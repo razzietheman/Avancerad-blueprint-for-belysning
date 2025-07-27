@@ -1,0 +1,264 @@
+blueprint:
+  name: Badrum – Tänd & släck med veckoschema, nattläge och failsafe
+  description: >
+    Styr badrumsbelysningen med rörelsesensor, veckoschema, nattläge och failsafe.
+  domain: automation
+  input:
+    binary_sensor_motion:
+      name: Rörelsesensor
+      description: Sensor som registrerar rörelse
+      selector:
+        entity:
+          domain: binary_sensor
+    light_entity:
+      name: Belysning
+      description: Lampan som ska tändas/släckas
+      selector:
+        entity:
+          domain: light
+    lux_sensor:
+      name: Ljusnivåsensor
+      description: Sensor som mäter ljusnivå (lux)
+      selector:
+        entity:
+          domain: sensor
+    input_text_last_scene:
+      name: Input text - senaste scen
+      description: En input_text som håller koll på senaste tända scenen
+      selector:
+        entity:
+          domain: input_text
+    scene_klart_ljus:
+      name: Klart ljus scen
+      description: Scen för dagtid med klart ljus
+      selector:
+        entity:
+          domain: scene
+    scene_nattlampa:
+      name: Nattlampa scen
+      description: Scen för nattläge
+      selector:
+        entity:
+          domain: scene
+
+trigger:
+  - platform: state
+    entity_id: !input binary_sensor_motion
+    to: "on"
+    id: motion_on
+  - platform: state
+    entity_id: !input binary_sensor_motion
+    from: "on"
+    to: "off"
+    id: motion_off
+
+mode: queued
+
+action:
+  - choose:
+      # Rörelse upptäckt
+      - conditions:
+          - condition: trigger
+            id: motion_on
+          - condition: numeric_state
+            entity_id: !input lux_sensor
+            below: 95
+        sequence:
+          - choose:
+              # Mån-Torsdag dag
+              - conditions:
+                  - condition: time
+                    after: "07:00"
+                    before: "21:00"
+                    weekday: [mon, tue, wed, thu]
+                sequence:
+                  - service: scene.turn_on
+                    target:
+                      entity_id: !input scene_klart_ljus
+                  - service: input_text.set_value
+                    data:
+                      entity_id: !input input_text_last_scene
+                      value: klart_ljus
+                  - parallel:
+                      - delay: "00:15:00"
+                      - condition: state
+                        entity_id: !input light_entity
+                        state: "on"
+                      - service: light.turn_off
+                        target:
+                          entity_id: !input light_entity
+                      - service: logbook.log
+                        data:
+                          name: Badrum
+                          message: "Failsafe: Ljuset släcktes efter 15 min"
+
+              # Fredag dag
+              - conditions:
+                  - condition: time
+                    after: "07:00"
+                    before: "22:30"
+                    weekday: [fri]
+                sequence:
+                  - service: scene.turn_on
+                    target:
+                      entity_id: !input scene_klart_ljus
+                  - service: input_text.set_value
+                    data:
+                      entity_id: !input input_text_last_scene
+                      value: klart_ljus
+                  - parallel:
+                      - delay: "00:15:00"
+                      - condition: state
+                        entity_id: !input light_entity
+                        state: "on"
+                      - service: light.turn_off
+                        target:
+                          entity_id: !input light_entity
+                      - service: logbook.log
+                        data:
+                          name: Badrum
+                          message: "Failsafe: Ljuset släcktes efter 15 min"
+
+              # Lördag dag
+              - conditions:
+                  - condition: time
+                    after: "08:00"
+                    before: "22:30"
+                    weekday: [sat]
+                sequence:
+                  - service: scene.turn_on
+                    target:
+                      entity_id: !input scene_klart_ljus
+                  - service: input_text.set_value
+                    data:
+                      entity_id: !input input_text_last_scene
+                      value: klart_ljus
+                  - parallel:
+                      - delay: "00:15:00"
+                      - condition: state
+                        entity_id: !input light_entity
+                        state: "on"
+                      - service: light.turn_off
+                        target:
+                          entity_id: !input light_entity
+                      - service: logbook.log
+                        data:
+                          name: Badrum
+                          message: "Failsafe: Ljuset släcktes efter 15 min"
+
+              # Söndag dag
+              - conditions:
+                  - condition: time
+                    after: "08:00"
+                    before: "21:00"
+                    weekday: [sun]
+                sequence:
+                  - service: scene.turn_on
+                    target:
+                      entity_id: !input scene_klart_ljus
+                  - service: input_text.set_value
+                    data:
+                      entity_id: !input input_text_last_scene
+                      value: klart_ljus
+                  - parallel:
+                      - delay: "00:15:00"
+                      - condition: state
+                        entity_id: !input light_entity
+                        state: "on"
+                      - service: light.turn_off
+                        target:
+                          entity_id: !input light_entity
+                      - service: logbook.log
+                        data:
+                          name: Badrum
+                          message: "Failsafe: Ljuset släcktes efter 15 min"
+
+              # Nattläge
+              - conditions:
+                  - condition: or
+                    conditions:
+                      - condition: and
+                        conditions:
+                          - condition: time
+                            before: "07:00"
+                            weekday: [mon, tue, wed, thu]
+                      - condition: and
+                        conditions:
+                          - condition: time
+                            after: "21:00"
+                            weekday: [mon, tue, wed, thu]
+                      - condition: and
+                        conditions:
+                          - condition: time
+                            before: "08:00"
+                            weekday: [fri]
+                      - condition: and
+                        conditions:
+                          - condition: time
+                            after: "22:30"
+                            weekday: [fri]
+                      - condition: and
+                        conditions:
+                          - condition: time
+                            before: "08:00"
+                            weekday: [sat]
+                      - condition: and
+                        conditions:
+                          - condition: time
+                            after: "22:30"
+                            weekday: [sat]
+                      - condition: and
+                        conditions:
+                          - condition: time
+                            before: "08:00"
+                            weekday: [sun]
+                      - condition: and
+                        conditions:
+                          - condition: time
+                            after: "21:00"
+                            weekday: [sun]
+                sequence:
+                  - service: scene.turn_on
+                    target:
+                      entity_id: !input scene_nattlampa
+                  - service: input_text.set_value
+                    data:
+                      entity_id: !input input_text_last_scene
+                      value: nattlampa
+
+      # Rörelse upphört
+      - conditions:
+          - condition: trigger
+            id: motion_off
+          - condition: state
+            entity_id: !input light_entity
+            state: "on"
+        sequence:
+          - choose:
+              # Klart ljus: släck efter 2 min
+              - conditions:
+                  - condition: state
+                    entity_id: !input input_text_last_scene
+                    state: klart_ljus
+                sequence:
+                  - delay: "00:02:00"
+                  - condition: state
+                    entity_id: !input binary_sensor_motion
+                    state: "off"
+                  - service: light.turn_off
+                    target:
+                      entity_id: !input light_entity
+
+              # Nattlampa: släck efter 1 min
+              - conditions:
+                  - condition: state
+                    entity_id: !input input_text_last_scene
+                    state: nattlampa
+                sequence:
+                  - delay: "00:01:00"
+                  - condition: state
+                    entity_id: !input binary_sensor_motion
+                    state: "off"
+                  - service: light.turn_off
+                    target:
+                      entity_id: !input light_entity
