@@ -52,7 +52,7 @@ trigger:
     to: "off"
     id: motion_off
 
-mode: queued
+mode: parallel
 
 action:
   - choose:
