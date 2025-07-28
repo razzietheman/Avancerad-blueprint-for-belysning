@@ -1,9 +1,0 @@
-  # Python bytecode
-  __pycache__/
-  *.py[cod]
-
-  # VS Code
-  .vscode/
-
-  # macOS
-  .DS_Store
