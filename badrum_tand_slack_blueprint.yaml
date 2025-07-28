@@ -1,7 +1,7 @@
 blueprint:
-  name: Badrum – Tänd & släck med veckoschema, nattläge och failsafe
+  name: Badrum – Tänd & släck med valbara tider, veckodagar, nattläge och failsafe
   description: >
-    Styr badrumsbelysningen med rörelsesensor, veckoschema, nattläge och failsafe.
+    Styr badrumsbelysningen med rörelsesensor, valbart veckoschema, nattläge och failsafe.
   domain: automation
   input:
     binary_sensor_motion:
@@ -40,6 +40,30 @@ blueprint:
       selector:
         entity:
           domain: scene
+    active_weekdays:
+      name: Aktiva dagar
+      description: Vilka dagar ska automationen vara aktiv?
+      selector:
+        select:
+          multiple: true
+          options:
+            - mon
+            - tue
+            - wed
+            - thu
+            - fri
+            - sat
+            - sun
+    active_start_time:
+      name: Starttid
+      description: Tid på dagen då belysningen ska aktiveras
+      selector:
+        time:
+    active_end_time:
+      name: Sluttid
+      description: Tid på dagen då belysningen ska sluta aktiveras
+      selector:
+        time:
 
 trigger:
   - platform: state
@@ -52,133 +76,49 @@ trigger:
     to: "off"
     id: motion_off
 
-mode: queued
+mode: parallel
 
 action:
   - choose:
-      # Rörelse upptäckt
       - conditions:
           - condition: trigger
             id: motion_on
           - condition: numeric_state
             entity_id: !input lux_sensor
             below: 95
+          - condition: time
+            after: !input active_start_time
+            before: !input active_end_time
+            weekday: !input active_weekdays
         sequence:
-          - choose:
-              # Mån-Torsdag dag
-              - conditions:
+          - service: scene.turn_on
+            target:
+              entity_id: !input scene_klart_ljus
+          - service: input_text.set_value
+            data:
+              entity_id: !input input_text_last_scene
+              value: klart_ljus
+
+      - conditions:
+          - condition: trigger
+            id: motion_on
+          - condition: or
+            conditions:
+              - condition: not
+                conditions:
                   - condition: time
-                    after: "07:00"
-                    before: "21:00"
-                    weekday: [mon, tue, wed, thu]
-                sequence:
-                  - service: scene.turn_on
-                    target:
-                      entity_id: !input scene_klart_ljus
-                  - service: input_text.set_value
-                    data:
-                      entity_id: !input input_text_last_scene
-                      value: klart_ljus
+                    after: !input active_start_time
+                    before: !input active_end_time
+                    weekday: !input active_weekdays
+        sequence:
+          - service: scene.turn_on
+            target:
+              entity_id: !input scene_nattlampa
+          - service: input_text.set_value
+            data:
+              entity_id: !input input_text_last_scene
+              value: nattlampa
 
-              # Fredag dag
-              - conditions:
-                  - condition: time
-                    after: "07:00"
-                    before: "22:30"
-                    weekday: [fri]
-                sequence:
-                  - service: scene.turn_on
-                    target:
-                      entity_id: !input scene_klart_ljus
-                  - service: input_text.set_value
-                    data:
-                      entity_id: !input input_text_last_scene
-                      value: klart_ljus
-
-              # Lördag dag
-              - conditions:
-                  - condition: time
-                    after: "08:00"
-                    before: "22:30"
-                    weekday: [sat]
-                sequence:
-                  - service: scene.turn_on
-                    target:
-                      entity_id: !input scene_klart_ljus
-                  - service: input_text.set_value
-                    data:
-                      entity_id: !input input_text_last_scene
-                      value: klart_ljus
-
-              # Söndag dag
-              - conditions:
-                  - condition: time
-                    after: "08:00"
-                    before: "21:00"
-                    weekday: [sun]
-                sequence:
-                  - service: scene.turn_on
-                    target:
-                      entity_id: !input scene_klart_ljus
-                  - service: input_text.set_value
-                    data:
-                      entity_id: !input input_text_last_scene
-                      value: klart_ljus
-
-              # Nattläge
-              - conditions:
-                  - condition: or
-                    conditions:
-                      - condition: and
-                        conditions:
-                          - condition: time
-                            before: "07:00"
-                            weekday: [mon, tue, wed, thu]
-                      - condition: and
-                        conditions:
-                          - condition: time
-                            after: "21:00"
-                            weekday: [mon, tue, wed, thu]
-                      - condition: and
-                        conditions:
-                          - condition: time
-                            before: "08:00"
-                            weekday: [fri]
-                      - condition: and
-                        conditions:
-                          - condition: time
-                            after: "22:30"
-                            weekday: [fri]
-                      - condition: and
-                        conditions:
-                          - condition: time
-                            before: "08:00"
-                            weekday: [sat]
-                      - condition: and
-                        conditions:
-                          - condition: time
-                            after: "22:30"
-                            weekday: [sat]
-                      - condition: and
-                        conditions:
-                          - condition: time
-                            before: "08:00"
-                            weekday: [sun]
-                      - condition: and
-                        conditions:
-                          - condition: time
-                            after: "21:00"
-                            weekday: [sun]
-                sequence:
-                  - service: scene.turn_on
-                    target:
-                      entity_id: !input scene_nattlampa
-                  - service: input_text.set_value
-                    data:
-                      entity_id: !input input_text_last_scene
-                      value: nattlampa
-
-      # Rörelse upphört
       - conditions:
           - condition: trigger
             id: motion_off
@@ -187,7 +127,6 @@ action:
             state: "on"
         sequence:
           - choose:
-              # Klart ljus: släck efter 2 min
               - conditions:
                   - condition: state
                     entity_id: !input input_text_last_scene
@@ -200,8 +139,6 @@ action:
                   - service: light.turn_off
                     target:
                       entity_id: !input light_entity
-
-              # Nattlampa: släck efter 1 min
               - conditions:
                   - condition: state
                     entity_id: !input input_text_last_scene
@@ -215,12 +152,12 @@ action:
                     target:
                       entity_id: !input light_entity
 
-  # Global failsafe – oavsett vad som tänt lampan
+  # Global failsafe: oavsett vad som tände lampan
   - wait_for_trigger:
       - platform: state
         entity_id: !input light_entity
         to: "off"
-    timeout: "00:06:00"
+    timeout: "00:15:00"
     continue_on_timeout: true
 
   - condition: state
@@ -234,4 +171,4 @@ action:
   - service: logbook.log
     data:
       name: Badrum
-      message: "Failsafe: Ljuset släcktes efter 6 minuter."
+      message: "Failsafe: Ljuset släcktes efter 15 minuter."
