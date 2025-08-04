@@ -1,7 +1,7 @@
 blueprint:
   name: Badrum – Tänd & släck med valbara tider, veckodagar, nattläge och failsafe
   description: >
-    Styr badrumsbelysningen med rörelsesensor, valbart veckoschema, nattläge och dynamisk failsafe-tid.
+    Styr badrumsbelysningen med rörelsesensor, valbart veckoschema, nattläge och dynamisk failsafe-tid samt justerbar ljusnivågräns.
   domain: automation
   input:
     binary_sensor_motion:
@@ -22,6 +22,16 @@ blueprint:
       selector:
         entity:
           domain: sensor
+    lux_threshold:
+      name: Ljusnivå tröskel (lux)
+      description: Maximalt lux-värde för att tända lampan (lampan tänds bara om lux är under detta värde)
+      default: 95
+      selector:
+        number:
+          min: 0
+          max: 500
+          unit_of_measurement: lx
+          mode: slider
     input_text_last_scene:
       name: Input text - senaste scen
       description: En input_text som håller koll på senaste tända scenen
@@ -100,7 +110,7 @@ action:
             id: motion_on
           - condition: numeric_state
             entity_id: !input lux_sensor
-            below: 95
+            below: !input lux_threshold
           - condition: time
             after: !input active_start_time
             before: !input active_end_time
@@ -117,14 +127,12 @@ action:
       - conditions:
           - condition: trigger
             id: motion_on
-          - condition: or
+          - condition: not
             conditions:
-              - condition: not
-                conditions:
-                  - condition: time
-                    after: !input active_start_time
-                    before: !input active_end_time
-                    weekday: !input active_weekdays
+              - condition: time
+                after: !input active_start_time
+                before: !input active_end_time
+                weekday: !input active_weekdays
         sequence:
           - service: scene.turn_on
             target:
@@ -167,7 +175,7 @@ action:
                     target:
                       entity_id: !input light_entity
 
-  # Dynamisk FAILSAFE – efter [input_number] minuter utan rörelse
+  # Dynamisk FAILSAFE – efter [failsafe_timer] minuter utan rörelse
   - choose:
       - conditions:
           - condition: or
@@ -184,7 +192,7 @@ action:
               - platform: state
                 entity_id: !input light_entity
                 to: "off"
-            timeout: "{{ (states('input_number.failsafe_timer') | int) ~ ':00' }}"
+            timeout: "{{ ( !input.failsafe_timer | int ) * 60 }}"
             continue_on_timeout: true
 
           - condition: state
@@ -202,4 +210,4 @@ action:
           - service: logbook.log
             data:
               name: Badrum
-              message: "Failsafe: Ljuset släcktes automatiskt efter {{ states('input_number.failsafe_timer') }} minuter utan rörelse."
+              message: "Failsafe: Ljuset släcktes automatiskt efter {{ !input.failsafe_timer }} minuter utan rörelse."
