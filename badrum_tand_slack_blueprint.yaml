@@ -1,7 +1,7 @@
 blueprint:
   name: Badrum – Tänd & släck med valbara tider, veckodagar, nattläge och failsafe
   description: >
-    Styr badrumsbelysningen med rörelsesensor, valbart veckoschema, nattläge och failsafe.
+    Styr badrumsbelysningen med rörelsesensor, valbart veckoschema, nattläge och dynamisk failsafe-tid.
   domain: automation
   input:
     binary_sensor_motion:
@@ -64,6 +64,16 @@ blueprint:
       description: Tid på dagen då belysningen ska sluta aktiveras
       selector:
         time:
+    failsafe_timer:
+      name: Failsafe-timer (i minuter)
+      description: Hur många minuter ska gå innan failsafen släcker ljuset?
+      default: 15
+      selector:
+        number:
+          min: 1
+          max: 60
+          unit_of_measurement: minuter
+          mode: slider
 
 trigger:
   - platform: state
@@ -75,6 +85,10 @@ trigger:
     from: "on"
     to: "off"
     id: motion_off
+  - platform: state
+    entity_id: !input light_entity
+    to: "on"
+    id: light_on
 
 mode: parallel
 max: 100
@@ -153,23 +167,39 @@ action:
                     target:
                       entity_id: !input light_entity
 
-  # Global failsafe: oavsett vad som tände lampan
-  - wait_for_trigger:
-      - platform: state
-        entity_id: !input light_entity
-        to: "off"
-    timeout: "00:15:00"
-    continue_on_timeout: true
+  # Dynamisk FAILSAFE – efter [input_number] minuter utan rörelse
+  - choose:
+      - conditions:
+          - condition: or
+            conditions:
+              - condition: trigger
+                id: motion_on
+              - condition: trigger
+                id: light_on
+          - condition: state
+            entity_id: !input light_entity
+            state: "on"
+        sequence:
+          - wait_for_trigger:
+              - platform: state
+                entity_id: !input light_entity
+                to: "off"
+            timeout: "{{ (states('input_number.failsafe_timer') | int) ~ ':00' }}"
+            continue_on_timeout: true
 
-  - condition: state
-    entity_id: !input light_entity
-    state: "on"
+          - condition: state
+            entity_id: !input light_entity
+            state: "on"
 
-  - service: light.turn_off
-    target:
-      entity_id: !input light_entity
+          - condition: state
+            entity_id: !input binary_sensor_motion
+            state: "off"
 
-  - service: logbook.log
-    data:
-      name: Badrum
-      message: "Failsafe: Ljuset släcktes efter 15 minuter."
+          - service: light.turn_off
+            target:
+              entity_id: !input light_entity
+
+          - service: logbook.log
+            data:
+              name: Badrum
+              message: "Failsafe: Ljuset släcktes automatiskt efter {{ states('input_number.failsafe_timer') }} minuter utan rörelse."
