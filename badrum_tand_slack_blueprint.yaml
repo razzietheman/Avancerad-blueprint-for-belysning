@@ -192,7 +192,7 @@ action:
               - platform: state
                 entity_id: !input light_entity
                 to: "off"
-            timeout: "{{ '%02d:00' | format(!input.failsafe_timer | int) }}"
+            timeout: "00:{{ '%02d' | format(!input.failsafe_timer | int) }}:00"
             continue_on_timeout: true
 
           - condition: state
