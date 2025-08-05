@@ -188,7 +188,7 @@ action:
             entity_id: !input light_entity
             state: "on"
         sequence:
-          - delay: "{{ ( !input.failsafe_timer | int ) * 60 }}"
+          - delay: "00:{{ '%02d' | format(!input.failsafe_timer | int) }}:00"
           - condition: state
             entity_id: !input light_entity
             state: "on"
