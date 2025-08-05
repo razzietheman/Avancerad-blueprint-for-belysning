@@ -192,7 +192,7 @@ action:
               - platform: state
                 entity_id: !input light_entity
                 to: "off"
-            timeout: "{{ ( !input.failsafe_timer | int ) * 60 }}"
+            timeout: "{{ '%02d:00' | format(!input.failsafe_timer | int) }}"
             continue_on_timeout: true
 
           - condition: state
@@ -210,5 +210,4 @@ action:
           - service: logbook.log
             data:
               name: Badrum
-              message: "Failsafe: Ljuset släcktes automatiskt efter {{ states('input_number.failsafe_timer') }} minuter utan rörelse."
-
+              message: "Failsafe: Ljuset släcktes automatiskt efter {{ !input.failsafe_timer }} minuter utan rörelse."
