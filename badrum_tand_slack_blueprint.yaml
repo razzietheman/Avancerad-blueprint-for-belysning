@@ -202,4 +202,4 @@ action:
           - service: logbook.log
             data:
               name: Badrum
-              message: "Failsafe: Ljuset släcktes automatiskt efter {{ !input.failsafe_timer }} minuter utan rörelse."
+              message: "Failsafe: Ljuset släcktes automatiskt efter angiven tid utan rörelse."
