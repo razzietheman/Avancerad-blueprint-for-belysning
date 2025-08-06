@@ -1,0 +1,62 @@
+{
+  "title": "Bathroom – Motion-activated lighting with schedule, night mode and failsafe",
+  "description": "Control your bathroom lights using a motion sensor, customizable weekly schedule, night mode, dynamic failsafe timer, and adjustable lux threshold.",
+  "input": {
+    "binary_sensor_motion": {
+      "name": "Motion Sensor",
+      "description": "Sensor that detects motion"
+    },
+    "light_entity": {
+      "name": "Light",
+      "description": "The light to be controlled"
+    },
+    "lux_sensor": {
+      "name": "Lux Sensor",
+      "description": "Sensor that measures ambient light level (lux)"
+    },
+    "lux_threshold": {
+      "name": "Lux threshold",
+      "description": "Maximum lux value for light activation (light turns on only if below this value)"
+    },
+    "input_text_last_scene": {
+      "name": "Input Text – Last Scene",
+      "description": "An input_text entity to keep track of the last activated scene"
+    },
+    "scene_klart_ljus": {
+      "name": "Daylight Scene",
+      "description": "Scene to activate during the day"
+    },
+    "scene_nattlampa": {
+      "name": "Nightlight Scene",
+      "description": "Scene to activate during night hours"
+    },
+    "active_weekdays_day": {
+      "name": "Active Days (Daylight)",
+      "description": "Days of the week when Daylight Scene is active"
+    },
+    "active_start_time_day": {
+      "name": "Start Time (Daylight)",
+      "description": "Time of day when Daylight Scene should become active"
+    },
+    "active_end_time_day": {
+      "name": "End Time (Daylight)",
+      "description": "Time of day when Daylight Scene should stop being active"
+    },
+    "active_weekdays_night": {
+      "name": "Active Days (Nightlight)",
+      "description": "Days of the week when Nightlight Scene is active"
+    },
+    "active_start_time_night": {
+      "name": "Start Time (Nightlight)",
+      "description": "Time of day when Nightlight Scene should become active"
+    },
+    "active_end_time_night": {
+      "name": "End Time (Nightlight)",
+      "description": "Time of day when Nightlight Scene should stop being active"
+    },
+    "failsafe_timer": {
+      "name": "Failsafe Timer (minutes)",
+      "description": "How many minutes should pass before the failsafe turns off the light?"
+    }
+  }
+}
