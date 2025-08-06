@@ -1,0 +1,17 @@
+{
+  "name": "Bathroom Motion Light Blueprint",
+  "content_in_root": false,
+  "domains": ["automation"],
+  "homeassistant": "2021.12.0",
+  "hacs": {
+    "type": "automation",
+    "categories": ["Automation"],
+    "startup": "post_start"
+  },
+  "filename": "badrum-tand-slack-blueprint.yaml",
+  "version": "2.1",
+  "authors": ["razzietheman"],
+  "description": "Advanced motion-activated bathroom lighting blueprint with day/night scenes, schedules, lux threshold, and failsafe timer.",
+  "keywords": ["blueprint", "automation", "motion", "light", "bathroom", "failsafe"],
+  "documentation": "https://github.com/razzietheman/badrum-tand-slack-blueprint"
+}
