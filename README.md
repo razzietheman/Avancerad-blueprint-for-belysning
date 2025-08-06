@@ -1,31 +1,63 @@
-# Badrum – Tänd & Släck Automation med Veckoschema, Nattläge och Failsafe
-
-[![Home Assistant](https://img.shields.io/badge/Home_Assistant-20232A?style=for-the-badge&logo=home-assistant&logoColor=white)](https://www.home-assistant.io/)  
-[![YAML](https://img.shields.io/badge/YAML-000000?style=for-the-badge&logo=yaml&logoColor=white)](https://yaml.org/)
-
-Automatisk styrning av badrumsbelysning med rörelsesensor, lux-sensor och veckoschema. Inkluderar nattläge och en failsafe-funktion som släcker lampan efter 15 minuter för att undvika att den står på för länge.
+# Badrumsrörelseljus Blueprint / Bathroom Motion Light Blueprint
 
 ---
 
-## Funktioner
+## Svenska
 
-- Tänder lampan baserat på rörelse och ljusnivå (lux).  
-- Olika tider för tändning/släckning beroende på veckodag och tid på dygnet.  
-- Nattläge med egen scen och kortare släckningstid.  
-- Failsafe som automatiskt släcker lampan efter 15 minuter för säkerhets skull.  
-- Sparar senaste aktiverade scen i en input_text för korrekt släckningsbeteende.
+### Beskrivning  
+Avancerad blueprint för badrumsbelysning med rörelsesensor, separata dag- och nattscener, anpassningsbara scheman, justerbar lux-tröskel och failsafe-timer.
+
+Denna blueprint låter dig styra badrumsbelysningen med en rörelsesensor där du kan ha olika aktiva tider och veckodagar för både dagsljus- och nattlampescener. Inkluderar en failsafe-timer som automatiskt släcker ljuset efter en angiven tid utan rörelse.
+
+### Funktioner  
+- Separata scheman för dagsljus- och nattlampescener  
+- Anpassningsbara aktiva veckodagar för varje scen  
+- Justerbar lux-tröskel så att lampan endast tänds när det är tillräckligt mörkt  
+- Dynamisk failsafe-timer för automatisk avstängning  
+- Manualvänlig – släcker inte lampor som tänds manuellt  
+- Helt UI-konfigurerbar, ingen YAML-redigering behövs  
+
+### Installation  
+1. Importera blueprinten i Home Assistant via UI.  
+2. Koppla in dina enheter: rörelsesensor, belysning, lux-sensor och scener.  
+3. Ställ in tider och lux-tröskel efter dina behov.  
+4. Spara och njut av smart badrumsbelysning!
+
+### Support  
+Har du frågor eller förslag? Öppna gärna ett ärende i [GitHub-repot](https://github.com/razzietheman/badrum-tand-slack-blueprint).
 
 ---
 
-## Installation
+## English
 
-1. Ladda ner filen `badrum_tand_slack_blueprint.yaml`.  
-2. Importera blueprinten i Home Assistant via:  
-   **Inställningar > Automations & Scener > Blueprints > Importera blueprint från fil**.  
-3. Skapa `input_text` i din `configuration.yaml` eller via UI:  
+### Description  
+Advanced blueprint for bathroom lighting using a motion sensor, separate day and night scenes, customizable schedules, adjustable lux threshold, and a failsafe timer.
 
-```yaml
-input_text:
-  last_scene_triggered:
-    name: Senaste scen
-    max: 20
+This blueprint allows you to control your bathroom lights with a motion sensor, where you can have separate active times and weekdays for both daylight and nightlight scenes. It includes a failsafe timer that automatically turns off the light after a specified period without motion.
+
+### Features  
+- Separate schedules for daylight and nightlight scenes  
+- Customizable active weekdays for each scene  
+- Adjustable lux threshold to only turn on the light when it’s dark enough  
+- Dynamic failsafe timer for automatic turn-off  
+- Manual-friendly – won’t turn off lights you turned on yourself  
+- Fully UI-configurable, no YAML editing required  
+
+### Installation  
+1. Import the blueprint in Home Assistant via the UI.  
+2. Link your devices: motion sensor, light, lux sensor, and scenes.  
+3. Configure times and lux threshold as you like.  
+4. Save and enjoy smarter bathroom lighting!
+
+### Support  
+Questions or suggestions? Please open an issue in the [GitHub repo](https://github.com/razzietheman/badrum-tand-slack-blueprint).
+
+---
+
+## Author  
+Rasmus Sjöberg (@razzietheman)  
+2025
+
+---
+
+Thank you for using and sharing!  
