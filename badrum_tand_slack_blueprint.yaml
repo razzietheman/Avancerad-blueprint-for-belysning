@@ -1,7 +1,8 @@
 blueprint:
   name: Badrum – Tänd & släck med valbara tider, veckodagar, nattläge och failsafe
   description: >
-    Styr badrumsbelysningen med rörelsesensor, valbart veckoschema, nattläge och dynamisk failsafe-tid samt justerbar ljusnivågräns.
+    Styr badrumsbelysningen med rörelsesensor, individuella tider och veckodagar för klart ljus och nattläge,
+    samt dynamisk failsafe-tid och justerbar ljusnivågräns.
   domain: automation
   input:
     binary_sensor_motion:
@@ -50,9 +51,9 @@ blueprint:
       selector:
         entity:
           domain: scene
-    active_weekdays:
-      name: Aktiva dagar
-      description: Vilka dagar ska automationen vara aktiv?
+    daytime_weekdays:
+      name: Veckodagar – Klart ljus
+      description: Vilka dagar ska klart ljus-scen vara aktiv?
       selector:
         select:
           multiple: true
@@ -64,14 +65,38 @@ blueprint:
             - fri
             - sat
             - sun
-    active_start_time:
-      name: Starttid
-      description: Tid på dagen då belysningen ska aktiveras
+    nighttime_weekdays:
+      name: Veckodagar – Nattläge
+      description: Vilka dagar ska nattlampa-scen vara aktiv?
+      selector:
+        select:
+          multiple: true
+          options:
+            - mon
+            - tue
+            - wed
+            - thu
+            - fri
+            - sat
+            - sun
+    daytime_start_time:
+      name: Starttid – Klart ljus
+      description: Tid på dagen då klart ljus-scen aktiveras
       selector:
         time:
-    active_end_time:
-      name: Sluttid
-      description: Tid på dagen då belysningen ska sluta aktiveras
+    daytime_end_time:
+      name: Sluttid – Klart ljus
+      description: Tid på dagen då klart ljus-scen slutar vara aktiv
+      selector:
+        time:
+    nighttime_start_time:
+      name: Starttid – Nattläge
+      description: Tid på dagen då nattlampa-scen aktiveras
+      selector:
+        time:
+    nighttime_end_time:
+      name: Sluttid – Nattläge
+      description: Tid på dagen då nattlampa-scen slutar vara aktiv
       selector:
         time:
     failsafe_timer:
@@ -112,9 +137,9 @@ action:
             entity_id: !input lux_sensor
             below: !input lux_threshold
           - condition: time
-            after: !input active_start_time
-            before: !input active_end_time
-            weekday: !input active_weekdays
+            after: !input daytime_start_time
+            before: !input daytime_end_time
+            weekday: !input daytime_weekdays
         sequence:
           - service: scene.turn_on
             target:
@@ -127,12 +152,10 @@ action:
       - conditions:
           - condition: trigger
             id: motion_on
-          - condition: not
-            conditions:
-              - condition: time
-                after: !input active_start_time
-                before: !input active_end_time
-                weekday: !input active_weekdays
+          - condition: time
+            after: !input nighttime_start_time
+            before: !input nighttime_end_time
+            weekday: !input nighttime_weekdays
         sequence:
           - service: scene.turn_on
             target:
@@ -175,7 +198,6 @@ action:
                     target:
                       entity_id: !input light_entity
 
-  # Dynamisk FAILSAFE – efter [failsafe_timer] minuter utan rörelse
   - choose:
       - conditions:
           - condition: or
