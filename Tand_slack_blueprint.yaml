@@ -269,5 +269,5 @@ action:
               entity_id: !input light_entity
           - service: logbook.log
             data:
-              name: Badrum
+              name: Lampa
               message: "Failsafe: Ljuset släcktes automatiskt efter timeout."
