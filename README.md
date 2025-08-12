@@ -31,8 +31,9 @@ Har du frågor eller förslag? Öppna gärna ett ärende i [GitHub-repot](https:
 
 ## English
 
-### Description  
-Advanced blueprint for bathroom lighting using a motion sensor, separate day and night scenes, customizable schedules, adjustable lux threshold, and a failsafe timer.
+### Description
+ 
+💡 Advanced blueprint for bathroom lighting using a motion sensor, separate day and night scenes, customizable schedules, adjustable lux threshold, and a failsafe timer.
 
 This blueprint allows you to control your bathroom lights with a motion sensor, where you can have separate active times and weekdays for both daylight and nightlight scenes. It includes a failsafe timer that automatically turns off the light after a specified period without motion.
 
