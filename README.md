@@ -1,4 +1,4 @@
-#💡 Badrumsrörelseljus Blueprint / Bathroom Motion Light Blueprint
+# Badrumsrörelseljus Blueprint / Bathroom Motion Light Blueprint
 
 ---
 
