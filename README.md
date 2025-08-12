@@ -1,4 +1,4 @@
-# Badrumsrörelseljus Blueprint / Bathroom Motion Light Blueprint
+# 💡Avancerad blueprint för belysning med rörelsesensor / 💡 Advanced Motion-Activated Light
 
 ---
 
