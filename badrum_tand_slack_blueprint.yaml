@@ -1,8 +1,9 @@
 blueprint:
-  name: Badrum – Tänd & släck med valbara tider, veckodagar, nattläge och failsafe
+  name: Rörelsestyrd belysning (Scen eller Direkta lampor) med schema, nattläge och failsafe
   description: >
-    Styr badrumsbelysningen med rörelsesensor, individuella tider och veckodagar för klart ljus och nattläge,
-    samt dynamisk failsafe-tid och justerbar ljusnivågräns.
+    Automatisera vilken belysning som helst med rörelsesensor, med separata dag- och nattinställningar,
+    justerbar ljusnivågräns, valbara veckodagar och tider, samt failsafe-timer. Stöd för både scener och direkta lampor.
+    Snapshot-återställning av tidigare ljusinställning ingår.
   domain: automation
   input:
     binary_sensor_motion:
@@ -11,21 +12,24 @@ blueprint:
       selector:
         entity:
           domain: binary_sensor
+
     light_entity:
-      name: Belysning
-      description: Lampan som ska tändas/släckas
+      name: Huvudlampa
+      description: Den lampa som används för att kontrollera om belysningen är på (kan vara en lampa i gruppen)
       selector:
         entity:
           domain: light
+
     lux_sensor:
       name: Ljusnivåsensor
-      description: Sensor som mäter ljusnivå (lux)
+      description: Sensor som mäter omgivande ljusnivå (lux)
       selector:
         entity:
           domain: sensor
+
     lux_threshold:
-      name: Ljusnivå tröskel (lux)
-      description: Maximalt lux-värde för att tända lampan (lampan tänds bara om lux är under detta värde)
+      name: Ljusnivåtröskel
+      description: Maximalt lux-värde för att tända lampan
       default: 95
       selector:
         number:
@@ -33,75 +37,87 @@ blueprint:
           max: 500
           unit_of_measurement: lx
           mode: slider
+
     input_text_last_scene:
-      name: Input text - senaste scen
-      description: En input_text som håller koll på senaste tända scenen
+      name: Input Text – Senaste scen
+      description: Håller reda på senast aktiverad scen/läge
       selector:
         entity:
           domain: input_text
+
+    # --- DAGINSTÄLLNINGAR ---
     scene_klart_ljus:
-      name: Klart ljus scen
-      description: Scen för dagtid med klart ljus
+      name: Dag-scen (valfritt)
+      description: Scen att aktivera under dagtid (lämna tom om direkta lampor används)
+      default: []
       selector:
         entity:
           domain: scene
+
+    day_lights:
+      name: Daglampor (valfritt)
+      description: Lampor att tända under dagtid (används om scen ej är satt)
+      default: []
+      selector:
+        entity:
+          domain: light
+          multiple: true
+
+    active_weekdays_day:
+      name: Aktiva veckodagar (Dag)
+      selector:
+        select:
+          multiple: true
+          options: [mon, tue, wed, thu, fri, sat, sun]
+
+    active_start_time_day:
+      name: Starttid (Dag)
+      selector:
+        time:
+
+    active_end_time_day:
+      name: Sluttid (Dag)
+      selector:
+        time:
+
+    # --- NATTINSTÄLLNINGAR ---
     scene_nattlampa:
-      name: Nattlampa scen
-      description: Scen för nattläge
+      name: Natt-scen (valfritt)
+      description: Scen att aktivera under natt (lämna tom om direkta lampor används)
+      default: []
       selector:
         entity:
           domain: scene
-    daytime_weekdays:
-      name: Veckodagar – Klart ljus
-      description: Vilka dagar ska klart ljus-scen vara aktiv?
+
+    night_lights:
+      name: Nattlampor (valfritt)
+      description: Lampor att tända under natt (används om scen ej är satt)
+      default: []
+      selector:
+        entity:
+          domain: light
+          multiple: true
+
+    active_weekdays_night:
+      name: Aktiva veckodagar (Natt)
       selector:
         select:
           multiple: true
-          options:
-            - mon
-            - tue
-            - wed
-            - thu
-            - fri
-            - sat
-            - sun
-    nighttime_weekdays:
-      name: Veckodagar – Nattläge
-      description: Vilka dagar ska nattlampa-scen vara aktiv?
-      selector:
-        select:
-          multiple: true
-          options:
-            - mon
-            - tue
-            - wed
-            - thu
-            - fri
-            - sat
-            - sun
-    daytime_start_time:
-      name: Starttid – Klart ljus
-      description: Tid på dagen då klart ljus-scen aktiveras
+          options: [mon, tue, wed, thu, fri, sat, sun]
+
+    active_start_time_night:
+      name: Starttid (Natt)
       selector:
         time:
-    daytime_end_time:
-      name: Sluttid – Klart ljus
-      description: Tid på dagen då klart ljus-scen slutar vara aktiv
+
+    active_end_time_night:
+      name: Sluttid (Natt)
       selector:
         time:
-    nighttime_start_time:
-      name: Starttid – Nattläge
-      description: Tid på dagen då nattlampa-scen aktiveras
-      selector:
-        time:
-    nighttime_end_time:
-      name: Sluttid – Nattläge
-      description: Tid på dagen då nattlampa-scen slutar vara aktiv
-      selector:
-        time:
+
     failsafe_timer:
-      name: Failsafe-timer (i minuter)
-      description: Hur många minuter ska gå innan failsafen släcker ljuset?
+      name: Failsafe-timer (minuter)
+      description: Hur många minuter innan ljuset släcks automatiskt utan rörelse
       default: 15
       selector:
         number:
@@ -130,6 +146,7 @@ max: 100
 
 action:
   - choose:
+      # --- DAGLÄGE ---
       - conditions:
           - condition: trigger
             id: motion_on
@@ -137,34 +154,62 @@ action:
             entity_id: !input lux_sensor
             below: !input lux_threshold
           - condition: time
-            after: !input daytime_start_time
-            before: !input daytime_end_time
-            weekday: !input daytime_weekdays
+            after: !input active_start_time_day
+            before: !input active_end_time_day
+            weekday: !input active_weekdays_day
         sequence:
-          - service: scene.turn_on
-            target:
-              entity_id: !input scene_klart_ljus
+          - service: scene.create
+            data:
+              scene_id: bathroom_before
+              snapshot_entities: !input light_entity
+          - choose:
+              - conditions:
+                  - condition: template
+                    value_template: "{{ (day_lights | length) > 0 }}"
+                sequence:
+                  - service: light.turn_on
+                    target:
+                      entity_id: !input day_lights
+              - default:
+                  - service: scene.turn_on
+                    target:
+                      entity_id: !input scene_klart_ljus
           - service: input_text.set_value
             data:
               entity_id: !input input_text_last_scene
               value: klart_ljus
 
+      # --- NATT ---
       - conditions:
           - condition: trigger
             id: motion_on
           - condition: time
-            after: !input nighttime_start_time
-            before: !input nighttime_end_time
-            weekday: !input nighttime_weekdays
+            after: !input active_start_time_night
+            before: !input active_end_time_night
+            weekday: !input active_weekdays_night
         sequence:
-          - service: scene.turn_on
-            target:
-              entity_id: !input scene_nattlampa
+          - service: scene.create
+            data:
+              scene_id: bathroom_before
+              snapshot_entities: !input light_entity
+          - choose:
+              - conditions:
+                  - condition: template
+                    value_template: "{{ (night_lights | length) > 0 }}"
+                sequence:
+                  - service: light.turn_on
+                    target:
+                      entity_id: !input night_lights
+              - default:
+                  - service: scene.turn_on
+                    target:
+                      entity_id: !input scene_nattlampa
           - service: input_text.set_value
             data:
               entity_id: !input input_text_last_scene
               value: nattlampa
 
+      # --- SLÄCKNING ---
       - conditions:
           - condition: trigger
             id: motion_off
@@ -182,9 +227,9 @@ action:
                   - condition: state
                     entity_id: !input binary_sensor_motion
                     state: "off"
-                  - service: light.turn_off
+                  - service: scene.turn_on
                     target:
-                      entity_id: !input light_entity
+                      entity_id: scene.bathroom_before
               - conditions:
                   - condition: state
                     entity_id: !input input_text_last_scene
@@ -194,10 +239,11 @@ action:
                   - condition: state
                     entity_id: !input binary_sensor_motion
                     state: "off"
-                  - service: light.turn_off
+                  - service: scene.turn_on
                     target:
-                      entity_id: !input light_entity
+                      entity_id: scene.bathroom_before
 
+  # --- FAILSAFE ---
   - choose:
       - conditions:
           - condition: or
@@ -224,4 +270,4 @@ action:
           - service: logbook.log
             data:
               name: Badrum
-              message: "Failsafe: Ljuset släcktes automatiskt efter angiven tid utan rörelse."
+              message: "Failsafe: Ljuset släcktes automatiskt efter timeout."
