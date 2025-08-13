@@ -1,9 +1,9 @@
 blueprint:
   name: Rörelsestyrd belysning (Scen eller Direkta lampor) med schema, nattläge och failsafe
   description: >
-    Automatiserar belysning med rörelsesensor och stöd för separata dag- och nattinställningar,
-    justerbar ljusnivågräns, valbara veckodagar och tider samt failsafe-timer.
-    Stöd för både scener och direkta lampor med snapshot-återställning av tidigare ljusinställning.
+    Automatisera vilken belysning som helst med rörelsesensor, med separata dag- och nattinställningar,
+    justerbar ljusnivågräns, valbara veckodagar och tider, samt failsafe-timer. Stöd för både scener och direkta lampor.
+    Snapshot-återställning av tidigare ljusinställning ingår.
   domain: automation
   input:
     binary_sensor_motion:
@@ -15,7 +15,7 @@ blueprint:
 
     light_entity:
       name: Huvudlampa
-      description: Lampan som används för att kontrollera om belysningen är på (kan vara en lampa i gruppen)
+      description: Den lampa som används för att kontrollera om belysningen är på (kan vara en lampa i gruppen)
       selector:
         entity:
           domain: light
@@ -45,6 +45,7 @@ blueprint:
         entity:
           domain: input_text
 
+    # --- DAGINSTÄLLNINGAR ---
     scene_klart_ljus:
       name: Dag-scen (valfritt)
       description: Scen att aktivera under dagtid (lämna tom om direkta lampor används)
@@ -79,6 +80,7 @@ blueprint:
       selector:
         time:
 
+    # --- NATTINSTÄLLNINGAR ---
     scene_nattlampa:
       name: Natt-scen (valfritt)
       description: Scen att aktivera under natt (lämna tom om direkta lampor används)
@@ -144,6 +146,7 @@ max: 100
 
 action:
   - choose:
+      # --- DAGLÄGE ---
       - conditions:
           - condition: trigger
             id: motion_on
@@ -157,7 +160,7 @@ action:
         sequence:
           - service: scene.create
             data:
-              scene_id: before_motion
+              scene_id: bathroom_before
               snapshot_entities: !input light_entity
           - choose:
               - conditions:
@@ -176,6 +179,7 @@ action:
               entity_id: !input input_text_last_scene
               value: klart_ljus
 
+      # --- NATT ---
       - conditions:
           - condition: trigger
             id: motion_on
@@ -186,7 +190,7 @@ action:
         sequence:
           - service: scene.create
             data:
-              scene_id: before_motion
+              scene_id: bathroom_before
               snapshot_entities: !input light_entity
           - choose:
               - conditions:
@@ -205,6 +209,7 @@ action:
               entity_id: !input input_text_last_scene
               value: nattlampa
 
+      # --- SLÄCKNING ---
       - conditions:
           - condition: trigger
             id: motion_off
@@ -224,7 +229,7 @@ action:
                     state: "off"
                   - service: scene.turn_on
                     target:
-                      entity_id: scene.before_motion
+                      entity_id: scene.bathroom_before
               - conditions:
                   - condition: state
                     entity_id: !input input_text_last_scene
@@ -236,8 +241,9 @@ action:
                     state: "off"
                   - service: scene.turn_on
                     target:
-                      entity_id: scene.before_motion
+                      entity_id: scene.bathroom_before
 
+  # --- FAILSAFE ---
   - choose:
       - conditions:
           - condition: or
@@ -263,5 +269,5 @@ action:
               entity_id: !input light_entity
           - service: logbook.log
             data:
-              name: Rörelsestyrning
+              name: Lampa
               message: "Failsafe: Ljuset släcktes automatiskt efter timeout."
