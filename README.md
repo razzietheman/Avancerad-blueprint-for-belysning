@@ -42,7 +42,7 @@ Perfekt för både inomhus- och utomhusbelysning — med stöd för soluppgång/
 
 # 📥 Installation
 
-Importera med 1-klick
+Importera med [1-klick](https://my.home-assistant.io/redirect/blueprint_import?blueprint_url=https://raw.githubusercontent.com/razzietheman/Avancerad-blueprint-for-belysning/main/Tand_slack_blueprint.yaml).
 
 Fyll i fälten
 
