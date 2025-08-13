@@ -1,5 +1,5 @@
 blueprint:
-  name: Rörelsestyrd belysning (Scen eller Direkta lampor) med schema, nattläge, solstyrning och failsafe
+  name: Rörelsestyrd belysning med schema, nattläge, solstyrning, veckodagar och failsafe
   description: >
     Styr valfri belysning med en eller flera rörelsesensorer, separata tider och/eller soluppgång/solnedgång för dag- och nattläge,
     justerbar ljusnivågräns (lux), dynamisk failsafe-timer och möjlighet att använda scen eller direkta lampor.
@@ -12,7 +12,6 @@ blueprint:
       selector:
         entity:
           domain: binary_sensor
-          device_class: motion
           multiple: true
     optional_switches:
       name: Valfri manuell strömbrytare
@@ -45,6 +44,22 @@ blueprint:
         entity:
           domain: scene
           multiple: false
+    day_lights:
+      name: Daglampor (valfritt)
+      description: Lampor att tända under dagtid om ingen scen används.
+      default: []
+      selector:
+        entity:
+          domain: light
+          multiple: true
+    night_lights:
+      name: Nattlampor (valfritt)
+      description: Lampor att tända under natt om ingen scen används.
+      default: []
+      selector:
+        entity:
+          domain: light
+          multiple: true
     lux_sensor:
       name: Lux-sensor (valfri)
       description: Lämna tom om du inte vill använda lux-gräns.
@@ -80,6 +95,28 @@ blueprint:
       default: "22:00:00"
       selector:
         time: {}
+    night_start:
+      name: Nattstart (tid)
+      default: "22:00:00"
+      selector:
+        time: {}
+    night_end:
+      name: Nattsslut (tid)
+      default: "07:00:00"
+      selector:
+        time: {}
+    active_weekdays_day:
+      name: Aktiva veckodagar (Dag)
+      selector:
+        select:
+          multiple: true
+          options: [mon, tue, wed, thu, fri, sat, sun]
+    active_weekdays_night:
+      name: Aktiva veckodagar (Natt)
+      selector:
+        select:
+          multiple: true
+          options: [mon, tue, wed, thu, fri, sat, sun]
     failsafe_timer:
       name: Failsafe-timer (minuter)
       default: 30
@@ -89,12 +126,23 @@ blueprint:
           max: 120
           step: 1
           unit_of_measurement: min
+    input_text_last_scene:
+      name: Input Text – Senaste scen
+      description: Håller reda på senast aktiverad scen/läge
+      selector:
+        entity:
+          domain: input_text
 
 trigger:
   - platform: state
     entity_id: !input motion_sensors
     to: "on"
     id: motion_on
+  - platform: state
+    entity_id: !input motion_sensors
+    from: "on"
+    to: "off"
+    id: motion_off
   - platform: state
     entity_id: !input optional_switches
     to: "on"
@@ -104,12 +152,17 @@ trigger:
     to: "on"
     id: light_on
 
+mode: parallel
+max: 100
+
 variables:
   use_sun_times: !input use_sun_times
   lux_sensor: !input lux_sensor
   lux_threshold: !input lux_threshold
   scene_day: !input scene_day
   scene_night: !input scene_night
+  day_lights: !input day_lights
+  night_lights: !input night_lights
 
 condition: []
 
@@ -117,74 +170,75 @@ action:
   - choose:
       # --- DAGLÄGE ---
       - conditions:
+          - condition: trigger
+            id: motion_on
+          - condition: or
+            conditions:
+              - condition: template
+                value_template: "{{ lux_sensor == [] }}"
+              - condition: numeric_state
+                entity_id: !input lux_sensor
+                below: !input lux_threshold
           - condition: or
             conditions:
               - condition: and
                 conditions:
+                  - condition: template
+                    value_template: "{{ not use_sun_times }}"
                   - condition: time
                     after: !input day_start
                     before: !input day_end
-                  - condition: template
-                    value_template: "{{ not use_sun_times }}"
+                    weekday: !input active_weekdays_day
               - condition: and
                 conditions:
                   - condition: template
                     value_template: "{{ use_sun_times }}"
-                  - condition: or
-                    conditions:
-                      - condition: sun
-                        after: sunrise
-                        after_offset: "0:00:00"
-                      - condition: sun
-                        before: sunset
-                        before_offset: "0:00:00"
-          - condition: or
-            conditions:
-              - condition: template
-                value_template: "{{ lux_sensor == [] }}"
-              - condition: numeric_state
-                entity_id: !input lux_sensor
-                below: !input lux_threshold
+                  - condition: sun
+                    after: sunrise
+                    before: sunset
         sequence:
+          - service: scene.create
+            data:
+              scene_id: before_day_scene
+              snapshot_entities: !input light_entity
           - choose:
               - conditions: "{{ scene_day != [] }}"
                 sequence:
-                  - service: scene.create
-                    data:
-                      scene_id: before_day_scene
-                      snapshot_entities: !input light_entity
                   - service: scene.turn_on
                     target:
                       entity_id: !input scene_day
-              - conditions: "{{ scene_day == [] }}"
-                sequence:
+              - default:
                   - service: light.turn_on
                     target:
-                      entity_id: !input light_entity
+                      entity_id: !input day_lights
+          - service: input_text.set_value
+            data:
+              entity_id: !input input_text_last_scene
+              value: "dag"
 
       # --- NATTLÄGE ---
       - conditions:
+          - condition: trigger
+            id: motion_on
           - condition: or
             conditions:
               - condition: and
                 conditions:
-                  - condition: time
-                    after: !input day_end
-                    before: !input day_start
                   - condition: template
                     value_template: "{{ not use_sun_times }}"
+                  - condition: time
+                    after: !input night_start
+                    before: !input night_end
+                    weekday: !input active_weekdays_night
               - condition: and
                 conditions:
                   - condition: template
                     value_template: "{{ use_sun_times }}"
                   - condition: or
-                    conditions:
-                      - condition: sun
-                        after: sunset
-                        after_offset: "0:00:00"
-                      - condition: sun
-                        before: sunrise
-                        before_offset: "0:00:00"
+                    - condition: sun
+                      after: sunset
+                    - condition: sun
+                      before: sunrise
           - condition: or
             conditions:
               - condition: template
@@ -193,21 +247,58 @@ action:
                 entity_id: !input lux_sensor
                 below: !input lux_threshold
         sequence:
+          - service: scene.create
+            data:
+              scene_id: before_night_scene
+              snapshot_entities: !input light_entity
           - choose:
               - conditions: "{{ scene_night != [] }}"
                 sequence:
-                  - service: scene.create
-                    data:
-                      scene_id: before_night_scene
-                      snapshot_entities: !input light_entity
                   - service: scene.turn_on
                     target:
                       entity_id: !input scene_night
-              - conditions: "{{ scene_night == [] }}"
-                sequence:
+              - default:
                   - service: light.turn_on
                     target:
-                      entity_id: !input light_entity
+                      entity_id: !input night_lights
+          - service: input_text.set_value
+            data:
+              entity_id: !input input_text_last_scene
+              value: "natt"
+
+      # --- SLÄCKNING ---
+      - conditions:
+          - condition: trigger
+            id: motion_off
+          - condition: state
+            entity_id: !input light_entity
+            state: "on"
+        sequence:
+          - choose:
+              - conditions:
+                  - condition: state
+                    entity_id: !input input_text_last_scene
+                    state: "dag"
+                sequence:
+                  - delay: "00:02:00"
+                  - condition: state
+                    entity_id: !input motion_sensors
+                    state: "off"
+                  - service: scene.turn_on
+                    target:
+                      entity_id: before_day_scene
+              - conditions:
+                  - condition: state
+                    entity_id: !input input_text_last_scene
+                    state: "natt"
+                sequence:
+                  - delay: "00:01:00"
+                  - condition: state
+                    entity_id: !input motion_sensors
+                    state: "off"
+                  - service: scene.turn_on
+                    target:
+                      entity_id: before_night_scene
 
   # --- FAILSAFE ---
   - choose:
@@ -237,6 +328,3 @@ action:
             data:
               name: Rörelsestyrning
               message: "Failsafe: Ljuset släcktes automatiskt efter timeout."
-
-mode: parallel
-max: 100
