@@ -160,7 +160,7 @@ action:
         sequence:
           - service: scene.create
             data:
-              scene_id: bathroom_before
+              scene_id: before_motion
               snapshot_entities: !input light_entity
           - choose:
               - conditions:
@@ -190,7 +190,7 @@ action:
         sequence:
           - service: scene.create
             data:
-              scene_id: bathroom_before
+              scene_id: before_motion
               snapshot_entities: !input light_entity
           - choose:
               - conditions:
@@ -229,7 +229,7 @@ action:
                     state: "off"
                   - service: scene.turn_on
                     target:
-                      entity_id: scene.bathroom_before
+                      entity_id: scene.before_motion
               - conditions:
                   - condition: state
                     entity_id: !input input_text_last_scene
@@ -241,7 +241,7 @@ action:
                     state: "off"
                   - service: scene.turn_on
                     target:
-                      entity_id: scene.bathroom_before
+                      entity_id: scene.before_motion
 
   # --- FAILSAFE ---
   - choose:
@@ -269,5 +269,5 @@ action:
               entity_id: !input light_entity
           - service: logbook.log
             data:
-              name: Lampa
+              name: Rörelsestyrning
               message: "Failsafe: Ljuset släcktes automatiskt efter timeout."
