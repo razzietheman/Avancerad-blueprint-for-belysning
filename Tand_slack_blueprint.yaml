@@ -1,5 +1,5 @@
 blueprint:
-  name: Rörelsestyrd belysning med schema, nattläge, solstyrning, veckodagar och failsafe
+  name: Rörelsestyrd belysning med schema, nattläge, solstyrning och failsafe
   description: >
     Styr valfri belysning med en eller flera rörelsesensorer, separata tider och/eller soluppgång/solnedgång för dag- och nattläge,
     justerbar ljusnivågräns (lux), dynamisk failsafe-timer och möjlighet att använda scen eller direkta lampor.
@@ -193,9 +193,12 @@ action:
                 conditions:
                   - condition: template
                     value_template: "{{ use_sun_times }}"
-                  - condition: sun
-                    after: sunrise
-                    before: sunset
+                  - condition: or
+                    conditions:
+                      - condition: sun
+                        after: sunrise
+                      - condition: sun
+                        before: sunset
         sequence:
           - service: scene.create
             data:
@@ -235,10 +238,11 @@ action:
                   - condition: template
                     value_template: "{{ use_sun_times }}"
                   - condition: or
-                    - condition: sun
-                      after: sunset
-                    - condition: sun
-                      before: sunrise
+                    conditions:
+                      - condition: sun
+                        after: sunset
+                      - condition: sun
+                        before: sunrise
           - condition: or
             conditions:
               - condition: template
