@@ -19,23 +19,26 @@ Styr dina lampor med en eller flera rörelsesensorer, manuella brytare, dag/natt
 ✅ Failsafe-timer (släcker lampor automatiskt efter timeout)
 
 # 🛠️ Inputs
-Input	Beskrivning	Standardvärde
-motion_sensors	Rörelsesensor(er)	Ingen
-optional_switches	Valfria brytare som också triggar lampor	[]
-light_entity	Lampor att styra (om ingen scen används)	Ingen
-scene_day	Scen som aktiveras på dagtid (valfritt)	[]
-scene_night	Scen som aktiveras på natten (valfritt)	[]
-day_lights	Lampor på dagtid om ingen scen används	[]
-night_lights	Lampor på natten om ingen scen används	[]
-lux_sensor	Valfri lux-sensor	[]
-lux_threshold	Tänd bara lampor om lux är under denna nivå	50 lx
-use_sun_times	Använd soluppgång/solnedgång istället för fasta tider	false
-day_start / day_end	Start- och sluttid för dagläge	07:00 / 22:00
-night_start / night_end	Start- och sluttid för nattläge	22:00 / 07:00
-active_weekdays_day	Aktiva dagar för dagläge	Alla
-active_weekdays_night	Aktiva dagar för nattläge	Alla
-failsafe_timer	Minuter innan automatisk avstängning	30
-input_text_last_scene	Håller reda på senaste aktiverade scen/läge	Ingen
+
+| Input | Beskrivning | Standardvärde |
+|-------|------------|---------------|
+| `motion_sensors` | Rörelsesensor(er) | Ingen |
+| `optional_switches` | Valfria brytare som också triggar lampor | [] |
+| `light_entity` | Lampor att styra (om ingen scen används) | Ingen |
+| `scene_day` | Scen som aktiveras på dagtid (valfritt) | [] |
+| `scene_night` | Scen som aktiveras på natten (valfritt) | [] |
+| `day_lights` | Lampor på dagtid om ingen scen används | [] |
+| `night_lights` | Lampor på natten om ingen scen används | [] |
+| `lux_sensor` | Valfri lux-sensor | [] |
+| `lux_threshold` | Tänd bara lampor om lux är under denna nivå | 50 lx |
+| `use_sun_times` | Använd soluppgång/solnedgång istället för fasta tider | false |
+| `day_start` / `day_end` | Start- och sluttid för dagläge | 07:00 / 22:00 |
+| `night_start` / `night_end` | Start- och sluttid för nattläge | 22:00 / 07:00 |
+| `active_weekdays_day` | Aktiva dagar för dagläge | Alla |
+| `active_weekdays_night` | Aktiva dagar för nattläge | Alla |
+| `failsafe_timer` | Minuter innan automatisk avstängning | 30 |
+| `input_text_last_scene` | Håller reda på senaste aktiverade scen/läge | Ingen |
+
 
 # 🏃‍♂️ Hur det fungerar
 
