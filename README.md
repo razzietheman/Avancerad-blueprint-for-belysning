@@ -33,12 +33,15 @@ Gå till Inställningar → Automatiseringar och Scener → Blueprints.
 Importera och skapa en ny automation baserad på denna blueprint.
 
 # ⚙️ Parametrar
-Parameter	Beskrivning	Obligatorisk
-Rörelsesensorer	En eller flera binary_sensor för rörelse	✅
-Lampor/Scen	Entiteter som ska styras	✅
-Arbetsdags-sensor	binary_sensor.workday_sensor eller liknande (kan lämnas tom för att alltid vara aktiv)	❌
-Tider för dag/natt	Separata start/sluttider för dag- och nattläge	❌
-Failsafe-tid	Maximal tid lampan kan vara på utan rörelse	✅
+
+| Parameter           | Beskrivning                                                                 | Obligatorisk |
+|--------------------|----------------------------------------------------------------------------|--------------|
+| Rörelsesensorer     | En eller flera `binary_sensor` för rörelse                                  | ✅           |
+| Lampor/Scen         | Entiteter som ska styras (lampor eller scen)                                | ✅           |
+| Arbetsdags-sensor    | `binary_sensor.workday_sensor` eller liknande (kan lämnas tom för att alltid vara aktiv) | ❌           |
+| Tider för dag/natt   | Separata start- och sluttider för dag- och nattläge                         | ❌           |
+| Failsafe-tid         | Maximal tid lampan kan vara på utan rörelse                                 | ✅           |
+
 
 # 📖 Exempel
 1. Enkel nattbelysning
