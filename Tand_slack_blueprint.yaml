@@ -139,8 +139,8 @@ blueprint:
 
     # --- Arbetsdag & failsafe ---
     workday_sensor:
-      name: Arbetsdag-sensor
-      description: Anger om det är arbetsdag (binary_sensor).
+      name: Arbetsdag-sensor (valfri)
+      description: Anger om det är arbetsdag (binary_sensor). Lämna tom för att ignorera arbetsdagskontrollen.
       default: []
       selector:
         entity:
@@ -275,9 +275,15 @@ action:
                     value_template: "{{ use_sun_times }}"
                   - condition: sun
                     after: sunrise
-          - condition: state
-            entity_id: !input workday_sensor
-            state: "on"
+          # --- Arbetsdag valfri: om ingen sensor vald -> tillåt; annars krävs 'on'
+          - condition: template
+            value_template: >-
+              {% set w = workday_sensor %}
+              {% if w == [] %}
+                true
+              {% else %}
+                is_state(w, 'on')
+              {% endif %}
         sequence:
           - service: scene.create
             data:
@@ -329,9 +335,15 @@ action:
               - condition: numeric_state
                 entity_id: !input lux_sensor
                 below: !input lux_threshold
-          - condition: state
-            entity_id: !input workday_sensor
-            state: "on"
+          # --- Arbetsdag valfri: om ingen sensor vald -> tillåt; annars krävs 'on'
+          - condition: template
+            value_template: >-
+              {% set w = workday_sensor %}
+              {% if w == [] %}
+                true
+              {% else %}
+                is_state(w, 'on')
+              {% endif %}
         sequence:
           - service: scene.create
             data:
