@@ -43,7 +43,7 @@ Importera och skapa en ny automation baserad på denna blueprint.
 | Failsafe-tid         | Maximal tid lampan kan vara på utan rörelse                                 | ✅           |
 
 
-# ## 📖 Exempel
+# 📖 Exempel
 
 ### 1. Enkel nattbelysning
 - **Sensor:** Rörelsesensor i hallen  
