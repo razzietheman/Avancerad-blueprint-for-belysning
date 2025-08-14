@@ -24,9 +24,9 @@ Ladda ner Tand_slack_blueprint.yaml.
 
 Placera filen i din Home Assistant-mapp:
 
-config/blueprints/automation/<ditt-namn>/
+config/blueprints/automation/
 
-Importera med [1-klick](https://my.home-assistant.io/redirect/blueprint_import?blueprint_url=https://raw.githubusercontent.com/razzietheman/Avancerad-blueprint-for-belysning/main/Tand_slack_blueprint.yaml).
+Eller importera med [1-klick](https://my.home-assistant.io/redirect/blueprint_import?blueprint_url=https://raw.githubusercontent.com/razzietheman/Avancerad-blueprint-for-belysning/main/Tand_slack_blueprint.yaml).
 
 Gå till Inställningar → Automatiseringar och Scener → Blueprints.
 
