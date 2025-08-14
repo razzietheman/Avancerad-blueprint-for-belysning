@@ -62,18 +62,6 @@ Full ljusstyrka dagtid, dämpad kvällstid
 
 Failsafe ställer av lamporna efter 15 min inaktivitet
 
-# 🆕 Release Notes – Version 3.0
-
-✨ Ny valfri arbetsdagskontroll – Kan nu lämnas tom om du alltid vill att automatiseringen ska köras.
-
-🔄 Förbättrad soluppgång/-nedgångshantering.
-
-⚡ Optimerad kod för snabbare respons.
-
-🛡 Stabilare failsafe-logik.
-
-🎯 Smidigare konfigurering direkt i UI.
-
 # 📜 Licens
 
 Fri att använda och modifiera. En länk tillbaka till originalprojektet uppskattas.
