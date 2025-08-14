@@ -1,109 +1,100 @@
-# 💡 Rörelsestyrd Belysning (Scen eller Direkta Lampor) med Schema, Nattläge, Solstyrning & Failsafe
+# 💡 Rörelsestyrd belysning 3.0 – Dynamisk med sol, arbetsdag och failsafe
 
-Styr dina lampor med en eller flera rörelsesensorer, manuella brytare, dag/natt-scheman, lux-tröskel, solstyrning, och failsafe-timer. Snapshots av tidigare ljusstyrka ingår.
+En komplett **Home Assistant blueprint** som styr belysning med rörelsesensorer, tid, lux-nivå, arbetsdagskontroll och solens position.  
+Inkluderar **failsafe-timer**, **scenstöd**, **gradvis släckning** och **snapshot-funktion**.
 
-# ⚙️ Funktioner
+---
 
-✅ Flera rörelsesensorer
+## 🚀 Funktioner
 
-✅ Valfria manuella brytare för att trigga lampor
+- 🚶‍♂️ Rörelsestyrning med stöd för flera sensorer
+- 🌅 Dag/Natt-läge via tid eller soluppgång/solnedgång
+- 💡 Lux-tröskel för att undvika tändning vid dagsljus
+- 🗓 Separata aktiva veckodagar för dag och natt
+- 🏢 Arbetsdagskontroll med binary sensor
+- 🎭 Stöd för scener eller direkta lampor
+- 📸 Snapshot av tidigare ljusinställningar
+- 🕒 Olika tändtider för dag och natt
+- ⏱ Failsafe-timer för automatisk släckning
+- 🌄 Dynamisk sol-trigger med offset
+- 🌙 Gradvis släckning med transition
 
-✅ Dag- och nattlägen (tidbaserat eller solbaserat)
+---
 
-✅ Lux-tröskel (valfritt)
+## ⚙️ Inputinställningar
 
-✅ Scen eller direkta lampor
+| Kategori | Input | Beskrivning | Typ |
+|----------|-------|-------------|-----|
+| **Sensorer & brytare** | 🚶‍♂️ Rörelsesensor(er) | En eller flera rörelsesensorer | `binary_sensor` |
+|  | 🔘 Valfri manuell strömbrytare | Extra brytare som triggar ljus | `switch` |
+| **Lampor & scener** | 💡 Lampor | Lampor som styrs om ingen scen används | `light` |
+|  | 🎭 Scen dagläge | Scen att aktivera dagtid | `scene` |
+|  | 🌙 Scen nattläge | Scen att aktivera nattetid | `scene` |
+|  | ☀️ Daglampor | Lampor för dag om ingen scen används | `light` |
+|  | 🌙 Nattlampor | Lampor för natt om ingen scen används | `light` |
+| **Lux & sol** | 📊 Lux-sensor | Lämna tom om lux ej används | `sensor` |
+|  | 📉 Lux-tröskel | Max lux för att tända ljus | `number` |
+|  | 🌄 Använd soluppgång/solnedgång | Dag/Natt via solens position | `boolean` |
+|  | ⏳ Solnedgång offset | Justering av soltid | `text` |
+|  | 📝 Input Text för sol-trigger | Loggar senaste solhändelse | `input_text` |
+| **Tidsinställningar** | 🕒 Dagstart/Dagsslut | Tider för dagläge | `time` |
+|  | 🌙 Nattstart/Nattsslut | Tider för nattläge | `time` |
+|  | 🗓 Aktiva veckodagar (Dag/Natt) | Separata dagar för lägena | `select` |
+| **Arbetsdag & failsafe** | 🏢 Arbetsdag-sensor | Binary sensor för arbetsdag | `binary_sensor` |
+|  | ⏱ Failsafe-timer dag/natt | Timeout innan släckning | `number` |
+|  | 📝 Input Text – Senaste scen | Sparar senaste läge | `input_text` |
+| **Tändtider** | ☀️ Tändtid dag | Tid efter rörelse slocknar (dag) | `number` |
+|  | 🌙 Tändtid natt | Tid efter rörelse slocknar (natt) | `number` |
 
-✅ Snapshot-återställning av tidigare ljusstyrka
+---
 
-✅ Failsafe-timer (släcker lampor automatiskt efter timeout)
+## 🔄 Funktionsflöde
 
-# 🛠️ Inputs
+1. **Rörelse upptäcks**  
+   → Kollar lux, tid/sol, arbetsdag → Tänder dag- eller nattbelysning.
+2. **Ingen rörelse**  
+   → Väntar definierad tändtid → Släcker med mjuk transition.
+3. **Failsafe**  
+   → Om ljus är på för länge → Släcker automatiskt.
+4. **Soluppgång/Solnedgång**  
+   → Växlar automatiskt mellan dag- och nattläge.
 
-| Input | Beskrivning | Standardvärde |
-|-------|------------|---------------|
-| `motion_sensors` | Rörelsesensor(er) | Ingen |
-| `optional_switches` | Valfria brytare som också triggar lampor | [] |
-| `light_entity` | Lampor att styra (om ingen scen används) | Ingen |
-| `scene_day` | Scen som aktiveras på dagtid (valfritt) | [] |
-| `scene_night` | Scen som aktiveras på natten (valfritt) | [] |
-| `day_lights` | Lampor på dagtid om ingen scen används | [] |
-| `night_lights` | Lampor på natten om ingen scen används | [] |
-| `lux_sensor` | Valfri lux-sensor | [] |
-| `lux_threshold` | Tänd bara lampor om lux är under denna nivå | 50 lx |
-| `use_sun_times` | Använd soluppgång/solnedgång istället för fasta tider | false |
-| `day_start` / `day_end` | Start- och sluttid för dagläge | 07:00 / 22:00 |
-| `night_start` / `night_end` | Start- och sluttid för nattläge | 22:00 / 07:00 |
-| `active_weekdays_day` | Aktiva dagar för dagläge | Alla |
-| `active_weekdays_night` | Aktiva dagar för nattläge | Alla |
-| `failsafe_timer` | Minuter innan automatisk avstängning | 30 |
-| `input_text_last_scene` | Håller reda på senaste aktiverade scen/läge | Ingen |
+---
 
+## 📝 Tips & tricks
 
-# 🏃‍♂️ Hur det fungerar
+- Använd **scener** om du vill ha avancerad belysningskontroll (färg, dimning m.m.).
+- Lux-tröskel kräver att du anger en lux-sensor.
+- Vill du köra utan arbetsdagskontroll → sätt en sensor som alltid är `on`.
 
-# Dagläge 🌞
-Rörelse upptäcks under dagtid eller solbaserat läge
+---
 
-Lux under tröskel (valfritt)
+## 📌 Krav
 
-Aktiverar dag-scen eller daglampor
+- Home Assistant 2025.4 eller senare
+- Minst en `binary_sensor` för rörelse
+- Lampor eller scener att styra
 
-Snapshots av nuvarande ljusstyrka
+---
 
-Uppdaterar input_text_last_scene till "dag"
+## 📚 Versionshistorik
 
-# Nattläge 🌙
+### **3.0**
+- Omarbetad struktur för tydlighet och robusthet
+- Failsafe för dag och natt separat
+- Stöd för scener och lampor parallellt
+- Förbättrad loggning
+- Dynamisk sol-trigger med offset
 
-Rörelse upptäcks under nattid eller solbaserat läge
+---
 
-Lux under tröskel (valfritt)
+## 🛠 Installation
 
-Aktiverar natt-scen eller nattlampor
+1. Spara filen som `Tand_slack_blueprint.yaml` i `config/blueprints/automation/`.
+2. I Home Assistant: **Inställningar → Automatiseringar & Scener → Blueprints**.
+3. Klicka på **Importera Blueprint** och välj filen.
+4. Skapa en ny automation från blueprinten och fyll i enheter och tider.
 
-Snapshots av nuvarande ljusstyrka
-
-Uppdaterar input_text_last_scene till "natt"
-
-# Släckning 💡
-
-När rörelse upphör och lampor är tända
-
-Återställer tidigare snapshot efter fördröjning:
-
-Dagläge: 2 minuter
-
-Nattläge: 1 minut
-
-# Failsafe ⏱
-
-Säkerställer att lampor inte står tända för länge
-
-Aktiveras efter failsafe_timer om lampor fortfarande är tända
-
-Släcker lampor och loggar händelsen
-
-# 📌 Tips & Notes
-
-Fungerar med flera rörelsesensorer
-
-Manuella brytare kan trigga lampor
-
-Kan använda scen eller direkta lampor
-
-Kan användas med eller utan lux-sensor
-
-Solbaserad tid fungerar om use_sun_times är aktiverat
-
-# 📥 Exempel på användning
-
-Hallen – Tänd ljus nattetid endast när det är mörkt 🌙
-
-Vardagsrum – Reagerar på rörelse dag och natt 🌞🌙
-
-Kök – Släcker automatiskt om någon glömmer lampan ⏱
-
-Snapshots återställer ljusmiljön perfekt 🎨
 
 # 📥 Installation
 
@@ -122,6 +113,7 @@ Schema för dag/natt eller solstyrning
 Failsafe-tid
 
 # ⚙ Tips
+
 Lux-sensor kan lämnas tom för utomhusbelysning utan luxkrav
 
 Failsafe sparar dig från att lampor står tända om något hänger sig
