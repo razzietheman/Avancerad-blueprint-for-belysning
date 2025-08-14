@@ -43,24 +43,19 @@ Importera och skapa en ny automation baserad på denna blueprint.
 | Failsafe-tid         | Maximal tid lampan kan vara på utan rörelse                                 | ✅           |
 
 
-# 📖 Exempel
-1. Enkel nattbelysning
+# ## 📖 Exempel
 
-Rörelsesensor i hallen
+### 1. Enkel nattbelysning
+- **Sensor:** Rörelsesensor i hallen  
+- **Funktion:** Tänder en scen med svagt ljus mellan 22:00 och 06:00  
+- **Arbetsdagskontroll:** Ingen  
+- **Failsafe:** Ingen extra inställning, använder standardvärden  
 
-Tänder en scen med svagt ljus mellan 22:00 och 06:00
-
-Ingen arbetsdagskontroll
-
-2. Dynamiskt kontorsljus
-
-Flera sensorer i kontorslokalen
-
-Arbetsdags-sensor aktiverad
-
-Full ljusstyrka dagtid, dämpad kvällstid
-
-Failsafe ställer av lamporna efter 15 min inaktivitet
+### 2. Dynamiskt kontorsljus
+- **Sensorer:** Flera sensorer i kontorslokalen  
+- **Arbetsdags-sensor:** Aktiverad  
+- **Ljusstyrka:** Full ljusstyrka dagtid, dämpad kvällstid  
+- **Failsafe:** Lamporna släcks automatiskt efter 15 minuter inaktivitet  
 
 # 📜 Licens
 
