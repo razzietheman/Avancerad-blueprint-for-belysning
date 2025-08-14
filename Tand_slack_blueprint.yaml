@@ -166,7 +166,8 @@ blueprint:
           unit_of_measurement: min
     input_text_last_scene:
       name: Input Text – Senaste scen
-      description: Håller reda på senaste aktiverad scen/läge.
+      description: Håller reda på senaste aktiverad scen/läge. Valfri.
+      default: []
       selector:
         entity:
           domain: input_text
@@ -236,7 +237,6 @@ variables:
   workday_sensor: !input workday_sensor
   sun_trigger_text: !input sun_trigger_text
   use_sun_times: !input use_sun_times
-  # Nya variabler för template-användning
   failsafe_timer_day: !input failsafe_timer_day
   failsafe_timer_night: !input failsafe_timer_night
   tändtid_dag: !input tändtid_dag
@@ -275,7 +275,6 @@ action:
                     value_template: "{{ use_sun_times }}"
                   - condition: sun
                     after: sunrise
-          # --- Arbetsdag valfri: om ingen sensor vald -> tillåt; annars krävs 'on'
           - condition: template
             value_template: >-
               {% set w = workday_sensor %}
@@ -299,10 +298,13 @@ action:
                   - service: light.turn_on
                     target:
                       entity_id: !input day_lights
-          - service: input_text.set_value
-            data:
-              entity_id: !input input_text_last_scene
-              value: "dag"
+          - choose:
+              - conditions: "{{ last_scene_entity != [] }}"
+                sequence:
+                  - service: input_text.set_value
+                    data:
+                      entity_id: !input input_text_last_scene
+                      value: "dag"
           - service: logbook.log
             data:
               name: Rörelsestyrning
@@ -335,7 +337,6 @@ action:
               - condition: numeric_state
                 entity_id: !input lux_sensor
                 below: !input lux_threshold
-          # --- Arbetsdag valfri: om ingen sensor vald -> tillåt; annars krävs 'on'
           - condition: template
             value_template: >-
               {% set w = workday_sensor %}
@@ -359,10 +360,13 @@ action:
                   - service: light.turn_on
                     target:
                       entity_id: !input night_lights
-          - service: input_text.set_value
-            data:
-              entity_id: !input input_text_last_scene
-              value: "natt"
+          - choose:
+              - conditions: "{{ last_scene_entity != [] }}"
+                sequence:
+                  - service: input_text.set_value
+                    data:
+                      entity_id: !input input_text_last_scene
+                      value: "natt"
           - service: logbook.log
             data:
               name: Rörelsestyrning
@@ -396,10 +400,13 @@ action:
                           - service: light.turn_on
                             target:
                               entity_id: !input day_lights
-                  - service: input_text.set_value
-                    data:
-                      entity_id: !input input_text_last_scene
-                      value: "dag"
+                  - choose:
+                      - conditions: "{{ last_scene_entity != [] }}"
+                        sequence:
+                          - service: input_text.set_value
+                            data:
+                              entity_id: !input input_text_last_scene
+                              value: "dag"
                   - service: logbook.log
                     data:
                       name: Rörelsestyrning
@@ -422,10 +429,13 @@ action:
                           - service: light.turn_on
                             target:
                               entity_id: !input night_lights
-                  - service: input_text.set_value
-                    data:
-                      entity_id: !input input_text_last_scene
-                      value: "natt"
+                  - choose:
+                      - conditions: "{{ last_scene_entity != [] }}"
+                        sequence:
+                          - service: input_text.set_value
+                            data:
+                              entity_id: !input input_text_last_scene
+                              value: "natt"
                   - service: input_text.set_value
                     data:
                       entity_id: !input sun_trigger_text
@@ -445,9 +455,8 @@ action:
         sequence:
           - choose:
               - conditions:
-                  - condition: state
-                    entity_id: !input input_text_last_scene
-                    state: "dag"
+                  - condition: template
+                    value_template: "{{ last_scene_entity != [] and is_state(last_scene_entity, 'dag') }}"
                 sequence:
                   - delay:
                       seconds: "{{ (tändtid_dag * 60) | int }}"
@@ -464,9 +473,8 @@ action:
                       name: Rörelsestyrning
                       message: "Dagläge släcktes gradvis efter inaktivitet."
               - conditions:
-                  - condition: state
-                    entity_id: !input input_text_last_scene
-                    state: "natt"
+                  - condition: template
+                    value_template: "{{ last_scene_entity != [] and is_state(last_scene_entity, 'natt') }}"
                 sequence:
                   - delay:
                       seconds: "{{ (tändtid_natt * 60) | int }}"
@@ -498,8 +506,12 @@ action:
         sequence:
           - delay:
               minutes: >
-                {% set scene = states(last_scene_entity) %}
-                {{ failsafe_timer_day if scene == 'dag' else failsafe_timer_night }}
+                {% if last_scene_entity != [] %}
+                  {% set scene = states(last_scene_entity) %}
+                  {{ failsafe_timer_day if scene == 'dag' else failsafe_timer_night }}
+                {% else %}
+                  {{ failsafe_timer_day }}
+                {% endif %}
           - condition: state
             entity_id: !input light_entity
             state: "on"
@@ -515,4 +527,4 @@ action:
             data:
               name: Rörelsestyrning
               message: >
-                Failsafe: Ljuset släcktes gradvis efter timeout. Senaste scen: {{ states(last_scene_entity) }}.
+                Failsafe: Ljuset släcktes gradvis efter timeout. {% if last_scene_entity != [] %}Senaste scen: {{ states(last_scene_entity) }}.{% endif %}
