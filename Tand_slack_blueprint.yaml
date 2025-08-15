@@ -1,12 +1,11 @@
 blueprint:
-  name: Rörelsestyrd belysning 3.0 – Dynamisk med sol, arbetsdag och failsafe
+  name: Rörelsestyrd belysning 3.1 – Dynamisk med sol, arbetsdag och failsafe
   description: >
     Styr valfri belysning med en eller flera rörelsesensorer, tid, soluppgång/solnedgång,
     lux-tröskel, arbetsdag-kontroll, snapshot-återställning och failsafe-timer.
-    Dynamisk sol-trigger som väljer dag- eller nattläge automatiskt.
+    Dynamisk sol-trigger som väljer dag- eller nattläge automatiskt. Fungerar även utan lampor.
   domain: automation
   input:
-    # --- Sensorer & brytare ---
     motion_sensors:
       name: Rörelsesensor(er)
       description: Välj en eller flera rörelsesensorer.
@@ -22,11 +21,10 @@ blueprint:
         entity:
           domain: switch
           multiple: true
-
-    # --- Lampor & scener ---
     light_entity:
-      name: Lampor
-      description: Lampor som styrs om ingen scen används.
+      name: Lampor (valfritt)
+      description: Lampor som styrs om ingen scen används. Kan lämnas tom.
+      default: []
       selector:
         entity:
           domain: light
@@ -63,8 +61,6 @@ blueprint:
         entity:
           domain: light
           multiple: true
-
-    # --- Lux & sol ---
     lux_sensor:
       name: Lux-sensor (valfri)
       description: Lämna tom om lux inte ska användas.
@@ -99,11 +95,10 @@ blueprint:
     sun_trigger_text:
       name: Input Text för sol-trigger
       description: Loggar senaste sol-trigger.
+      default: []
       selector:
         entity:
           domain: input_text
-
-    # --- Tidsinställningar ---
     day_start:
       name: Dagstart
       default: "07:00:00"
@@ -136,8 +131,6 @@ blueprint:
         select:
           multiple: true
           options: [mon, tue, wed, thu, fri, sat, sun]
-
-    # --- Arbetsdag & failsafe ---
     workday_sensor:
       name: Arbetsdag-sensor (valfri)
       description: Anger om det är arbetsdag (binary_sensor). Lämna tom för att ignorera arbetsdagskontrollen.
@@ -171,8 +164,6 @@ blueprint:
       selector:
         entity:
           domain: input_text
-
-    # --- Tändtider ---
     tändtid_dag:
       name: Tändtid dag (minuter)
       description: Hur länge lampan ska vara tänd på dagen efter att rörelse upphör.
@@ -181,7 +172,7 @@ blueprint:
         number:
           min: 0.1
           max: 120
-          step: 0.1
+          step: 0.5
           unit_of_measurement: minuter
           mode: box
     tändtid_natt:
@@ -192,11 +183,10 @@ blueprint:
         number:
           min: 0.1
           max: 120
-          step: 0.1
+          step: 0.5
           unit_of_measurement: minuter
           mode: box
 
-# --- TRIGGERS ---
 trigger:
   - platform: state
     entity_id: !input motion_sensors
@@ -226,7 +216,6 @@ trigger:
 mode: parallel
 max: 100
 
-# --- VARIABLER ---
 variables:
   lux_sensor: !input lux_sensor
   lux_threshold: !input lux_threshold
@@ -242,10 +231,10 @@ variables:
   tändtid_dag: !input tändtid_dag
   tändtid_natt: !input tändtid_natt
   last_scene_entity: !input input_text_last_scene
+  light_entity: !input light_entity
 
 condition: []
 
-# --- ACTIONS ---
 action:
   - choose:
       # DAGLÄGE via rörelse
@@ -295,9 +284,12 @@ action:
                     target:
                       entity_id: !input scene_day
               - default:
-                  - service: light.turn_on
-                    target:
-                      entity_id: !input day_lights
+                  - choose:
+                      - conditions: "{{ day_lights != [] }}"
+                        sequence:
+                          - service: light.turn_on
+                            target:
+                              entity_id: !input day_lights
           - choose:
               - conditions: "{{ last_scene_entity != [] }}"
                 sequence:
@@ -357,9 +349,12 @@ action:
                     target:
                       entity_id: !input scene_night
               - default:
-                  - service: light.turn_on
-                    target:
-                      entity_id: !input night_lights
+                  - choose:
+                      - conditions: "{{ night_lights != [] }}"
+                        sequence:
+                          - service: light.turn_on
+                            target:
+                              entity_id: !input night_lights
           - choose:
               - conditions: "{{ last_scene_entity != [] }}"
                 sequence:
@@ -397,9 +392,12 @@ action:
                             target:
                               entity_id: !input scene_day
                       - default:
-                          - service: light.turn_on
-                            target:
-                              entity_id: !input day_lights
+                          - choose:
+                              - conditions: "{{ day_lights != [] }}"
+                                sequence:
+                                  - service: light.turn_on
+                                    target:
+                                      entity_id: !input day_lights
                   - choose:
                       - conditions: "{{ last_scene_entity != [] }}"
                         sequence:
@@ -426,9 +424,12 @@ action:
                             target:
                               entity_id: !input scene_night
                       - default:
-                          - service: light.turn_on
-                            target:
-                              entity_id: !input night_lights
+                          - choose:
+                              - conditions: "{{ night_lights != [] }}"
+                                sequence:
+                                  - service: light.turn_on
+                                    target:
+                                      entity_id: !input night_lights
                   - choose:
                       - conditions: "{{ last_scene_entity != [] }}"
                         sequence:
