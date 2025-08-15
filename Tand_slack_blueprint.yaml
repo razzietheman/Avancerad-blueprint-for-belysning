@@ -30,9 +30,9 @@ blueprint:
       description: Lampor som styrs om ingen scen används.
       default: []
       selector:
-        entity:
-          domain: light
-          multiple: true
+        target:
+          entity:
+            domain: light
     scene_day:
       name: Scen dagläge (valfri)
       description: Scen att aktivera på dagtid.
@@ -54,17 +54,17 @@ blueprint:
       description: Lampor att tända under dag om ingen scen används.
       default: []
       selector:
-        entity:
-          domain: light
-          multiple: true
+        target:
+          entity:
+            domain: light
     night_lights:
       name: Nattlampor (valfritt)
       description: Lampor att tända under natt om ingen scen används.
       default: []
       selector:
-        entity:
-          domain: light
-          multiple: true
+        target:
+          entity:
+            domain: light
 
     # --- Lux & sol ---
     lux_sensor:
@@ -316,8 +316,7 @@ action:
                       entity_id: !input scene_day
               - default:
                   - service: light.turn_on
-                    target:
-                      entity_id: !input day_lights
+                    target: !input day_lights
           - choose:
               - conditions: "{{ last_scene_entity != [] }}"
                 sequence:
@@ -381,8 +380,7 @@ action:
                       entity_id: !input scene_night
               - default:
                   - service: light.turn_on
-                    target:
-                      entity_id: !input night_lights
+                    target: !input night_lights
           - choose:
               - conditions: "{{ last_scene_entity != [] }}"
                 sequence:
@@ -424,8 +422,7 @@ action:
                               entity_id: !input scene_day
                       - default:
                           - service: light.turn_on
-                            target:
-                              entity_id: !input day_lights
+                            target: !input day_lights
                   - choose:
                       - conditions: "{{ last_scene_entity != [] }}"
                         sequence:
@@ -456,8 +453,7 @@ action:
                               entity_id: !input scene_night
                       - default:
                           - service: light.turn_on
-                            target:
-                              entity_id: !input night_lights
+                            target: !input night_lights
                   - choose:
                       - conditions: "{{ last_scene_entity != [] }}"
                         sequence:
