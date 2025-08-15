@@ -53,7 +53,7 @@ På helger kan lampor tändas senare eller inte alls – helt automatiskt.
 
 # 🛡️ Failsafe
 
-Om något glöms kvar tänds inte lamporna för evigt.
+Om något glöms kvar så lyser inte lamporna för evigt.
 
 Gradvis släckning sker automatiskt efter timeout, baserat på tändtid och senaste scen.
 
