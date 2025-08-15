@@ -1,73 +1,84 @@
-# 💡 Rörelsestyrd Belysning 3.0
+# 🌟 Rörelsestyrd belysning 3.2 – Din personliga ljusmästare 🌟
+#✨ Beskrivning
 
-Dynamisk styrning med sol, arbetsdag och failsafe
+Tänk dig att ditt hem vaknar och somnar helt på egen hand. Rörelsestyrd belysning 3.2 gör precis det – men på dina villkor. Denna blueprint kombinerar:
 
-Automatiserar belysning baserat på rörelse, solens position, scheman och arbetsdagar – med extra säkerhetsfunktioner för att undvika att lampor blir kvarslagna.
+🚶 Rörelse
 
-# ✨ Funktioner
+🌅 Solens gång
 
-🚶 Flera rörelsesensorer – Lägg till en eller flera sensorer som triggar belysningen.
+💡 Lux
 
-🌅 Dynamiskt dags-/nattläge – Skiftar automatiskt beroende på solens upp-/nedgång.
+🎨 Scener
 
-📅 Valfritt arbetsdagsvillkor – Styr separat för arbetsdagar eller helger (kan stängas av helt).
+⏰ Fasta tider
 
-🕒 Schema & tidsstyrning – Olika ljusstyrkor eller scener beroende på tid på dygnet.
+🛡️ Failsafe
 
-🛡 Failsafe – Släcker ljuset om systemet missar en avstängning, så inget står tänt i onödan.
+Allt är valfritt – använd bara de funktioner som passar dig.
 
-🖼 Scen eller direktstyrning – Välj att tända en scen eller direkt styra lampor/grupper.
+# 🎨 Scenarion som väcker hemmet till liv
 
-# 🛠 Installation
+🌅 Morgonljus – 07:00 på vardagar
 
-Ladda ner Tand_slack_blueprint.yaml.
+Rörelsesensorer känner att du kliver ur sängen.
 
-Placera filen i din Home Assistant-mapp:
+Lampor i köket och vardagsrummet tänds mjukt.
 
-config/blueprints/automation/
+Om luxnivån är hög ute händer inget – solen gör jobbet.
 
-Eller importera med [1-klick](https://my.home-assistant.io/redirect/blueprint_import?blueprint_url=https://raw.githubusercontent.com/razzietheman/Avancerad-blueprint-for-belysning/main/Tand_slack_blueprint.yaml).
+Scen för dagläge aktiveras och loggas i input_text.
 
-Gå till Inställningar → Automatiseringar och Scener → Blueprints.
+# 🌞 Dagljus med sol-trigger
 
-Importera och skapa en ny automation baserad på denna blueprint.
+Lampor tänds automatiskt 2 timmar innan solnedgång (solnedgång offset).
 
-# ⚙️ Parametrar
+Perfekt för sena sommar-eftermiddagar när ljuset börjar sjunka.
 
-| Parameter           | Beskrivning                                                                 | Obligatorisk |
-|--------------------|----------------------------------------------------------------------------|--------------|
-| Rörelsesensorer     | En eller flera `binary_sensor` för rörelse                                  | ✅           |
-| Lampor/Scen         | Entiteter som ska styras (lampor eller scen)                                | ✅           |
-| Arbetsdags-sensor    | `binary_sensor.workday_sensor` eller liknande (kan lämnas tom för att alltid vara aktiv) | ❌           |
-| Tider för dag/natt   | Separata start- och sluttider för dag- och nattläge                         | ❌           |
-| Failsafe-tid         | Maximal tid lampan kan vara på utan rörelse                                 | ✅           |
+Om du vill, släcks samma lampor automatiskt klockan 22:00 (fast släcktid).
 
+# 🌙 Kvällsmys
 
-# 📖 Exempel
+Rörelsesensorer eller manuella switchar aktiverar nattläge.
 
-### 1. Enkel nattbelysning
-- **Sensor:** Rörelsesensor i hallen  
-- **Funktion:** Tänder en scen med svagt ljus mellan 22:00 och 06:00  
-- **Arbetsdagskontroll:** Ingen  
-- **Failsafe:** Ingen extra inställning, använder standardvärden  
+Nattlampor tänds diskret och gradvis, med möjlighet till scen-styrning.
 
-### 2. Dynamiskt kontorsljus
-- **Sensorer:** Flera sensorer i kontorslokalen  
-- **Arbetsdags-sensor:** Aktiverad  
-- **Ljusstyrka:** Full ljusstyrka dagtid, dämpad kvällstid  
-- **Failsafe:** Lamporna släcks automatiskt efter 15 minuter inaktivitet  
+Om ingen rörelse påträffas släcks ljuset gradvis efter inställd tändtid.
 
-# 📜 Licens
+# ⏰ Arbetsdag vs helg
 
-Fri att använda och modifiera. En länk tillbaka till originalprojektet uppskattas.
+Välj arbetsdag-sensor för att anpassa tändning efter vardag eller helg.
 
-# ⚙ Tips
+På helger kan lampor tändas senare eller inte alls – helt automatiskt.
 
-Lux-sensor kan lämnas tom för utomhusbelysning utan luxkrav
+# 🛡️ Failsafe
 
-Failsafe sparar dig från att lampor står tända om något hänger sig
+Om något glöms kvar tänds inte lamporna för evigt.
 
-Du kan använda både tid och solstyrning parallellt
+Gradvis släckning sker automatiskt efter timeout, baserat på tändtid och senaste scen.
+
+## 🔧 Funktioner i detalj
+
+| Funktion | Beskrivning |
+|----------|-------------|
+| 🚶‍♂️ Rörelsesensor (valfri) | Använd automationen med eller utan rörelse |
+| 🔘 Manuell switch (valfri) | Tänd ljus när du vill |
+| 🌞 Dag- och natt-scener | Skapa stämning med scener eller individuella lampor |
+| 💡 Lux-sensor | Smart ljusstyrning beroende på dagsljus |
+| 🌅 Soluppgång/solnedgång | Med offset för exakt timing |
+| ⏱ Fast släcktid | Välj exakt tid när lampor alltid ska släckas |
+| 📅 Arbetsdagskontroll | Anpassa belysning efter vardag eller helg |
+| 🛡️ Failsafe | Gradvis släckning efter timeout |
+| ⏳ Tändtid | Hur länge lampor ska vara tända efter inaktivitet |
+| 📝 Input Text-logg | Håller koll på senaste scen eller sol-trigger |
+
+Kombinera sol-trigger med fast släcktid för perfekta kvällar.
+
+Använd separata scener för dag- och nattläge för dynamisk stämning.
+
+Lämna valfria fält tomma om du vill förenkla setupen.
+
+Med Rörelsestyrd belysning 3.2 blir ditt hem smartare, mysigare och mer energisnålt – utan att du behöver lyfta ett finger. ✨
 
 ### Support  
 Har du frågor eller förslag? Öppna gärna ett ärende i [GitHub-repot](https://github.com/razzietheman/Avancerad-blueprint-for-belysning).
