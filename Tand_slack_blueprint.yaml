@@ -1,4 +1,4 @@
-blueprint:
+blueprint: 
   name: Rörelsestyrd belysning 3.2 – Fullständig valfri och helt dynamisk med sol, arbetsdag och failsafe
   description: >
     Styr valfri belysning med en eller flera rörelsesensorer, tid, soluppgång/solnedgång,
@@ -315,8 +315,16 @@ action:
                     target:
                       entity_id: !input scene_day
               - default:
-                  - service: light.turn_on
-                    target: !input day_lights
+                  - choose:
+                      - conditions: "{{ day_lights != [] }}"
+                        sequence:
+                          - service: light.turn_on
+                            target:
+                              entity_id: !input day_lights
+                      - default:
+                          - service: light.turn_on
+                            target:
+                              entity_id: !input light_entity
           - choose:
               - conditions: "{{ last_scene_entity != [] }}"
                 sequence:
@@ -379,8 +387,16 @@ action:
                     target:
                       entity_id: !input scene_night
               - default:
-                  - service: light.turn_on
-                    target: !input night_lights
+                  - choose:
+                      - conditions: "{{ night_lights != [] }}"
+                        sequence:
+                          - service: light.turn_on
+                            target:
+                              entity_id: !input night_lights
+                      - default:
+                          - service: light.turn_on
+                            target:
+                              entity_id: !input light_entity
           - choose:
               - conditions: "{{ last_scene_entity != [] }}"
                 sequence:
@@ -421,8 +437,16 @@ action:
                             target:
                               entity_id: !input scene_day
                       - default:
-                          - service: light.turn_on
-                            target: !input day_lights
+                          - choose:
+                              - conditions: "{{ day_lights != [] }}"
+                                sequence:
+                                  - service: light.turn_on
+                                    target:
+                                      entity_id: !input day_lights
+                              - default:
+                                  - service: light.turn_on
+                                    target:
+                                      entity_id: !input light_entity
                   - choose:
                       - conditions: "{{ last_scene_entity != [] }}"
                         sequence:
@@ -452,8 +476,16 @@ action:
                             target:
                               entity_id: !input scene_night
                       - default:
-                          - service: light.turn_on
-                            target: !input night_lights
+                          - choose:
+                              - conditions: "{{ night_lights != [] }}"
+                                sequence:
+                                  - service: light.turn_on
+                                    target:
+                                      entity_id: !input night_lights
+                              - default:
+                                  - service: light.turn_on
+                                    target:
+                                      entity_id: !input light_entity
                   - choose:
                       - conditions: "{{ last_scene_entity != [] }}"
                         sequence:
@@ -492,13 +524,20 @@ action:
                   - condition: state
                     entity_id: !input motion_sensors
                     state: "off"
-                  - service: light.turn_off
-                    target:
-                      entity_id:
-                        - !input day_lights
-                        - !input night_lights
-                    data:
-                      transition: 30
+                  - choose:
+                      - conditions: "{{ day_lights != [] }}"
+                        sequence:
+                          - service: light.turn_off
+                            target:
+                              entity_id: !input day_lights
+                            data:
+                              transition: 30
+                      - default:
+                          - service: light.turn_off
+                            target:
+                              entity_id: !input light_entity
+                            data:
+                              transition: 30
                   - service: logbook.log
                     data:
                       name: Rörelsestyrning
@@ -510,13 +549,20 @@ action:
                   - condition: state
                     entity_id: !input motion_sensors
                     state: "off"
-                  - service: light.turn_off
-                    target:
-                      entity_id:
-                        - !input day_lights
-                        - !input night_lights
-                    data:
-                      transition: 30
+                  - choose:
+                      - conditions: "{{ night_lights != [] }}"
+                        sequence:
+                          - service: light.turn_off
+                            target:
+                              entity_id: !input night_lights
+                            data:
+                              transition: 30
+                      - default:
+                          - service: light.turn_off
+                            target:
+                              entity_id: !input light_entity
+                            data:
+                              transition: 30
                   - service: logbook.log
                     data:
                       name: Rörelsestyrning
@@ -536,13 +582,21 @@ action:
                     data:
                       transition: 30
               - default:
-                  - service: light.turn_off
-                    target:
-                      entity_id:
-                        - !input day_lights
-                        - !input night_lights
-                    data:
-                      transition: 30
+                  - choose:
+                      - conditions: "{{ day_lights != [] }}"
+                        sequence:
+                          - service: light.turn_off
+                            target:
+                              entity_id: !input day_lights
+                            data:
+                              transition: 30
+                      - conditions: "{{ night_lights != [] }}"
+                        sequence:
+                          - service: light.turn_off
+                            target:
+                              entity_id: !input night_lights
+                            data:
+                              transition: 30
           - service: logbook.log
             data:
               name: Rörelsestyrning
@@ -579,13 +633,22 @@ action:
           - condition: state
             entity_id: !input motion_sensors
             state: "off"
-          - service: light.turn_off
-            target:
-              entity_id:
-                - !input day_lights
-                - !input night_lights
-            data:
-              transition: 30
+          - choose:
+              - conditions: "{{ day_lights != [] or night_lights != [] }}"
+                sequence:
+                  - service: light.turn_off
+                    target:
+                      entity_id:
+                        - !input day_lights
+                        - !input night_lights
+                    data:
+                      transition: 30
+              - default:
+                  - service: light.turn_off
+                    target:
+                      entity_id: !input light_entity
+                    data:
+                      transition: 30
           - service: logbook.log
             data:
               name: Rörelsestyrning
