@@ -498,7 +498,9 @@ action:
                     state: "off"
                   - service: light.turn_off
                     target:
-                      entity_id: !input light_entity
+                      entity_id:
+                        - !input day_lights
+                        - !input night_lights
                     data:
                       transition: 30
                   - service: logbook.log
@@ -514,7 +516,9 @@ action:
                     state: "off"
                   - service: light.turn_off
                     target:
-                      entity_id: !input light_entity
+                      entity_id:
+                        - !input day_lights
+                        - !input night_lights
                     data:
                       transition: 30
                   - service: logbook.log
@@ -538,7 +542,9 @@ action:
               - default:
                   - service: light.turn_off
                     target:
-                      entity_id: !input day_lights + !input night_lights
+                      entity_id:
+                        - !input day_lights
+                        - !input night_lights
                     data:
                       transition: 30
           - service: logbook.log
@@ -579,7 +585,9 @@ action:
             state: "off"
           - service: light.turn_off
             target:
-              entity_id: !input light_entity
+              entity_id:
+                - !input day_lights
+                - !input night_lights
             data:
               transition: 30
           - service: logbook.log
