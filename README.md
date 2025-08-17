@@ -79,18 +79,19 @@ Släcker automatiskt efter angiven timeout, även om något glömts bort
 
 # 🔧 Funktioner i detalj
 
-| Funktion                  | Beskrivning |
-|---------------------------|-------------|
-| 🚶‍♂️ Rörelsesensor (valfri) | Tänd/släck med rörelse – eller lämna tomt för schemastyrning |
-| 🔘 Manuell switch (valfri)  | Tänd ljus manuellt när du vill |
-| 🌞 Dag- och natt-scener     | Skapa stämning med scener eller individuella lampor |
-| 💡 Lux-sensor               | Tänder bara när det är tillräckligt mörkt |
-| 🌅 Soluppgång/solnedgång    | Offset för exakt timing |
-| ⏱ Två fasta släcktider      | Bestäm exakt klockslag för släckning – t.ex. vardag och helg |
-| 📅 Arbetsdagskontroll        | Anpassar belysning beroende på vardag eller helg |
-| 🛡️ Failsafe                 | Släcker alltid efter inställd timeout. **Nyhet i 3.5:** du kan nu välja om failsafe ska aktiveras eller inte, perfekt vid användning av fasta släcktider. |
-| ⏳ Tändtid                   | Hur länge lampor ska vara tända efter inaktivitet |
-| 📝 Input Text-logg           | Sparar senaste scen eller trigger för logik och felsökning |
+| Funktion | Beskrivning |
+|----------|-------------|
+| 🚶‍♂️Rörelsesensor (valfri) | Tänd/släck med rörelse – eller lämna tomt för schemastyrning |
+| 🔘Manuell switch (valfri) | Tänd ljus manuellt när du vill |
+| 🌞Dag- och natt-scener | Skapa stämning med scener eller individuella lampor |
+| 💡Lux-sensor | Tänder bara när det är tillräckligt mörkt |
+| 🌅Soluppgång/solnedgång | Offset för exakt timing |
+| ⏱Två fasta släcktider | Bestäm exakt klockslag för släckning – t.ex. vardag och helg |
+| 📅Arbetsdagskontroll | Anpassar belysning beroende på vardag eller helg |
+| 🛡️Failsafe | Släcker alltid efter inställd timeout. **Nyhet i 3.5:** du kan nu välja om failsafe ska aktiveras eller inte, perfekt vid användning av fasta släcktider. |
+| ⏳Tändtid | Hur länge lampor ska vara tända efter inaktivitet |
+| 📝Input Text-logg | Sparar senaste scen eller trigger för logik och felsökning |
+
 
 
 
