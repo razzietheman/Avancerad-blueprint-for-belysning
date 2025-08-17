@@ -88,9 +88,10 @@ Släcker automatiskt efter angiven timeout, även om något glömts bort
 | 🌅 Soluppgång/solnedgång    | Offset för exakt timing |
 | ⏱ Två fasta släcktider      | Bestäm exakt klockslag för släckning – t.ex. vardag och helg |
 | 📅 Arbetsdagskontroll        | Anpassar belysning beroende på vardag eller helg |
-| 🛡️ Failsafe                 | Släcker alltid efter inställd timeout |
+| 🛡️ Failsafe                 | Släcker alltid efter inställd timeout. **Nyhet i 3.5:** du kan nu välja om failsafe ska aktiveras eller inte, perfekt vid användning av fasta släcktider. |
 | ⏳ Tändtid                   | Hur länge lampor ska vara tända efter inaktivitet |
 | 📝 Input Text-logg           | Sparar senaste scen eller trigger för logik och felsökning |
+
 
 
 #💡 Tips: Kombinera sol-trigger med två fasta släcktider för perfekt kvällsbelysning – t.ex. tidigare släckning på vardagar och senare på helger.
