@@ -1,9 +1,9 @@
-# 🌟 Rörelsestyrd belysning 3.4 – Din smarta ljusmästare med dubbla släcktider 🌟
+# 🌟 Rörelsestyrd belysning 3.5 – Din smarta ljusmästare med dubbla släcktider 🌟
 
-#✨ Beskrivning
+# ✨ Beskrivning
 
-Föreställ dig att ditt hem vaknar, följer solen och somnar helt på egen hand – men nu med ännu större flexibilitet.
-Rörelsestyrd belysning 3.4 bygger vidare på version 3.2 och introducerar två separata fasta släcktider, vilket ger dig full kontroll över kvällsbelysningen.
+Föreställ dig att ditt hem vaknar, följer solen och somnar helt på egen hand – nu med ännu större flexibilitet.
+Rörelsestyrd belysning 3.5 bygger vidare på version 3.4 och introducerar två separata fasta släcktider, vilket ger full kontroll över kvällsbelysningen.
 
 Perfekt om du vill ha:
 
@@ -11,62 +11,71 @@ Tidig nattbelysning på vardagar
 
 Senare kvällsbelysning på helger
 
-Eller helt olika tider i olika rum
+Helt olika tider i olika rum
 
-Den innehåller nu:
+# Den innehåller nu:
 
-- 🚶 Rörelsesensorer (valfritt)  
-- 🔘 Manuella brytare (valfritt)  
-- 🌅 Solens gång (med offset)  
-- 💡 Lux-baserad styrning (valfritt)  
-- 🎨 Dag- och natt-scener (valfritt)  
-- ⏰ Två fasta släcktider (valfritt)  
-- 📅 Arbetsdagskontroll (valfritt)  
-- 🛡️ Failsafe & timeout  
-- ⏳ Tändtid vid inaktivitet  
-- 📝 Input Text-loggning  
+🚶 Rörelsesensorer (valfritt)
 
-Alla funktioner är fortfarande valfria – använd bara det som passar din installation.
+🔘 Manuella brytare (valfritt)
+
+🌅 Solens gång med offset
+
+💡 Lux-baserad styrning (valfritt)
+
+🎨 Dag- och natt-scener (valfritt)
+
+⏰ Två fasta släcktider (valfritt)
+
+📅 Arbetsdagskontroll (valfritt)
+
+🛡️ Failsafe & timeout
+
+⏳ Tändtid vid inaktivitet
+
+📝 Input Text-loggning
+
+Alla funktioner är valfria – använd bara det som passar din installation.
 
 # 🎨 Exempel på scenarion
 
 🌅 Morgonljus – Mjuk start på dagen
 
-Aktiveras t.ex. 07:00 på vardagar.
+Aktiveras t.ex. 07:00 på vardagar
 
-Rörelsesensorer känner av att du är uppe och tänder lamporna mjukt.
+Rörelsesensorer känner av att du är uppe och tänder lamporna mjukt
 
-Lux-sensorn ser till att inget tänds i onödan om solen redan lyser in.
+Lux-sensor ser till att inget tänds i onödan om solen redan lyser in
 
-Din dag-scen startar och loggas automatiskt.
+Dag-scen startar och loggas automatiskt
 
 # 🌞 Dagljus med sol-trigger
 
-Lampor tänds X minuter/timmar innan solnedgång (offset).
+Lampor tänds X minuter före solnedgång (offset)
 
-Perfekt för mörka vinterkvällar eller sena sommarkvällar.
+Perfekt för mörka vinterkvällar eller sena sommarkvällar
 
-Kan kombineras med fasta släcktider 1 och 2 för maximal flexibilitet.
+Kan kombineras med fasta släcktider 1 och 2
 
 # 🌙 Kvällsmys
 
-Aktiveras via rörelse eller manuell brytare.
+Aktiveras via rörelse eller manuell brytare
 
-Lampor tänds i diskret nattläge, med möjlighet till scenstyrning.
+Lampor tänds i diskret nattläge, med möjlighet till scenstyrning
 
-Släcks gradvis efter inställd tändtid om ingen rörelse detekteras.
+Släcks gradvis efter inställd tändtid om ingen rörelse detekteras
 
 # ⏰ Arbetsdag vs Helg
 
-Anpassa tändning och släckning efter veckodag.
+Anpassa tändning och släckning efter veckodag
 
-På helger kan tändningen ske senare – eller inte alls.
+På helger kan tändningen ske senare – eller inte alls
 
 # 🛡️ Failsafe
 
-Säkerställer att lampor inte lyser för evigt.
+Säkerställer att lampor inte lyser för evigt
 
-Släcker automatiskt efter angiven timeout, även om något glömts bort.
+Släcker automatiskt efter angiven timeout, även om något glömts bort
 
 # 🔧 Funktioner i detalj
 
@@ -107,4 +116,4 @@ Har du frågor eller förbättringsförslag?
 
 ---
 
-Med **Rörelsestyrd belysning 3.2** blir ditt hem smartare, mysigare och mer energisnålt – utan att du behöver lyfta ett finger. ✨
+Med **Rörelsestyrd belysning 3.5** blir ditt hem smartare, mysigare och mer energisnålt – utan att du behöver lyfta ett finger. ✨
