@@ -15,16 +15,16 @@ Eller helt olika tider i olika rum
 
 Den innehåller nu:
 
-🚶 Rörelsesensorer (valfritt)
-🔘 Manuella brytare (valfritt)
-🌅 Solens gång (med offset)
-💡 Lux-baserad styrning (valfritt)
-🎨 Dag- och natt-scener (valfritt)
-⏰ Två fasta släcktider (valfritt)
-📅 Arbetsdagskontroll (valfritt)
-🛡️ Failsafe & timeout
-⏳ Tändtid vid inaktivitet
-📝 Input Text-loggning
+- 🚶 Rörelsesensorer (valfritt)  
+- 🔘 Manuella brytare (valfritt)  
+- 🌅 Solens gång (med offset)  
+- 💡 Lux-baserad styrning (valfritt)  
+- 🎨 Dag- och natt-scener (valfritt)  
+- ⏰ Två fasta släcktider (valfritt)  
+- 📅 Arbetsdagskontroll (valfritt)  
+- 🛡️ Failsafe & timeout  
+- ⏳ Tändtid vid inaktivitet  
+- 📝 Input Text-loggning  
 
 Alla funktioner är fortfarande valfria – använd bara det som passar din installation.
 
