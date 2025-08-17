@@ -1,5 +1,5 @@
 blueprint:
-  name: Rörelsestyrd belysning 3.4 – Fullständig valfri med två fasta tider och veckodagar och helt dynamisk med sol, arbetsdag och failsafe
+  name: Rörelsestyrd belysning 3.5 – Fullständig valfri med två fasta tider och veckodagar och helt dynamisk med sol, arbetsdag och failsafe
   description: >
     Styr valfri belysning med en eller flera rörelsesensorer, tid, soluppgång/solnedgång,
     lux-tröskel, arbetsdag-kontroll, snapshot-återställning och failsafe-timer.
@@ -183,6 +183,11 @@ blueprint:
           max: 120
           step: 1
           unit_of_measurement: min
+    enable_failsafe:
+      name: Aktivera failsafe
+      default: true
+      selector:
+        boolean: {}
     input_text_last_scene:
       name: Input Text – Senaste scen (valfri)
       default: []
@@ -262,6 +267,7 @@ variables:
   use_sun_times: !input use_sun_times
   failsafe_timer_day: !input failsafe_timer_day
   failsafe_timer_night: !input failsafe_timer_night
+  enable_failsafe: !input enable_failsafe
   tändtid_dag: !input tändtid_dag
   tändtid_natt: !input tändtid_natt
   last_scene_entity: !input input_text_last_scene
@@ -737,6 +743,8 @@ action:
 
       # --- FAILSAFE GRADVIS ---
       - conditions:
+          - condition: template
+            value_template: "{{ enable_failsafe }}"
           - condition: or
             conditions:
               - condition: trigger
@@ -761,7 +769,6 @@ action:
           - condition: state
             entity_id: !input motion_sensors
             state: "off"
-          # Stäng av dag-/nattlampor var för sig om de finns
           - choose:
               - conditions:
                   - condition: template
@@ -782,7 +789,6 @@ action:
                       entity_id: !input night_lights
                     data:
                       transition: 30
-          # Om inga separata listor finns, stäng huvudljus
           - choose:
               - conditions:
                   - condition: template
