@@ -22,25 +22,14 @@ Helt olika tider i olika rum
 
 # Den innehåller nu:
 
-🚶 Rörelsesensorer (valfritt)
-
-🔘 Manuella brytare (valfritt)
-
-🌅 Solens gång med offset
-
-💡 Lux-baserad styrning (valfritt)
-
-🎨 Dag- och natt-scener (valfritt)
-
-⏰ Två fasta släcktider (valfritt)
-
-📅 Arbetsdagskontroll (valfritt)
-
-🛡️ Failsafe & timeout
-
-⏳ Tändtid vid inaktivitet
-
-📝 Input Text-loggning
+| Funktion | Beskrivning |
+|----------|-------------|
+| 🚶‍♂️ Rörelsesensor & 🔘 Manuell switch | Tänd/släck via rörelse eller brytare |
+| 🌞 Dag- och natt-scener | Skapa stämning med scener eller lampor |
+| 💡 Lux-sensor & 🌅 Soltrigger | Smart tändning baserat på ljus & solens position |
+| ⏰ Två fasta släcktider & 📅 Arbetsdag/helg | Flexibel kvällsbelysning |
+| 🛡️ Failsafe & ⏳ Tändtid | Säkerställer att lampor inte lyser för länge |
+| 📝 Input Text-logg | Sparar senaste scen eller trigger |
 
 Alla funktioner är valfria – använd bara det som passar din installation.
 
