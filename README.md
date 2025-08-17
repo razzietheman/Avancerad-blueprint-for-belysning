@@ -3,7 +3,8 @@
 # ✨ Beskrivning
 
 Föreställ dig att ditt hem vaknar, följer solen och somnar helt på egen hand – nu med ännu större flexibilitet.
-Rörelsestyrd belysning 3.5 bygger vidare på version 3.4 och introducerar två separata fasta släcktider, vilket ger full kontroll över kvällsbelysningen.
+Rörelsestyrd belysning 3.5 bygger vidare på version 3.4 och introducerar två separata fasta släcktider,
+vilket ger full kontroll över kvällsbelysningen.
 
 Perfekt om du vill ha:
 
@@ -92,10 +93,7 @@ Släcker automatiskt efter angiven timeout, även om något glömts bort
 | ⏳Tändtid | Hur länge lampor ska vara tända efter inaktivitet |
 | 📝Input Text-logg | Sparar senaste scen eller trigger för logik och felsökning |
 
-
-
-
-#💡 Tips: Kombinera sol-trigger med två fasta släcktider för perfekt kvällsbelysning – t.ex. tidigare släckning på vardagar och senare på helger.
+💡 Tips: Kombinera sol-trigger med två fasta släcktider för perfekt kvällsbelysning – t.ex. tidigare släckning på vardagar och senare på helger.
 
 # 📥 Installation
 
