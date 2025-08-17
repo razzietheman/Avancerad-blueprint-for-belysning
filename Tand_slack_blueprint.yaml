@@ -1,5 +1,5 @@
 blueprint:
-  name: Rörelsestyrd belysning 3.6 – Fullständig valfri med två fasta tider och veckodagar och helt dynamisk med sol, arbetsdag och failsafe
+  name: Rörelsestyrd belysning 3.7 – Fullständig valfri med två fasta tider och veckodagar och helt dynamisk med sol, arbetsdag och failsafe
   description: >
     Styr valfri belysning med en eller flera rörelsesensorer, tid, soluppgång/solnedgång,
     lux-tröskel, arbetsdag-kontroll, snapshot-återställning och failsafe-timer.
@@ -18,18 +18,19 @@ blueprint:
       name: Valfri manuell strömbrytare
       default: []
       selector:
-        entity:
-          domain: switch
-          multiple: true
+        target:
+          entity:
+            domain: switch
 
     # --- Lampor & scener ---
     light_entity:
       name: Lampor (valfritt)
       default: []
       selector:
-        entity:
-          domain: light
-          multiple: true
+        target:
+          entity:
+            domain: light
+
     scene_day:
       name: Scen dagläge (valfri)
       default: []
@@ -48,16 +49,16 @@ blueprint:
       name: Daglampor (valfritt)
       default: []
       selector:
-        entity:
-          domain: light
-          multiple: true
+        target:
+          entity:
+            domain: light
     night_lights:
       name: Nattlampor (valfritt)
       default: []
       selector:
-        entity:
-          domain: light
-          multiple: true
+        target:
+          entity:
+            domain: light
 
     # --- Lux & sol ---
     lux_sensor:
