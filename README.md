@@ -81,7 +81,7 @@ Släcker automatiskt efter angiven timeout, även om något glömts bort
 | 🔘Manuell switch (valfri) | Tänd ljus manuellt när du vill |
 | 🌞Dag- och natt-scener | Skapa stämning med scener eller individuella lampor |
 | 💡Lux-sensor | Tänder bara när det är tillräckligt mörkt |
-| 🌅Soluppgång/solnedgång | Offset för exakt timing |
+| 🌅Soluppgång/solnedgång | "Offset för exakt timing" |
 | ⏱Två fasta släcktider | Bestäm exakt klockslag för släckning – t.ex. vardag och helg |
 | 📅Arbetsdagskontroll | Anpassar belysning beroende på vardag eller helg |
 | 🛡️Failsafe | Släcker alltid efter inställd timeout. **Nyhet i 3.5:** du kan nu välja om failsafe ska aktiveras eller inte, perfekt vid användning av fasta släcktider. |
