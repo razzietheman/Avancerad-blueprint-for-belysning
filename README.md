@@ -111,4 +111,4 @@ Har du frågor eller förbättringsförslag?
 
 ---
 
-Med **Rörelsestyrd belysning 3.5** blir ditt hem smartare, mysigare och mer energisnålt – utan att du behöver lyfta ett finger. ✨
+Med **Rörelsestyrd belysning 3.7** blir ditt hem smartare, mysigare och mer energisnålt – utan att du behöver lyfta ett finger. ✨
