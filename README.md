@@ -1,10 +1,16 @@
-# 🌟 Rörelsestyrd belysning 3.5 – Din smarta ljusmästare med dubbla släcktider 🌟
+# 🌟 Rörelsestyrd belysning 3.7 – Uppdaterad GUI och fler förbättringar 🌟
 
 # ✨ Beskrivning
 
-Föreställ dig att ditt hem vaknar, följer solen och somnar helt på egen hand – nu med ännu större flexibilitet.
-Rörelsestyrd belysning 3.5 bygger vidare på version 3.4 och introducerar två separata fasta släcktider,
-vilket ger full kontroll över kvällsbelysningen.
+# **Höjdpunkter i 3.7:**
+- ✅ GUI har fått en uppfräschning med modernare layout och språkjusteringar
+- 🔧 Förbättrad blueprintstruktur och targets för lampor
+- 🛡️ Stabilitet och småbugfixar
+
+---
+
+Föreställ dig att ditt hem vaknar, följer solen och somnar helt på egen hand – nu med ännu större flexibilitet.  
+Rörelsestyrd belysning 3.7 bygger vidare på version 3.5, som introducerade två separata fasta släcktider, och ger dig full kontroll över kvällsbelysningen.
 
 Perfekt om du vill ha:
 
