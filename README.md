@@ -1,82 +1,94 @@
-# 🌟 Rörelsestyrd belysning 3.2 – Din personliga ljusmästare 🌟
+# 🌟 Rörelsestyrd belysning 3.4 – Din smarta ljusmästare med dubbla släcktider 🌟
 
-## ✨ Beskrivning
+#✨ Beskrivning
 
-Föreställ dig att ditt hem vaknar, följer solen och somnar helt på egen hand – **men på dina villkor**.  
-Rörelsestyrd belysning 3.2 kombinerar flexibel automationslogik med smarta sensorer och scener för att skapa rätt ljus vid rätt tillfälle.
+Föreställ dig att ditt hem vaknar, följer solen och somnar helt på egen hand – men nu med ännu större flexibilitet.
+Rörelsestyrd belysning 3.4 bygger vidare på version 3.2 och introducerar två separata fasta släcktider, vilket ger dig full kontroll över kvällsbelysningen.
 
-Den innehåller:
+Perfekt om du vill ha:
 
-🚶 Rörelsesensorer (valfritt)  
-🔘 Manuella brytare (valfritt)  
-🌅 Solens gång (med offset)  
-💡 Lux-baserad styrning (valfritt)  
-🎨 Dag- och natt-scener (valfritt)  
-⏰ Fasta släcktider (valfritt)  
-📅 Arbetsdagskontroll (valfritt)  
-🛡️ Failsafe & timeout  
-⏳ Tändtid vid inaktivitet  
-📝 Input Text-loggning  
+Tidig nattbelysning på vardagar
 
-Alla funktioner är **valfria** – använd bara det som passar din installation.
+Senare kvällsbelysning på helger
 
----
+Eller helt olika tider i olika rum
 
-## 🎨 Exempel på scenarion
+Den innehåller nu:
 
-### 🌅 Morgonljus – Mjuk start på dagen
+🚶 Rörelsesensorer (valfritt)
+🔘 Manuella brytare (valfritt)
+🌅 Solens gång (med offset)
+💡 Lux-baserad styrning (valfritt)
+🎨 Dag- och natt-scener (valfritt)
+⏰ Två fasta släcktider (valfritt)
+📅 Arbetsdagskontroll (valfritt)
+🛡️ Failsafe & timeout
+⏳ Tändtid vid inaktivitet
+📝 Input Text-loggning
 
-- Aktiveras t.ex. 07:00 på vardagar.  
-- Rörelsesensorer känner av att du är uppe och tänder lamporna mjukt.  
-- Lux-sensorn ser till att inget tänds i onödan om solen redan lyser in.  
-- Din dag-scen startar och loggas automatiskt.  
+Alla funktioner är fortfarande valfria – använd bara det som passar din installation.
 
-### 🌞 Dagljus med sol-trigger
+# 🎨 Exempel på scenarion
 
-- Lampor tänds **X minuter/timmar innan solnedgång** (offset).  
-- Perfekt för mörka vinterkvällar eller sena sommarkvällar.  
-- Kan kombineras med en **fast släcktid** (t.ex. 22:00).  
+🌅 Morgonljus – Mjuk start på dagen
 
-### 🌙 Kvällsmys
+Aktiveras t.ex. 07:00 på vardagar.
 
-- Aktiveras via rörelse eller manuell brytare.  
-- Lampor tänds i diskret nattläge, med möjlighet till scenstyrning.  
-- Släcks gradvis efter inställd tändtid om ingen rörelse detekteras.  
+Rörelsesensorer känner av att du är uppe och tänder lamporna mjukt.
 
-### ⏰ Arbetsdag vs Helg
+Lux-sensorn ser till att inget tänds i onödan om solen redan lyser in.
 
-- Anpassa tändning efter veckodag.  
-- På helger kan tändningen ske senare – eller inte alls.  
+Din dag-scen startar och loggas automatiskt.
 
-### 🛡️ Failsafe
+# 🌞 Dagljus med sol-trigger
 
-- Säkerställer att lampor **inte lyser för evigt**.  
-- Släcker automatiskt efter angiven tid, även om något glömts bort.  
+Lampor tänds X minuter/timmar innan solnedgång (offset).
 
----
+Perfekt för mörka vinterkvällar eller sena sommarkvällar.
 
-## 🔧 Funktioner i detalj
+Kan kombineras med fasta släcktider 1 och 2 för maximal flexibilitet.
 
-| Funktion | Beskrivning |
-|----------|-------------|
+# 🌙 Kvällsmys
+
+Aktiveras via rörelse eller manuell brytare.
+
+Lampor tänds i diskret nattläge, med möjlighet till scenstyrning.
+
+Släcks gradvis efter inställd tändtid om ingen rörelse detekteras.
+
+# ⏰ Arbetsdag vs Helg
+
+Anpassa tändning och släckning efter veckodag.
+
+På helger kan tändningen ske senare – eller inte alls.
+
+# 🛡️ Failsafe
+
+Säkerställer att lampor inte lyser för evigt.
+
+Släcker automatiskt efter angiven timeout, även om något glömts bort.
+
+# 🔧 Funktioner i detalj
+
+| Funktion                  | Beskrivning |
+|---------------------------|-------------|
 | 🚶‍♂️ Rörelsesensor (valfri) | Tänd/släck med rörelse – eller lämna tomt för schemastyrning |
-| 🔘 Manuell switch (valfri) | Tänd ljus manuellt när du vill |
-| 🌞 Dag- och natt-scener | Skapa stämning med scener eller individuella lampor |
-| 💡 Lux-sensor | Tänder bara när det är tillräckligt mörkt |
-| 🌅 Soluppgång/solnedgång | Offset för exakt timing |
-| ⏱ Fast släcktid | Bestäm exakt klockslag när lamporna alltid släcks |
-| 📅 Arbetsdagskontroll | Anpassar belysning beroende på vardag eller helg |
-| 🛡️ Failsafe | Släcker alltid efter inställd timeout |
-| ⏳ Tändtid | Hur länge lampor ska vara tända efter inaktivitet |
-| 📝 Input Text-logg | Sparar senaste scen eller trigger för logik och felsökning |
+| 🔘 Manuell switch (valfri)  | Tänd ljus manuellt när du vill |
+| 🌞 Dag- och natt-scener     | Skapa stämning med scener eller individuella lampor |
+| 💡 Lux-sensor               | Tänder bara när det är tillräckligt mörkt |
+| 🌅 Soluppgång/solnedgång    | Offset för exakt timing |
+| ⏱ Två fasta släcktider      | Bestäm exakt klockslag för släckning – t.ex. vardag och helg |
+| 📅 Arbetsdagskontroll        | Anpassar belysning beroende på vardag eller helg |
+| 🛡️ Failsafe                 | Släcker alltid efter inställd timeout |
+| ⏳ Tändtid                   | Hur länge lampor ska vara tända efter inaktivitet |
+| 📝 Input Text-logg           | Sparar senaste scen eller trigger för logik och felsökning |
 
-💡 **Tips:** Kombinera sol-trigger med fast släcktid för perfekt kvällsbelysning.
 
----
+#💡 Tips: Kombinera sol-trigger med två fasta släcktider för perfekt kvällsbelysning – t.ex. tidigare släckning på vardagar och senare på helger.
 
-## 📥 Installation
+# 📥 Installation
 
-1. **Importera med 1-klick:**  
+Importera med 1-klick:
    [Importera blueprint](https://my.home-assistant.io/redirect/blueprint_import?blueprint_url=https://raw.githubusercontent.com/razzietheman/Avancerad-blueprint-for-belysning/main/Tand_slack_blueprint.yaml)
 
 2. **Fyll i fälten:**
