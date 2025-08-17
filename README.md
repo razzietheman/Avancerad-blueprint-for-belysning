@@ -73,9 +73,7 @@ Säkerställer att lampor inte lyser för evigt
 
 Släcker automatiskt efter angiven timeout, även om något glömts bort
 
-# 🔧 Funktioner i detalj
-
-| Funktion | Beskrivning |
+# | Funktion | Beskrivning |
 |----------|-------------|
 | 🚶‍♂️Rörelsesensor (valfri) | Tänd/släck med rörelse – eller lämna tomt för schemastyrning |
 | 🔘Manuell switch (valfri) | Tänd ljus manuellt när du vill |
@@ -84,7 +82,7 @@ Släcker automatiskt efter angiven timeout, även om något glömts bort
 | 🌅Soluppgång/solnedgång | Offset för exakt timing |
 | ⏱Två fasta släcktider | Bestäm exakt klockslag för släckning – t.ex. vardag och helg |
 | 📅Arbetsdagskontroll | Anpassar belysning beroende på vardag eller helg |
-| 🛡️Failsafe | Släcker alltid efter inställd timeout. **Nyhet i 3.5:** du kan nu välja om failsafe ska aktiveras eller inte, perfekt vid användning av fasta släcktider. |
+| 🛡️Failsafe | Säkerställer att lampor inte lyser för länge, med valbar aktiverings-switch |
 | ⏳Tändtid | Hur länge lampor ska vara tända efter inaktivitet |
 | 📝Input Text-logg | Sparar senaste scen eller trigger för logik och felsökning |
 
