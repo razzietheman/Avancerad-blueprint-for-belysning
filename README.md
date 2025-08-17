@@ -73,7 +73,9 @@ Säkerställer att lampor inte lyser för evigt
 
 Släcker automatiskt efter angiven timeout, även om något glömts bort
 
-# | Funktion | Beskrivning |
+# 🔧 Funktioner i detalj
+
+| Funktion | Beskrivning |
 |----------|-------------|
 | 🚶‍♂️Rörelsesensor (valfri) | Tänd/släck med rörelse – eller lämna tomt för schemastyrning |
 | 🔘Manuell switch (valfri) | Tänd ljus manuellt när du vill |
