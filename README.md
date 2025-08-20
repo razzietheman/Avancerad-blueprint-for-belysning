@@ -1,8 +1,8 @@
-# 🌟 Rörelsestyrd belysning 3.7 – Uppdaterad GUI och fler förbättringar 🌟
+# 🌟 Rörelsestyrd belysning 3.8 – Uppdaterad GUI och fler förbättringar 🌟
 
 # ✨ Beskrivning
 
-# **Höjdpunkter i 3.7:**
+# **Höjdpunkter i 3.8:**
 - ✅ GUI har fått en uppfräschning med modernare layout och språkjusteringar
 - 🔧 Förbättrad blueprintstruktur och targets för lampor
 - 🛡️ Stabilitet och småbugfixar
@@ -10,7 +10,7 @@
 ---
 
 Föreställ dig att ditt hem vaknar, följer solen och somnar helt på egen hand – nu med ännu större flexibilitet.  
-Rörelsestyrd belysning 3.7 bygger vidare på version 3.5, som introducerade två separata fasta släcktider, och ger dig full kontroll över kvällsbelysningen.
+Rörelsestyrd belysning 3.8 bygger vidare på version 3.5, som introducerade två separata fasta släcktider, och ger dig full kontroll över kvällsbelysningen.
 
 Perfekt om du vill ha:
 
@@ -111,4 +111,4 @@ Har du frågor eller förbättringsförslag?
 
 ---
 
-Med **Rörelsestyrd belysning 3.7** blir ditt hem smartare, mysigare och mer energisnålt – utan att du behöver lyfta ett finger. ✨
+Med **Rörelsestyrd belysning 3.8** blir ditt hem smartare, mysigare och mer energisnålt – utan att du behöver lyfta ett finger. ✨
