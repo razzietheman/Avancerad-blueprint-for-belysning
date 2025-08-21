@@ -387,24 +387,34 @@ action:
           - condition: template
             value_template: >
               {% set ls = lux_sensor_var %}
-              {% if ls == [] %} true
+              {% if ls == [] %}
+                true
               {% else %}
                 {% set val = states(ls[0]) %}
-                {% if val in ['unknown', 'unavailable'] %} false
-                {% else %} {{ val | float(9999) < lux_threshold_var }} {% endif %}
+                {% if val in ['unknown', 'unavailable'] %}
+                  false
+                {% else %}
+                  {{ val | float(9999) < lux_threshold_var }}
+                {% endif %}
               {% endif %}
           - condition: template
             value_template: >
               {% if not use_sun_times_var %}
                 {% set t = now().time() %}
-                {{ t >= day_start_var | as_datetime().time() and t <= day_end_var | as_datetime().time() }}
+                {% set start = day_start_var | as_datetime %}
+                {% set end = day_end_var | as_datetime %}
+                {{ t >= start.time() and t <= end.time() }}
               {% else %}
                 true
               {% endif %}
           - condition: template
             value_template: >
               {% set w = workday_sensor_var %}
-              {% if w == [] %} true {% else %} {{ is_state(w[0], 'on') }} {% endif %}
+              {% if w == [] %}
+                true
+              {% else %}
+                {{ is_state(w[0], 'on') }}
+              {% endif %}
         sequence:
           # --- Snapshot ---
           - choose:
@@ -549,7 +559,9 @@ action:
                   - condition: template
                     value_template: >
                       {% set t = now().time() %}
-                      {{ t >= day_start_var | as_datetime().time() and t <= day_end_var | as_datetime().time() }}
+                      {% set start = day_start_var | as_datetime %}
+                      {% set end = day_end_var | as_datetime %}
+                      {{ t >= start.time() and t <= end.time() }}
                 sequence:
                   - delay:
                       minutes: "{{ failsafe_timer_day_var }}"
@@ -565,10 +577,12 @@ action:
                   - condition: template
                     value_template: >
                       {% set t = now().time() %}
-                      {% if night_start_var < night_end_var %}
-                        {{ t >= night_start_var | as_datetime().time() and t <= night_end_var | as_datetime().time() }}
+                      {% set start = night_start_var | as_datetime %}
+                      {% set end = night_end_var | as_datetime %}
+                      {% if start <= end %}
+                        {{ t >= start.time() and t <= end.time() }}
                       {% else %}
-                        {{ t >= night_start_var | as_datetime().time() or t <= night_end_var | as_datetime().time() }}
+                        {{ t >= start.time() or t <= end.time() }}
                       {% endif %}
                 sequence:
                   - delay:
