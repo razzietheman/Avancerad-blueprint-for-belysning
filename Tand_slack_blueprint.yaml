@@ -1,12 +1,11 @@
 blueprint:
-  name: Rörelsestyrd belysning 4.2 – Stabil release med korrekt failsafe
+  name: Rörelsestyrd belysning 4.3 – Stabil release med korrekt failsafe dag/natt
   description: >
     Rörelsestyrd belysning med dag/natt, scener, lux, soluppgång/solnedgång,
-    arbetsdag, failsafe, fasta avstängningstider (med veckodagar), snapshots och loggning.
-    Auto-off-tider körs bara om ingen fast avstängningstid är aktiv.
+    arbetsdag, failsafe (separat dag/natt), fasta avstängningstider (med veckodagar),
+    snapshots och loggning. Auto-off-tider körs bara om ingen fast avstängningstid är aktiv.
   domain: automation
   input:
-    
     # --- Sensorer & brytare ---
     
     motion_sensors:
@@ -405,7 +404,7 @@ action:
             value_template: >
               {% set ls = lux_sensor_var %}
               {% if ls == [] %} true
-              {% else %} 
+              {% else %}
                 {% set val = states(ls[0]) %}
                 {% if val in ['unknown', 'unavailable'] %} false
                 {% else %} {{ val | float(9999) < lux_threshold_var }} {% endif %}
@@ -431,8 +430,8 @@ action:
               {% set w = workday_sensor_var %}
               {% if w == [] %} true {% else %} {{ is_state(w[0], 'on') }} {% endif %}
         sequence:
-
-          # Snapshot om huvudlampor finns
+          
+          # --- Snapshot ---
           
           - choose:
               - conditions:
@@ -443,8 +442,8 @@ action:
                     data:
                       scene_id: snapshot_before_on
                       snapshot_entities: "{{ main_lights_var }}"
-
-          # Prioritet: scene_day -> day_lights -> main_lights
+          
+          # --- Prioritet: scene_day -> day_lights -> main_lights ---
           
           - choose:
               - conditions:
@@ -468,8 +467,8 @@ action:
                   - service: light.turn_on
                     target:
                       entity_id: "{{ main_lights_var }}"
-
-          # Spara senaste scen
+          
+          # --- Spara senaste scen ---
           
           - choose:
               - conditions:
@@ -480,6 +479,9 @@ action:
                     data:
                       entity_id: "{{ last_scene_entity }}"
                       value: "dag/natt PÅ"
+          
+          # --- Loggning ---
+          
           - service: logbook.log
             data:
               name: Rörelsestyrning
@@ -510,8 +512,11 @@ action:
                         (fo2_ts is not none and now_ts < as_timestamp(fo2_ts))
                       %}
                       {{ fo_active }}
-                sequence: [] # Om fast tid är aktiv, gör inget
+                sequence: []  # Om fast tid är aktiv, gör inget
               - default:
+                 
+                 # --- Parallell auto-off ---
+                 
                   - service: timer.start
                     data:
                       entity_id: timer.auto_off_main
@@ -564,20 +569,41 @@ action:
               name: Rörelsestyrning
               message: "Fast avstängningstid 2 utförd."
 
-  # --- Failsafe ---
+  # --- Failsafe dag/natt ---
   
   - choose:
       - conditions:
           - condition: template
             value_template: "{{ enable_failsafe_var }}"
         sequence:
-          - delay:
-              minutes: "{{ failsafe_timer_day }}"
-          - service: light.turn_off
-            target:
-              entity_id: "{{ main_lights_var + day_lights_var + night_lights_var }}"
-          - service: logbook.log
-            data:
-              name: Rörelsestyrning
-              message: >
-                Failsafe utförd; alla lampor av efter {{ failsafe_timer_day }} min.
+          - choose:
+              - conditions:
+                  - condition: time
+                    after: !input day_start
+                    before: !input day_end
+                sequence:
+                  - delay:
+                      minutes: "{{ failsafe_timer_day }}"
+                  - service: light.turn_off
+                    target:
+                      entity_id: "{{ main_lights_var + day_lights_var + night_lights_var }}"
+                  - service: logbook.log
+                    data:
+                      name: Rörelsestyrning
+                      message: >
+                        Failsafe dag utförd; alla lampor av efter {{ failsafe_timer_day }} min.
+              - conditions:
+                  - condition: time
+                    after: !input night_start
+                    before: !input night_end
+                sequence:
+                  - delay:
+                      minutes: "{{ failsafe_timer_night }}"
+                  - service: light.turn_off
+                    target:
+                      entity_id: "{{ main_lights_var + day_lights_var + night_lights_var }}"
+                  - service: logbook.log
+                    data:
+                      name: Rörelsestyrning
+                      message: >
+                        Failsafe natt utförd; alla lampor av efter {{ failsafe_timer_night }} min.
