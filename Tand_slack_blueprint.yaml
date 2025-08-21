@@ -1,5 +1,5 @@
 blueprint:
-  name: Rörelsestyrd belysning 4.5 – Stabil release med korrekt failsafe dag/natt
+  name: Rörelsestyrd belysning 4.6 – Stabil release med korrekt failsafe dag/natt
   description: >
     Rörelsestyrd belysning med dag/natt, scener, lux, soluppgång/solnedgång,
     arbetsdag, failsafe (separat dag/natt), fasta avstängningstider (med veckodagar),
@@ -7,6 +7,7 @@ blueprint:
   domain: automation
   input:
     # --- Sensorer & brytare ---
+    
     motion_sensors:
       name: Rörelsesensor(er)
       default: []
@@ -24,6 +25,7 @@ blueprint:
           multiple: true
 
     # --- Lampor & scener ---
+    
     main_lights:
       name: Huvudlampor
       default: []
@@ -376,7 +378,6 @@ condition: []
 action:
   
   # --- Rörelse/Brytare PÅ ---
-  
   - choose:
       - conditions:
           - condition: or
@@ -420,7 +421,7 @@ action:
                     data:
                       scene_id: snapshot_before_on
                       snapshot_entities: "{{ main_lights_var }}"
-
+          
           # --- Dagscen / lampor ---
           
           - choose:
@@ -445,7 +446,7 @@ action:
                   - service: light.turn_on
                     target:
                       entity_id: "{{ main_lights_var }}"
-
+          
           # --- Spara senaste scen ---
           
           - choose:
@@ -457,7 +458,7 @@ action:
                     data:
                       entity_id: "{{ last_scene_entity }}"
                       value: "dag/natt PÅ"
-
+          
           # --- Loggning ---
           
           - service: logbook.log
@@ -496,17 +497,17 @@ action:
                   minutes: "{{ auto_off_main_var }}"
               - service: light.turn_off
                 target:
-                  entity_id: "{{ main_lights_var }}"
+                  entity_id: "{{ main_lights_var | reject('equalto', []) | list }}"
               - delay:
                   minutes: "{{ auto_off_day_var }}"
               - service: light.turn_off
                 target:
-                  entity_id: "{{ day_lights_var }}"
+                  entity_id: "{{ day_lights_var | reject('equalto', []) | list }}"
               - delay:
                   minutes: "{{ auto_off_night_var }}"
               - service: light.turn_off
                 target:
-                  entity_id: "{{ night_lights_var }}"
+                  entity_id: "{{ night_lights_var | reject('equalto', []) | list }}"
               - service: logbook.log
                 data:
                   name: Rörelsestyrning
@@ -527,7 +528,8 @@ action:
         sequence:
           - service: light.turn_off
             target:
-              entity_id: "{{ main_lights_var + day_lights_var + night_lights_var }}"
+              entity_id: >
+                {{ (main_lights_var + day_lights_var + night_lights_var) | reject('equalto', []) | list }}
           - service: logbook.log
             data:
               name: Rörelsestyrning
@@ -541,7 +543,8 @@ action:
         sequence:
           - service: light.turn_off
             target:
-              entity_id: "{{ main_lights_var + day_lights_var + night_lights_var }}"
+              entity_id: >
+                {{ (main_lights_var + day_lights_var + night_lights_var) | reject('equalto', []) | list }}
           - service: logbook.log
             data:
               name: Rörelsestyrning
@@ -554,10 +557,10 @@ action:
           - condition: template
             value_template: "{{ enable_failsafe_var }}"
         sequence:
+          
+          # Failsafe dag
+          
           - choose:
-              
-              # --- Failsafe dag ---
-              
               - conditions:
                   - condition: template
                     value_template: >
@@ -576,15 +579,17 @@ action:
                         sequence:
                           - service: light.turn_off
                             target:
-                              entity_id: "{{ main_lights_var + day_lights_var }}"
+                              entity_id: >
+                                {{ (main_lights_var + day_lights_var) | reject('equalto', []) | list }}
                           - service: logbook.log
                             data:
                               name: Rörelsestyrning
                               message: >
                                 Failsafe dag utförd; alla tända daglampor & huvudlampor av efter {{ failsafe_timer_day_var }} min.
-              
-              # --- Failsafe natt ---
-              
+          
+          # Failsafe natt
+          
+          - choose:
               - conditions:
                   - condition: template
                     value_template: >
@@ -607,7 +612,8 @@ action:
                         sequence:
                           - service: light.turn_off
                             target:
-                              entity_id: "{{ main_lights_var + night_lights_var }}"
+                              entity_id: >
+                                {{ (main_lights_var + night_lights_var) | reject('equalto', []) | list }}
                           - service: logbook.log
                             data:
                               name: Rörelsestyrning
