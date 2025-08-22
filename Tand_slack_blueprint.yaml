@@ -347,39 +347,27 @@ trigger:
 
 mode: restart
 
-# --- Variabler ---
+# --- Variabler fixade ---
 
 variables:
   main_lights_var: >
     {% set lights = [] %}
     {% for l in main_lights %}
-      {% if l is mapping and 'entity_id' in l %}
-        {% set lights = lights + [l.entity_id] %}
-      {% else %}
-        {% set lights = lights + [l] %}
-      {% endif %}
+      {% set lights = lights + [l] %}
     {% endfor %}
     {{ lights | unique }}
 
   day_lights_var: >
     {% set lights = [] %}
     {% for l in day_lights %}
-      {% if l is mapping and 'entity_id' in l %}
-        {% set lights = lights + [l.entity_id] %}
-      {% else %}
-        {% set lights = lights + [l] %}
-      {% endif %}
+      {% set lights = lights + [l] %}
     {% endfor %}
     {{ lights | unique }}
 
   night_lights_var: >
     {% set lights = [] %}
     {% for l in night_lights %}
-      {% if l is mapping and 'entity_id' in l %}
-        {% set lights = lights + [l.entity_id] %}
-      {% else %}
-        {% set lights = lights + [l] %}
-      {% endif %}
+      {% set lights = lights + [l] %}
     {% endfor %}
     {{ lights | unique }}
 
