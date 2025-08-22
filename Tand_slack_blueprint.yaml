@@ -468,14 +468,14 @@ action:
                 sequence:
                   - service: light.turn_on
                     target:
-                      entity_id: "{{ day_lights_var | join(',') }}"
+                      entity_id: "{{ day_lights_var }}"
               - conditions:
                   - condition: template
                     value_template: "{{ main_lights_var != [] }}"
                 sequence:
                   - service: light.turn_on
                     target:
-                      entity_id: "{{ main_lights_var | join(',') }}"
+                      entity_id: "{{ day_lights_var }}"
           
           # --- Nattscen / lampor ---
           
@@ -565,7 +565,7 @@ action:
                   minutes: "{{ auto_off_main_var }}"
               - service: light.turn_off
                 target:
-                  entity_id: "{{ (main_lights_var | reject('equalto', []) | list) | join(',') }}"
+                  entity_id: "{{ main_lights_var | reject('equalto', []) | list }}"
               - delay:
                   minutes: "{{ auto_off_day_var }}"
               - service: light.turn_off
