@@ -511,36 +511,34 @@ action:
                       message: "Dag/natt AV – auto-off aktiverad."
   
   # --- Fasta avstängningstider ---
-  
-  - choose:
-      - conditions:
-          - condition: time
-            at: !input fixed_off_time_1
-          - condition: template
-            value_template: >
-              {{ now().strftime('%a').lower() in fixed_off_weekdays_1_var }}
-        sequence:
-          - service: light.turn_off
-            target:
-              entity_id: "{{ main_lights_var + day_lights_var + night_lights_var }}"
-          - service: logbook.log
-            data:
-              name: Rörelsestyrning
-              message: "Fast avstängningstid 1 aktiverad."
-      - conditions:
-          - condition: time
-            at: !input fixed_off_time_2
-          - condition: template
-            value_template: >
-              {{ now().strftime('%a').lower() in fixed_off_weekdays_2_var }}
-        sequence:
-          - service: light.turn_off
-            target:
-              entity_id: "{{ main_lights_var + day_lights_var + night_lights_var }}"
-          - service: logbook.log
-            data:
-              name: Rörelsestyrning
-              message: "Fast avstängningstid 2 aktiverad."
+- choose:
+    - conditions:
+        - condition: template
+          value_template: "{{ fixed_off_time_1_var != [] and now().strftime('%H:%M:%S') == fixed_off_time_1_var[0] }}"
+        - condition: template
+          value_template: "{{ now().strftime('%a').lower() in fixed_off_weekdays_1_var }}"
+      sequence:
+        - service: light.turn_off
+          target:
+            entity_id: "{{ main_lights_var + day_lights_var + night_lights_var }}"
+        - service: logbook.log
+          data:
+            name: Rörelsestyrning
+            message: "Fast avstängningstid 1 aktiverad."
+
+    - conditions:
+        - condition: template
+          value_template: "{{ fixed_off_time_2_var != [] and now().strftime('%H:%M:%S') == fixed_off_time_2_var[0] }}"
+        - condition: template
+          value_template: "{{ now().strftime('%a').lower() in fixed_off_weekdays_2_var }}"
+      sequence:
+        - service: light.turn_off
+          target:
+            entity_id: "{{ main_lights_var + day_lights_var + night_lights_var }}"
+        - service: logbook.log
+          data:
+            name: Rörelsestyrning
+            message: "Fast avstängningstid 2 aktiverad."
 
   # --- Failsafe ---
   
