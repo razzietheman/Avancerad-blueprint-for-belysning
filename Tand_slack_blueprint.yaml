@@ -349,8 +349,8 @@ variables:
   main_lights_var: >
     {% set lights = [] %}
     {% for l in main_lights %}
-      {% if l is mapping and 'target' in l and 'entity_id' in l.target %}
-        {% set lights = lights + [l.target.entity_id] %}
+      {% if l is mapping and 'entity_id' in l %}
+        {% set lights = lights + [l.entity_id] %}
       {% else %}
         {% set lights = lights + [l] %}
       {% endif %}
@@ -360,8 +360,8 @@ variables:
   day_lights_var: >
     {% set lights = [] %}
     {% for l in day_lights %}
-      {% if l is mapping and 'target' in l and 'entity_id' in l.target %}
-        {% set lights = lights + [l.target.entity_id] %}
+      {% if l is mapping and 'entity_id' in l %}
+        {% set lights = lights + [l.entity_id] %}
       {% else %}
         {% set lights = lights + [l] %}
       {% endif %}
@@ -371,8 +371,8 @@ variables:
   night_lights_var: >
     {% set lights = [] %}
     {% for l in night_lights %}
-      {% if l is mapping and 'target' in l and 'entity_id' in l.target %}
-        {% set lights = lights + [l.target.entity_id] %}
+      {% if l is mapping and 'entity_id' in l %}
+        {% set lights = lights + [l.entity_id] %}
       {% else %}
         {% set lights = lights + [l] %}
       {% endif %}
