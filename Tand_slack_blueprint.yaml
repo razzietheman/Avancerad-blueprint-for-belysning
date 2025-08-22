@@ -94,13 +94,13 @@ blueprint:
         
     sunset_offset:
       name: Offset för solnedgång
-      default: ""
+      default: "00:00:00"
       selector:
         text: {}
         
     sunrise_offset:
       name: Offset för soluppgång
-      default: ""
+      default: "00:00:00"
       selector:
         text: {}
 
