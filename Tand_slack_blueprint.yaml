@@ -329,11 +329,11 @@ trigger:
     id: switch_off
   - platform: sun
     event: sunrise
-    offset: !input sunrise_offset
+    offset: "{{ !input('sunrise_offset') | default('00:00:00') }}"
     id: sun_rise
   - platform: sun
     event: sunset
-    offset: !input sunset_offset
+    offset: "{{ !input('sunset_offset') | default('00:00:00') }}"
     id: sun_set
   - platform: time
     at: !input fixed_off_time_1
