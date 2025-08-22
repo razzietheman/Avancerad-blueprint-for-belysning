@@ -96,13 +96,13 @@ blueprint:
       name: Offset för solnedgång
       default: "00:00:00"
       selector:
-        text: {}
+        time: {}
         
     sunrise_offset:
       name: Offset för soluppgång
       default: "00:00:00"
       selector:
-        text: {}
+        time: {}
 
     # --- Fasta avstängningstider ---
     fixed_off_time_1:
@@ -329,11 +329,11 @@ trigger:
     id: switch_off
   - platform: sun
     event: sunrise
-    offset: "{{ !input('sunrise_offset') | default('00:00:00') }}"
+    offset: !input sunrise_offset
     id: sun_rise
   - platform: sun
     event: sunset
-    offset: "{{ !input('sunset_offset') | default('00:00:00') }}"
+    offset:  !input sunset_offset
     id: sun_set
   - platform: time
     at: !input fixed_off_time_1
