@@ -1,5 +1,5 @@
 blueprint:
-  name: Rörelsestyrd belysning 4.6 – Stabil release med korrekt failsafe dag/natt
+  name: Rörelsestyrd belysning 4.7 – Stabil release med korrekt LUX & failsafe dag/natt
   description: >
     Rörelsestyrd belysning med dag/natt, scener, lux, soluppgång/solnedgång,
     arbetsdag, failsafe (separat dag/natt), fasta avstängningstider (med veckodagar),
@@ -393,7 +393,7 @@ action:
               {% else %}
                 {% set val = states(ls[0]) %}
                 {% if val in ['unknown', 'unavailable'] %} false
-                {% else %} {{ val | float(9999) < lux_threshold_var }} {% endif %}
+                {% else %} {{ val.replace(',', '.') | float(9999) < lux_threshold_var }} {% endif %}
               {% endif %}
           - condition: template
             value_template: >
