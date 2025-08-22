@@ -23,7 +23,7 @@ blueprint:
         entity:
           domain: switch
           multiple: true
-
+          
     # --- Lampor & scener ---
     
     main_lights:
@@ -65,7 +65,7 @@ blueprint:
         target:
           entity:
             domain: light
-
+            
     # --- Lux & sol ---
     
     lux_sensor:
@@ -103,7 +103,7 @@ blueprint:
       default: "00:00:00"
       selector:
         time: {}
-
+        
     # --- Fasta avstängningstider ---
     
     fixed_off_time_1:
@@ -161,7 +161,7 @@ blueprint:
               value: sat
             - label: Söndag
               value: sun
-
+              
     # --- Tidinställningar ---
     
     day_start:
@@ -187,7 +187,7 @@ blueprint:
       default: "07:00:00"
       selector:
         time: {}
-
+        
     # --- Aktiva veckodagar ---
     
     active_weekdays_day:
@@ -233,7 +233,7 @@ blueprint:
               value: sat
             - label: Söndag
               value: sun
-
+              
     # --- Arbetsdag & failsafe ---
     
     workday_sensor:
@@ -275,7 +275,7 @@ blueprint:
       selector:
         entity:
           domain: input_text
-
+          
     # --- Auto-off-tider ---
     
     auto_off_main:
@@ -311,6 +311,8 @@ blueprint:
           unit_of_measurement: min
           mode: box
 
+# --- Trigger & Mode ---
+
 trigger:
   - platform: state
     entity_id: !input motion_sensors
@@ -343,7 +345,9 @@ trigger:
     at: !input fixed_off_time_2
     id: fixed_off_2
 
-mode: restart  # viktigt för failsafe
+mode: restart
+
+# --- Variabler ---
 
 variables:
   main_lights_var: >
@@ -405,8 +409,10 @@ variables:
 
 condition: []
 
+# --- Action ---
+
 action:
-  
+
   # --- Rörelse/Brytare PÅ ---
   
   - choose:
@@ -433,9 +439,13 @@ action:
             value_template: >
               {% if not use_sun_times_var %}
                 {% set t = now().time() %}
-                {% set start = day_start_var | as_datetime %}
-                {% set end = day_end_var | as_datetime %}
-                {{ t >= start.time() and t <= end.time() }}
+                {% set start = strptime(day_start_var, '%H:%M:%S').time() %}
+                {% set end = strptime(day_end_var, '%H:%M:%S').time() %}
+                {% if start <= end %}
+                  {{ t >= start and t <= end }}
+                {% else %}
+                  {{ t >= start or t <= end }}
+                {% endif %}
               {% else %}
                 true
               {% endif %}
@@ -447,7 +457,7 @@ action:
                 {{ is_state(workday_sensor_var[0], 'on') }}
               {% endif %}
         sequence:
-          
+
           # --- Snapshot ---
           
           - choose:
@@ -465,39 +475,52 @@ action:
           - choose:
               - conditions:
                   - condition: template
-                    value_template: "{{ scene_day_var != [] }}"
+                    value_template: >
+                      {% set t = now().time() %}
+                      {% set start = strptime(day_start_var, '%H:%M:%S').time() %}
+                      {% set end = strptime(day_end_var, '%H:%M:%S').time() %}
+                      {% if start <= end %}
+                        {{ t >= start and t <= end }}
+                      {% else %}
+                        {{ t >= start or t <= end }}
+                      {% endif %}
                 sequence:
-                  - service: scene.turn_on
-                    target:
-                      entity_id: "{{ scene_day_var }}"
-              - conditions:
-                  - condition: template
-                    value_template: "{{ day_lights_var != [] }}"
-                sequence:
-                  - service: light.turn_on
-                    target:
-                      entity_id: "{{ day_lights_var | unique }}"
-              - conditions:
-                  - condition: template
-                    value_template: "{{ main_lights_var != [] }}"
-                sequence:
-                  - service: light.turn_on
-                    target:
-                      entity_id: "{{ main_lights_var | unique }}"
+                  - choose:
+                      - conditions:
+                          - condition: template
+                            value_template: "{{ scene_day_var != [] }}"
+                        sequence:
+                          - service: scene.turn_on
+                            target:
+                              entity_id: "{{ scene_day_var }}"
+                      - conditions:
+                          - condition: template
+                            value_template: "{{ day_lights_var != [] }}"
+                        sequence:
+                          - service: light.turn_on
+                            target:
+                              entity_id: "{{ day_lights_var | unique }}"
+                      - conditions:
+                          - condition: template
+                            value_template: "{{ main_lights_var != [] }}"
+                        sequence:
+                          - service: light.turn_on
+                            target:
+                              entity_id: "{{ main_lights_var | unique }}"
 
-          # --- Nattscen ---
-          
+  # --- Nattscen ---
+  
           - choose:
               - conditions:
                   - condition: template
                     value_template: >
                       {% set t = now().time() %}
-                      {% set start = night_start_var | as_datetime %}
-                      {% set end = night_end_var | as_datetime %}
+                      {% set start = strptime(night_start_var, '%H:%M:%S').time() %}
+                      {% set end = strptime(night_end_var, '%H:%M:%S').time() %}
                       {% if start <= end %}
-                        {{ t >= start.time() and t <= end.time() }}
+                        {{ t >= start and t <= end }}
                       {% else %}
-                        {{ t >= start.time() or t <= end.time() }}
+                        {{ t >= start or t <= end }}
                       {% endif %}
                 sequence:
                   - choose:
@@ -522,6 +545,7 @@ action:
                           - service: light.turn_on
                             target:
                               entity_id: "{{ main_lights_var | unique }}"
+
 
           # --- Spara senaste scen ---
           
