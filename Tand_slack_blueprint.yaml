@@ -94,18 +94,17 @@ blueprint:
         
     sunset_offset:
       name: Offset för solnedgång
-      default: "-02:00:00"
+      default: ""
       selector:
         text: {}
         
     sunrise_offset:
       name: Offset för soluppgång
-      default: "+02:00:00"
+      default: ""
       selector:
         text: {}
 
     # --- Fasta avstängningstider ---
-    
     fixed_off_time_1:
       name: Fast avstängningstid 1 (valfri)
       default: []
@@ -347,32 +346,11 @@ mode: restart  # viktigt för failsafe
 
 variables:
   main_lights_var: >
-    {% if main_lights is mapping and 'entity_id' in main_lights %}
-      [{{ main_lights.entity_id }}]
-    {% elif main_lights is sequence %}
-      {{ main_lights | map(attribute='entity_id') | list if main_lights[0] is mapping else main_lights }}
-    {% else %}
-      []
-    {% endif %}
-
+    {% if main_lights is sequence %} {{ main_lights | list }} {% else %} [] {% endif %}
   day_lights_var: >
-    {% if day_lights is mapping and 'entity_id' in day_lights %}
-      [{{ day_lights.entity_id }}]
-    {% elif day_lights is sequence %}
-      {{ day_lights | map(attribute='entity_id') | list if day_lights[0] is mapping else day_lights }}
-    {% else %}
-      []
-    {% endif %}
-
+    {% if day_lights is sequence %} {{ day_lights | list }} {% else %} [] {% endif %}
   night_lights_var: >
-    {% if night_lights is mapping and 'entity_id' in night_lights %}
-      [{{ night_lights.entity_id }}]
-    {% elif night_lights is sequence %}
-      {{ night_lights | map(attribute='entity_id') | list if night_lights[0] is mapping else night_lights }}
-    {% else %}
-      []
-    {% endif %}
-
+    {% if night_lights is sequence %} {{ night_lights | list }} {% else %} [] {% endif %}
   scene_day_var: !input scene_day
   scene_night_var: !input scene_night
   last_scene_entity: !input input_text_last_scene
@@ -400,8 +378,8 @@ variables:
 condition: []
 
 action:
-  
   # --- Rörelse/Brytare PÅ ---
+  
   - choose:
       - conditions:
           - condition: or
@@ -462,14 +440,52 @@ action:
                 sequence:
                   - service: light.turn_on
                     target:
-                      entity_id: "{{ day_lights_var }}"
+                      entity_id: "{{ day_lights_var | join(',') }}"
               - conditions:
                   - condition: template
                     value_template: "{{ main_lights_var != [] }}"
                 sequence:
                   - service: light.turn_on
                     target:
-                      entity_id: "{{ main_lights_var }}"
+                      entity_id: "{{ main_lights_var | join(',') }}"
+          
+          # --- Nattscen / lampor ---
+          
+          - choose:
+              - conditions:
+                  - condition: template
+                    value_template: >
+                      {% set t = now().time() %}
+                      {% set start = night_start_var | as_datetime %}
+                      {% set end = night_end_var | as_datetime %}
+                      {% if start <= end %}
+                        {{ t >= start.time() and t <= end.time() }}
+                      {% else %}
+                        {{ t >= start.time() or t <= end.time() }}
+                      {% endif %}
+                sequence:
+                  - choose:
+                      - conditions:
+                          - condition: template
+                            value_template: "{{ scene_night_var != [] }}"
+                        sequence:
+                          - service: scene.turn_on
+                            target:
+                              entity_id: "{{ scene_night_var }}"
+                      - conditions:
+                          - condition: template
+                            value_template: "{{ night_lights_var != [] }}"
+                        sequence:
+                          - service: light.turn_on
+                            target:
+                              entity_id: "{{ night_lights_var | join(',') }}"
+                      - conditions:
+                          - condition: template
+                            value_template: "{{ main_lights_var != [] }}"
+                        sequence:
+                          - service: light.turn_on
+                            target:
+                              entity_id: "{{ main_lights_var | join(',') }}"
           
           # --- Spara senaste scen ---
           
@@ -521,7 +537,7 @@ action:
                   minutes: "{{ auto_off_main_var }}"
               - service: light.turn_off
                 target:
-                  entity_id: "{{ main_lights_var | reject('equalto', []) | list }}"
+                  entity_id: "{{ (main_lights_var | reject('equalto', []) | list) | join(',') }}"
               - delay:
                   minutes: "{{ auto_off_day_var }}"
               - service: light.turn_off
@@ -581,9 +597,9 @@ action:
           - condition: template
             value_template: "{{ enable_failsafe_var }}"
         sequence:
-          
-          # Failsafe dag
-          
+         
+         # Failsafe dag
+         
           - choose:
               - conditions:
                   - condition: template
@@ -610,7 +626,7 @@ action:
                               name: Rörelsestyrning
                               message: >
                                 Failsafe dag utförd; alla tända daglampor & huvudlampor av efter {{ failsafe_timer_day_var }} min.
-          
+
           # Failsafe natt
           
           - choose:
