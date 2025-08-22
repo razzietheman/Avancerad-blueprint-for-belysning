@@ -468,14 +468,14 @@ action:
                 sequence:
                   - service: light.turn_on
                     target:
-                      entity_id: "{{ day_lights_var }}"
+                      entity_id: "{{ day_lights_var | unique | join(',') }}"
               - conditions:
                   - condition: template
                     value_template: "{{ main_lights_var != [] }}"
                 sequence:
                   - service: light.turn_on
                     target:
-                      entity_id: "{{ day_lights_var }}"
+                      entity_id: "{{ day_lights_var | unique | join(',') }}"
           
           # --- Nattscen / lampor ---
           
@@ -506,14 +506,14 @@ action:
                         sequence:
                           - service: light.turn_on
                             target:
-                              entity_id: "{{ night_lights_var | join(',') }}"
+                              entity_id: "{{ night_lights_var | unique | join(',') }}"
                       - conditions:
                           - condition: template
                             value_template: "{{ main_lights_var != [] }}"
                         sequence:
                           - service: light.turn_on
                             target:
-                              entity_id: "{{ main_lights_var | join(',') }}"
+                              entity_id: "{{ main_lights_var | unique | join(',') }}"
           
           # --- Spara senaste scen ---
           
@@ -565,17 +565,17 @@ action:
                   minutes: "{{ auto_off_main_var }}"
               - service: light.turn_off
                 target:
-                  entity_id: "{{ main_lights_var | reject('equalto', []) | list }}"
+                  entity_id: "{{ main_lights_var | reject('equalto', []) | unique | list }}"
               - delay:
                   minutes: "{{ auto_off_day_var }}"
               - service: light.turn_off
                 target:
-                  entity_id: "{{ day_lights_var | reject('equalto', []) | list }}"
+                  entity_id: "{{ day_lights_var | reject('equalto', []) | unique | list }}"
               - delay:
                   minutes: "{{ auto_off_night_var }}"
               - service: light.turn_off
                 target:
-                  entity_id: "{{ night_lights_var | reject('equalto', []) | list }}"
+                  entity_id: "{{ night_lights_var | reject('equalto', []) | unique | list }}"
               - service: logbook.log
                 data:
                   name: Rörelsestyrning
