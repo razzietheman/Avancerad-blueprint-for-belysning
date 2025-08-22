@@ -1,5 +1,5 @@
 blueprint:
-  name: Rörelsestyrd belysning 4.7 – Stabil release med korrekt LUX & failsafe dag/natt
+  name: Rörelsestyrd belysning 4.8 – Stabil release med korrekt LUX & failsafe dag/natt
   description: >
     Rörelsestyrd belysning med dag/natt, scener, lux, soluppgång/solnedgång,
     arbetsdag, failsafe (separat dag/natt), fasta avstängningstider (med veckodagar),
@@ -105,6 +105,7 @@ blueprint:
         time: {}
 
     # --- Fasta avstängningstider ---
+    
     fixed_off_time_1:
       name: Fast avstängningstid 1 (valfri)
       default: []
@@ -347,44 +348,35 @@ mode: restart  # viktigt för failsafe
 variables:
   main_lights_var: >
     {% set lights = [] %}
-    {% if main_lights is sequence %} {% set lights = lights + main_lights | list %} {% endif %}
-    {% if main_area is defined and main_area != [] %}
-      {% set lights = lights + (states.light | selectattr('attributes.area_id','eq',main_area) | map(attribute='entity_id') | list) %}
-    {% endif %}
-    {% if main_device is defined and main_device != [] %}
-      {% set lights = lights + (states.light | selectattr('device_id','eq',main_device) | map(attribute='entity_id') | list) %}
-    {% endif %}
-    {% if main_label is defined and main_label != [] %}
-      {% set lights = lights + (states.light | selectattr('attributes.label','eq',main_label) | map(attribute='entity_id') | list) %}
-    {% endif %}
+    {% for l in main_lights %}
+      {% if l is mapping and 'target' in l and 'entity_id' in l.target %}
+        {% set lights = lights + [l.target.entity_id] %}
+      {% else %}
+        {% set lights = lights + [l] %}
+      {% endif %}
+    {% endfor %}
     {{ lights | unique }}
 
   day_lights_var: >
     {% set lights = [] %}
-    {% if day_lights is sequence %} {% set lights = lights + day_lights | list %} {% endif %}
-    {% if day_area is defined and day_area != [] %}
-      {% set lights = lights + (states.light | selectattr('attributes.area_id','eq',day_area) | map(attribute='entity_id') | list) %}
-    {% endif %}
-    {% if day_device is defined and day_device != [] %}
-      {% set lights = lights + (states.light | selectattr('device_id','eq',day_device) | map(attribute='entity_id') | list) %}
-    {% endif %}
-    {% if day_label is defined and day_label != [] %}
-      {% set lights = lights + (states.light | selectattr('attributes.label','eq',day_label) | map(attribute='entity_id') | list) %}
-    {% endif %}
+    {% for l in day_lights %}
+      {% if l is mapping and 'target' in l and 'entity_id' in l.target %}
+        {% set lights = lights + [l.target.entity_id] %}
+      {% else %}
+        {% set lights = lights + [l] %}
+      {% endif %}
+    {% endfor %}
     {{ lights | unique }}
 
   night_lights_var: >
     {% set lights = [] %}
-    {% if night_lights is sequence %} {% set lights = lights + night_lights | list %} {% endif %}
-    {% if night_area is defined and night_area != [] %}
-      {% set lights = lights + (states.light | selectattr('attributes.area_id','eq',night_area) | map(attribute='entity_id') | list) %}
-    {% endif %}
-    {% if night_device is defined and night_device != [] %}
-      {% set lights = lights + (states.light | selectattr('device_id','eq',night_device) | map(attribute='entity_id') | list) %}
-    {% endif %}
-    {% if night_label is defined and night_label != [] %}
-      {% set lights = lights + (states.light | selectattr('attributes.label','eq',night_label) | map(attribute='entity_id') | list) %}
-    {% endif %}
+    {% for l in night_lights %}
+      {% if l is mapping and 'target' in l and 'entity_id' in l.target %}
+        {% set lights = lights + [l.target.entity_id] %}
+      {% else %}
+        {% set lights = lights + [l] %}
+      {% endif %}
+    {% endfor %}
     {{ lights | unique }}
 
   scene_day_var: !input scene_day
