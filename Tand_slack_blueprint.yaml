@@ -475,7 +475,7 @@ action:
                 sequence:
                   - service: light.turn_on
                     target:
-                      entity_id: "{{ day_lights_var | unique | join(',') }}"
+                      entity_id: "{{ main_lights_var | unique | join(',') }}"
           
           # --- Nattscen / lampor ---
           
