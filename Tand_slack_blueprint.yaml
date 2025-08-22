@@ -346,9 +346,33 @@ trigger:
 mode: restart  # viktigt för failsafe
 
 variables:
-  main_lights_var: !input main_lights
-  day_lights_var: !input day_lights
-  night_lights_var: !input night_lights
+  main_lights_var: >
+    {% if main_lights is mapping and 'entity_id' in main_lights %}
+      [{{ main_lights.entity_id }}]
+    {% elif main_lights is sequence %}
+      {{ main_lights | map(attribute='entity_id') | list if main_lights[0] is mapping else main_lights }}
+    {% else %}
+      []
+    {% endif %}
+
+  day_lights_var: >
+    {% if day_lights is mapping and 'entity_id' in day_lights %}
+      [{{ day_lights.entity_id }}]
+    {% elif day_lights is sequence %}
+      {{ day_lights | map(attribute='entity_id') | list if day_lights[0] is mapping else day_lights }}
+    {% else %}
+      []
+    {% endif %}
+
+  night_lights_var: >
+    {% if night_lights is mapping and 'entity_id' in night_lights %}
+      [{{ night_lights.entity_id }}]
+    {% elif night_lights is sequence %}
+      {{ night_lights | map(attribute='entity_id') | list if night_lights[0] is mapping else night_lights }}
+    {% else %}
+      []
+    {% endif %}
+
   scene_day_var: !input scene_day
   scene_night_var: !input scene_night
   last_scene_entity: !input input_text_last_scene
