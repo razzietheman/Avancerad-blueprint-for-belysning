@@ -397,8 +397,6 @@ variables:
 
 condition: []
 
-# --- Action ---
-
 action:
 
   # --- Rörelse/Brytare PÅ ---
@@ -417,10 +415,10 @@ action:
                 true
               {% else %}
                 {% set val = states(lux_sensor_var[0]) %}
-                {% if val in ['unknown', 'unavailable'] %}
+                {% if val in ['unknown','unavailable'] %}
                   false
                 {% else %}
-                  {{ val.replace(',', '.') | float < lux_threshold_var }}
+                  {{ val | float < lux_threshold_var }}
                 {% endif %}
               {% endif %}
           - condition: template
@@ -442,7 +440,7 @@ action:
               {% if workday_sensor_var == [] %}
                 true
               {% else %}
-                {{ is_state(workday_sensor_var[0], 'on') }}
+                {{ is_state(workday_sensor_var[0],'on') }}
               {% endif %}
         sequence:
 
@@ -533,7 +531,6 @@ action:
                           - service: light.turn_on
                             target:
                               entity_id: "{{ main_lights_var | unique }}"
-
 
           # --- Spara senaste scen ---
           
@@ -633,9 +630,13 @@ action:
                   - condition: template
                     value_template: >
                       {% set t = now().time() %}
-                      {% set start = day_start_var | as_datetime %}
-                      {% set end = day_end_var | as_datetime %}
-                      {{ t >= start.time() and t <= end.time() }}
+                      {% set start = strptime(day_start_var, '%H:%M:%S').time() %}
+                      {% set end = strptime(day_end_var, '%H:%M:%S').time() %}
+                      {% if start <= end %}
+                        {{ t >= start and t <= end }}
+                      {% else %}
+                        {{ t >= start or t <= end }}
+                      {% endif %}
                 sequence:
                   - delay:
                       minutes: "{{ failsafe_timer_day_var }}"
@@ -655,12 +656,12 @@ action:
                   - condition: template
                     value_template: >
                       {% set t = now().time() %}
-                      {% set start = night_start_var | as_datetime %}
-                      {% set end = night_end_var | as_datetime %}
+                      {% set start = strptime(night_start_var, '%H:%M:%S').time() %}
+                      {% set end = strptime(night_end_var, '%H:%M:%S').time() %}
                       {% if start <= end %}
-                        {{ t >= start.time() and t <= end.time() }}
+                        {{ t >= start and t <= end }}
                       {% else %}
-                        {{ t >= start.time() or t <= end.time() }}
+                        {{ t >= start or t <= end }}
                       {% endif %}
                 sequence:
                   - delay:
