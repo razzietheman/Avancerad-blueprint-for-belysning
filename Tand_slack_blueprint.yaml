@@ -36,16 +36,19 @@ blueprint:
           entity:
             domain: light
             
+    auto_off_main:
+      name: Huvudlampors varaktighet (minuter)
+      default: 10
+      selector:
+        number:
+          min: 1
+          max: 120
+          step: 1
+          unit_of_measurement: min
+          mode: box
+    
     scene_day:
       name: Dagscen
-      default: []
-      selector:
-        entity:
-          domain: scene
-          multiple: false
-          
-    scene_night:
-      name: Nattscen
       default: []
       selector:
         entity:
@@ -59,7 +62,26 @@ blueprint:
         target:
           entity:
             domain: light
-            
+    
+    auto_off_day:
+      name: Dagslampors varaktighet (minuter)
+      default: 5
+      selector:
+        number:
+          min: 1
+          max: 120
+          step: 1
+          unit_of_measurement: min
+          mode: box
+    
+    scene_night:
+      name: Nattscen
+      default: []
+      selector:
+        entity:
+          domain: scene
+          multiple: false
+                    
     night_lights:
       name: Nattlampor
       default: []
@@ -68,6 +90,16 @@ blueprint:
           entity:
             domain: light
             
+    auto_off_night:
+      name: Nattlampors varaktighet (minuter)
+      default: 1
+      selector:
+        number:
+          min: 1
+          max: 120
+          step: 1
+          unit_of_measurement: min
+          mode: box
     
     # --- Lux & sol ---
     
@@ -165,8 +197,7 @@ blueprint:
               value: sat
             - label: Söndag
               value: sun
-              
-    
+                  
     # --- Tidinställningar ---
     
     day_start:
@@ -179,19 +210,6 @@ blueprint:
       name: Dagslut
       description: "Dagslut kan inte ha samma starttid som Nattstart. Exempel: 22:00:00"
       default: "22:00:00"
-      selector:
-        time: {}
-        
-    night_start:
-      name: Nattstart
-      description: "Nattstart kan inte ha samma starttid som Dagslut. Exempel: 22:00:01"
-      default: "22:00:01"
-      selector:
-        time: {}
-        
-    night_end:
-      name: Nattslut
-      default: "07:00:00"
       selector:
         time: {}
         
@@ -215,8 +233,21 @@ blueprint:
             - label: Lördag
               value: sat
             - label: Söndag
-              value: sun
-              
+              value: sun 
+    
+    night_start:
+      name: Nattstart
+      description: "Nattstart kan inte ha samma starttid som Dagslut. Exempel: 22:00:01"
+      default: "22:00:01"
+      selector:
+        time: {}
+        
+    night_end:
+      name: Nattslut
+      default: "07:00:00"
+      selector:
+        time: {}
+        
     active_weekdays_night:
       name: Aktiva veckodagar (Natt)
       default: []
@@ -281,42 +312,6 @@ blueprint:
       selector:
         entity:
           domain: input_text
-          
-    
-    # --- Auto-off-tider ---
-    
-    auto_off_main:
-      name: Huvudlampors varaktighet (minuter)
-      default: 10
-      selector:
-        number:
-          min: 1
-          max: 120
-          step: 1
-          unit_of_measurement: min
-          mode: box
-          
-    auto_off_day:
-      name: Dagslampors varaktighet (minuter)
-      default: 5
-      selector:
-        number:
-          min: 1
-          max: 120
-          step: 1
-          unit_of_measurement: min
-          mode: box
-          
-    auto_off_night:
-      name: Nattlampors varaktighet (minuter)
-      default: 1
-      selector:
-        number:
-          min: 1
-          max: 120
-          step: 1
-          unit_of_measurement: min
-          mode: box
 
 # --- Triggers och mode ---
 
