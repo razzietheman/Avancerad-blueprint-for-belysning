@@ -1,14 +1,14 @@
 blueprint:
-  name: Rörelsestyrd belysning 4.8 – Stabil release med korrekt LUX & failsafe dag/natt
+  name: Rörelsestyrd belysning 4.9 – Stabil release med korrekt LUX & robust failsafe
   description: >
     Rörelsestyrd belysning med dag/natt, scener, lux, soluppgång/solnedgång,
-    arbetsdag, failsafe (separat dag/natt), fasta avstängningstider (med veckodagar),
+    arbetsdag, failsafe (separat dag/natt, robust), fasta avstängningstider,
     snapshots och loggning. Auto-off-tider körs bara om ingen fast avstängningstid är aktiv.
   domain: automation
   input:
-  
-  # --- Sensorer & brytare ---
-  
+    
+    # --- Sensorer & brytare ---
+    
     motion_sensors:
       name: Rörelsesensor(er)
       default: []
@@ -26,7 +26,7 @@ blueprint:
           multiple: true
           
     # --- Lampor & scener ---
-          
+    
     main_lights:
       name: Huvudlampor
       default: []
@@ -424,7 +424,7 @@ action:
                     data:
                       scene_id: snapshot_before_on
                       snapshot_entities: !input main_lights
-
+          
           # --- Dagscen ---
           
           - choose:
@@ -459,7 +459,7 @@ action:
                           - service: light.turn_on
                             target:
                               entity_id: !input main_lights
-
+          
           # --- Nattscen ---
           
           - choose:
@@ -494,7 +494,7 @@ action:
                           - service: light.turn_on
                             target:
                               entity_id: !input main_lights
-
+          
           # --- Spara senaste scen ---
           
           - choose:
@@ -506,7 +506,7 @@ action:
                     data:
                       entity_id: !input input_text_last_scene
                       value: "dag/natt PÅ"
-
+          
           # --- Loggning ---
           
           - service: logbook.log
@@ -605,41 +605,42 @@ action:
               name: Rörelsestyrning
               message: "Fast avstängningstid 2 utförd."
 
-  # --- Failsafe dag/natt ---
+  # --- Robust Failsafe dag/natt ---
   
   - choose:
       - conditions:
           - condition: template
             value_template: "{{ enable_failsafe_var }}"
         sequence:
-          
-          # Dag failsafe
-          
-          - delay:
-              minutes: !input failsafe_timer_day
-          - service: light.turn_off
-            target:
-              entity_id: !input main_lights
-          - service: light.turn_off
-            target:
-              entity_id: !input day_lights
-          - service: logbook.log
-            data:
-              name: Rörelsestyrning
-              message: >
-                Failsafe dag utförd; alla tända daglampor & huvudlampor av efter !input failsafe_timer_day min.
-
-          # Natt failsafe
-          - delay:
-              minutes: !input failsafe_timer_night
-          - service: light.turn_off
-            target:
-              entity_id: !input main_lights
-          - service: light.turn_off
-            target:
-              entity_id: !input night_lights
-          - service: logbook.log
-            data:
-              name: Rörelsestyrning
-              message: >
-                Failsafe natt utförd; alla tända nattlampor & huvudlampor av efter !input failsafe_timer_night min.
+          - variables:
+              failsafe_types:
+                - { name: "dag", timer: failsafe_timer_day_var, lights: day_lights_var + main_lights_var }
+                - { name: "natt", timer: failsafe_timer_night_var, lights: night_lights_var + main_lights_var }
+          - repeat:
+              count: "{{ failsafe_types | length }}"
+              sequence:
+                - variables:
+                    fs: "{{ failsafe_types[repeat.index - 1] }}"
+                - delay:
+                    minutes: "{{ fs.timer }}"
+                - choose:
+                    - conditions:
+                        - condition: template
+                          value_template: >
+                            {% set motion_ok = motion_sensors | length > 0 and is_state(motion_sensors[0], 'off') %}
+                            {% set motion_missing = motion_sensors | length == 0 %}
+                            {{ motion_ok or motion_missing }}
+                      sequence:
+                        - choose:
+                            - conditions:
+                                - condition: template
+                                  value_template: "{{ fs.lights | length > 0 }}"
+                              sequence:
+                                - service: light.turn_off
+                                  target:
+                                    entity_id: "{{ fs.lights }}"
+                        - service: logbook.log
+                          data:
+                            name: Rörelsestyrning
+                            message: >
+                              Failsafe {{ fs.name }}: Lamporna släcktes efter {{ fs.timer }} min utan rörelse eller sensor saknas.
