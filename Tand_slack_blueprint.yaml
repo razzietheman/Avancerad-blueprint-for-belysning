@@ -1,5 +1,5 @@
 blueprint:
-  name: Rörelsestyrd belysning 4.9 – Stabil release med korrekt LUX & failsafe dag/natt
+  name: Rörelsestyrd belysning 4.8 – Stabil release med korrekt LUX & failsafe dag/natt
   description: >
     Rörelsestyrd belysning med dag/natt, scener, lux, soluppgång/solnedgång,
     arbetsdag, failsafe (separat dag/natt), fasta avstängningstider (med veckodagar),
@@ -601,7 +601,6 @@ action:
             data:
               name: Rörelsestyrning
               message: "Fast avstängningstid 2 utförd
-
 
 # --- Failsafe dag/natt ---
 
