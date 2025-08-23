@@ -420,7 +420,7 @@ action:
           - choose:
               - conditions:
                   - condition: template
-                    value_template: "{{ main_lights_var != [] }}"
+                    value_template: "{{ main_lights_var | length > 0 }}"
                 sequence:
                   - service: scene.create
                     data:
@@ -442,20 +442,20 @@ action:
                   - choose:
                       - conditions:
                           - condition: template
-                            value_template: "{{ scene_day_var != [] }}"
+                            value_template: "{{ scene_day_var | length > 0 }}"
                         sequence:
                           - service: scene.turn_on
                             target: !input scene_day
                       - conditions:
                           - condition: template
-                            value_template: "{{ day_lights_var != [] }}"
+                            value_template: "{{ day_lights_var | length > 0 }}"
                         sequence:
                           - service: light.turn_on
                             target:
                               entity_id: !input day_lights
                       - conditions:
                           - condition: template
-                            value_template: "{{ main_lights_var != [] }}"
+                            value_template: "{{ main_lights_var | length > 0 }}"
                         sequence:
                           - service: light.turn_on
                             target:
@@ -476,20 +476,20 @@ action:
                   - choose:
                       - conditions:
                           - condition: template
-                            value_template: "{{ scene_night_var != [] }}"
+                            value_template: "{{ scene_night_var | length > 0 }}"
                         sequence:
                           - service: scene.turn_on
                             target: !input scene_night
                       - conditions:
                           - condition: template
-                            value_template: "{{ night_lights_var != [] }}"
+                            value_template: "{{ night_lights_var | length > 0 }}"
                         sequence:
                           - service: light.turn_on
                             target:
                               entity_id: !input night_lights
                       - conditions:
                           - condition: template
-                            value_template: "{{ main_lights_var != [] }}"
+                            value_template: "{{ main_lights_var | length > 0 }}"
                         sequence:
                           - service: light.turn_on
                             target:
@@ -500,7 +500,7 @@ action:
           - choose:
               - conditions:
                   - condition: template
-                    value_template: "{{ last_scene_entity != [] }}"
+                    value_template: "{{ last_scene_entity | length > 0 }}"
                 sequence:
                   - service: input_text.set_value
                     data:
@@ -527,19 +527,34 @@ action:
         sequence:
           - delay:
               minutes: !input auto_off_main
-          - service: light.turn_off
-            target:
-              entity_id: !input main_lights
+          - choose:
+              - conditions:
+                  - condition: template
+                    value_template: "{{ main_lights_var | length > 0 }}"
+                sequence:
+                  - service: light.turn_off
+                    target:
+                      entity_id: !input main_lights
           - delay:
               minutes: !input auto_off_day
-          - service: light.turn_off
-            target:
-              entity_id: !input day_lights
+          - choose:
+              - conditions:
+                  - condition: template
+                    value_template: "{{ day_lights_var | length > 0 }}"
+                sequence:
+                  - service: light.turn_off
+                    target:
+                      entity_id: !input day_lights
           - delay:
               minutes: !input auto_off_night
-          - service: light.turn_off
-            target:
-              entity_id: !input night_lights
+          - choose:
+              - conditions:
+                  - condition: template
+                    value_template: "{{ night_lights_var | length > 0 }}"
+                sequence:
+                  - service: light.turn_off
+                    target:
+                      entity_id: !input night_lights
           - service: logbook.log
             data:
               name: Rörelsestyrning
@@ -557,15 +572,30 @@ action:
           - condition: template
             value_template: "{{ now().strftime('%a').lower() in fixed_off_weekdays_1_var }}"
         sequence:
-          - service: light.turn_off
-            target:
-              entity_id: !input main_lights
-          - service: light.turn_off
-            target:
-              entity_id: !input day_lights
-          - service: light.turn_off
-            target:
-              entity_id: !input night_lights
+          - choose:
+              - conditions:
+                  - condition: template
+                    value_template: "{{ main_lights_var | length > 0 }}"
+                sequence:
+                  - service: light.turn_off
+                    target:
+                      entity_id: !input main_lights
+          - choose:
+              - conditions:
+                  - condition: template
+                    value_template: "{{ day_lights_var | length > 0 }}"
+                sequence:
+                  - service: light.turn_off
+                    target:
+                      entity_id: !input day_lights
+          - choose:
+              - conditions:
+                  - condition: template
+                    value_template: "{{ night_lights_var | length > 0 }}"
+                sequence:
+                  - service: light.turn_off
+                    target:
+                      entity_id: !input night_lights
           - service: logbook.log
             data:
               name: Rörelsestyrning
@@ -576,19 +606,35 @@ action:
           - condition: template
             value_template: "{{ now().strftime('%a').lower() in fixed_off_weekdays_2_var }}"
         sequence:
-          - service: light.turn_off
-            target:
-              entity_id: !input main_lights
-          - service: light.turn_off
-            target:
-              entity_id: !input day_lights
-          - service: light.turn_off
-            target:
-              entity_id: !input night_lights
+          - choose:
+              - conditions:
+                  - condition: template
+                    value_template: "{{ main_lights_var | length > 0 }}"
+                sequence:
+                  - service: light.turn_off
+                    target:
+                      entity_id: !input main_lights
+          - choose:
+              - conditions:
+                  - condition: template
+                    value_template: "{{ day_lights_var | length > 0 }}"
+                sequence:
+                  - service: light.turn_off
+                    target:
+                      entity_id: !input day_lights
+          - choose:
+              - conditions:
+                  - condition: template
+                    value_template: "{{ night_lights_var | length > 0 }}"
+                sequence:
+                  - service: light.turn_off
+                    target:
+                      entity_id: !input night_lights
           - service: logbook.log
             data:
               name: Rörelsestyrning
               message: "Fast avstängningstid 2 utförd."
+
 
   # --- Failsafe dag/natt ---
   
