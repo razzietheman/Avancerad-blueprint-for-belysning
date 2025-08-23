@@ -6,9 +6,9 @@ blueprint:
     snapshots och loggning. Auto-off-tider körs bara om ingen fast avstängningstid är aktiv.
   domain: automation
   input:
-    
-    # --- Sensorer & brytare ---
-    
+  
+  # --- Sensorer & brytare ---
+  
     motion_sensors:
       name: Rörelsesensor(er)
       default: []
@@ -16,7 +16,7 @@ blueprint:
         entity:
           domain: binary_sensor
           multiple: true
-
+          
     optional_switches:
       name: Valfri manuell brytare
       default: []
@@ -24,9 +24,9 @@ blueprint:
         entity:
           domain: switch
           multiple: true
-
+          
     # --- Lampor & scener ---
-    
+          
     main_lights:
       name: Huvudlampor
       default: []
@@ -34,7 +34,7 @@ blueprint:
         target:
           entity:
             domain: light
-
+            
     scene_day:
       name: Dagscen
       default: []
@@ -42,7 +42,7 @@ blueprint:
         entity:
           domain: scene
           multiple: false
-
+          
     scene_night:
       name: Nattscen
       default: []
@@ -50,7 +50,7 @@ blueprint:
         entity:
           domain: scene
           multiple: false
-
+          
     day_lights:
       name: Dagslampor
       default: []
@@ -58,7 +58,7 @@ blueprint:
         target:
           entity:
             domain: light
-
+            
     night_lights:
       name: Nattlampor
       default: []
@@ -66,7 +66,7 @@ blueprint:
         target:
           entity:
             domain: light
-
+            
     # --- Lux & sol ---
     
     lux_sensor:
@@ -76,7 +76,7 @@ blueprint:
         entity:
           domain: sensor
           device_class: illuminance
-
+          
     lux_threshold:
       name: Luxgräns
       default: 50
@@ -86,25 +86,25 @@ blueprint:
           max: 1000
           step: 1
           unit_of_measurement: lx
-
+          
     use_sun_times:
       name: Använd soluppgång/solnedgång
       default: false
       selector:
         boolean: {}
-
+        
     sunset_offset:
       name: Offset för solnedgång
       default: "00:00:00"
       selector:
         time: {}
-
+        
     sunrise_offset:
       name: Offset för soluppgång
       default: "00:00:00"
       selector:
         time: {}
-
+        
     # --- Fasta avstängningstider ---
     
     fixed_off_time_1:
@@ -112,7 +112,7 @@ blueprint:
       default: []
       selector:
         time: {}
-
+        
     fixed_off_weekdays_1:
       name: Aktiva veckodagar (Fast tid 1)
       default: []
@@ -134,13 +134,13 @@ blueprint:
               value: sat
             - label: Söndag
               value: sun
-
+              
     fixed_off_time_2:
       name: Fast avstängningstid 2 (valfri)
       default: []
       selector:
         time: {}
-
+        
     fixed_off_weekdays_2:
       name: Aktiva veckodagar (Fast tid 2)
       default: []
@@ -162,7 +162,7 @@ blueprint:
               value: sat
             - label: Söndag
               value: sun
-
+              
     # --- Tidinställningar ---
     
     day_start:
@@ -170,27 +170,25 @@ blueprint:
       default: "07:00:00"
       selector:
         time: {}
-
+        
     day_end:
       name: Dagslut
       default: "22:00:00"
       selector:
         time: {}
-
+        
     night_start:
       name: Nattstart
       default: "22:00:01"
       selector:
         time: {}
-
+        
     night_end:
       name: Nattslut
       default: "07:00:00"
       selector:
         time: {}
-
-    # --- Aktiva veckodagar ---
-    
+        
     active_weekdays_day:
       name: Aktiva veckodagar (Dag)
       default: []
@@ -212,7 +210,7 @@ blueprint:
               value: sat
             - label: Söndag
               value: sun
-
+              
     active_weekdays_night:
       name: Aktiva veckodagar (Natt)
       default: []
@@ -234,7 +232,7 @@ blueprint:
               value: sat
             - label: Söndag
               value: sun
-
+              
     # --- Arbetsdag & failsafe ---
     
     workday_sensor:
@@ -243,13 +241,13 @@ blueprint:
       selector:
         entity:
           domain: binary_sensor
-
+          
     enable_failsafe:
       name: Aktivera failsafe
       default: true
       selector:
         boolean: {}
-
+        
     failsafe_timer_day:
       name: Failsafe-timer dag (minuter)
       default: 15
@@ -259,7 +257,7 @@ blueprint:
           max: 120
           step: 1
           unit_of_measurement: min
-
+          
     failsafe_timer_night:
       name: Failsafe-timer natt (minuter)
       default: 15
@@ -269,14 +267,14 @@ blueprint:
           max: 120
           step: 1
           unit_of_measurement: min
-
+          
     input_text_last_scene:
       name: Input Text - Senaste scen
       default: []
       selector:
         entity:
           domain: input_text
-
+          
     # --- Auto-off-tider ---
     
     auto_off_main:
@@ -289,7 +287,7 @@ blueprint:
           step: 1
           unit_of_measurement: min
           mode: box
-
+          
     auto_off_day:
       name: Dagslampors varaktighet (minuter)
       default: 5
@@ -300,7 +298,7 @@ blueprint:
           step: 1
           unit_of_measurement: min
           mode: box
-
+          
     auto_off_night:
       name: Nattlampors varaktighet (minuter)
       default: 1
@@ -381,7 +379,7 @@ variables:
 condition: []
 
 action:
-
+  
   # --- Rörelse/Brytare PÅ ---
   
   - choose:
@@ -414,7 +412,7 @@ action:
               {% if workday_sensor_var == [] %} true
               {% else %} {{ is_state(workday_sensor_var[0],'on') }} {% endif %}
         sequence:
-
+          
           # --- Snapshot ---
           
           - choose:
@@ -445,7 +443,8 @@ action:
                             value_template: "{{ scene_day_var | length > 0 }}"
                         sequence:
                           - service: scene.turn_on
-                            target: !input scene_day
+                            target:
+                              entity_id: !input scene_day
                       - conditions:
                           - condition: template
                             value_template: "{{ day_lights_var | length > 0 }}"
@@ -479,7 +478,8 @@ action:
                             value_template: "{{ scene_night_var | length > 0 }}"
                         sequence:
                           - service: scene.turn_on
-                            target: !input scene_night
+                            target:
+                              entity_id: !input scene_night
                       - conditions:
                           - condition: template
                             value_template: "{{ night_lights_var | length > 0 }}"
@@ -572,30 +572,15 @@ action:
           - condition: template
             value_template: "{{ now().strftime('%a').lower() in fixed_off_weekdays_1_var }}"
         sequence:
-          - choose:
-              - conditions:
-                  - condition: template
-                    value_template: "{{ main_lights_var | length > 0 }}"
-                sequence:
-                  - service: light.turn_off
-                    target:
-                      entity_id: !input main_lights
-          - choose:
-              - conditions:
-                  - condition: template
-                    value_template: "{{ day_lights_var | length > 0 }}"
-                sequence:
-                  - service: light.turn_off
-                    target:
-                      entity_id: !input day_lights
-          - choose:
-              - conditions:
-                  - condition: template
-                    value_template: "{{ night_lights_var | length > 0 }}"
-                sequence:
-                  - service: light.turn_off
-                    target:
-                      entity_id: !input night_lights
+          - service: light.turn_off
+            target:
+              entity_id: !input main_lights
+          - service: light.turn_off
+            target:
+              entity_id: !input day_lights
+          - service: light.turn_off
+            target:
+              entity_id: !input night_lights
           - service: logbook.log
             data:
               name: Rörelsestyrning
@@ -606,35 +591,19 @@ action:
           - condition: template
             value_template: "{{ now().strftime('%a').lower() in fixed_off_weekdays_2_var }}"
         sequence:
-          - choose:
-              - conditions:
-                  - condition: template
-                    value_template: "{{ main_lights_var | length > 0 }}"
-                sequence:
-                  - service: light.turn_off
-                    target:
-                      entity_id: !input main_lights
-          - choose:
-              - conditions:
-                  - condition: template
-                    value_template: "{{ day_lights_var | length > 0 }}"
-                sequence:
-                  - service: light.turn_off
-                    target:
-                      entity_id: !input day_lights
-          - choose:
-              - conditions:
-                  - condition: template
-                    value_template: "{{ night_lights_var | length > 0 }}"
-                sequence:
-                  - service: light.turn_off
-                    target:
-                      entity_id: !input night_lights
+          - service: light.turn_off
+            target:
+              entity_id: !input main_lights
+          - service: light.turn_off
+            target:
+              entity_id: !input day_lights
+          - service: light.turn_off
+            target:
+              entity_id: !input night_lights
           - service: logbook.log
             data:
               name: Rörelsestyrning
               message: "Fast avstängningstid 2 utförd."
-
 
   # --- Failsafe dag/natt ---
   
@@ -643,55 +612,34 @@ action:
           - condition: template
             value_template: "{{ enable_failsafe_var }}"
         sequence:
-
+          
           # Dag failsafe
           
-          - choose:
-              - conditions:
-                  - condition: template
-                    value_template: >
-                      {% set t = now().time() %}
-                      {% set start = strptime(day_start_var, '%H:%M:%S').time() %}
-                      {% set end = strptime(day_end_var, '%H:%M:%S').time() %}
-                      {% if start <= end %} {{ t >= start and t <= end }}
-                      {% else %} {{ t >= start or t <= end }} {% endif %}
-                sequence:
-                  - delay:
-                      minutes: !input failsafe_timer_day
-                  - service: light.turn_off
-                    target:
-                      entity_id: !input main_lights
-                  - service: light.turn_off
-                    target:
-                      entity_id: !input day_lights
-                  - service: logbook.log
-                    data:
-                      name: Rörelsestyrning
-                      message: >
-                        Failsafe dag utförd; alla tända daglampor & huvudlampor av efter !input failsafe_timer_day min.
+          - delay:
+              minutes: !input failsafe_timer_day
+          - service: light.turn_off
+            target:
+              entity_id: !input main_lights
+          - service: light.turn_off
+            target:
+              entity_id: !input day_lights
+          - service: logbook.log
+            data:
+              name: Rörelsestyrning
+              message: >
+                Failsafe dag utförd; alla tända daglampor & huvudlampor av efter !input failsafe_timer_day min.
 
           # Natt failsafe
-          
-          - choose:
-              - conditions:
-                  - condition: template
-                    value_template: >
-                      {% set t = now().time() %}
-                      {% set start = strptime(night_start_var, '%H:%M:%S').time() %}
-                      {% set end = strptime(night_end_var, '%H:%M:%S').time() %}
-                      {% if start <= end %} {{ t >= start and t <= end }}
-                      {% else %} {{ t >= start or t <= end }} {% endif %}
-                sequence:
-                  - delay:
-                      minutes: !input failsafe_timer_night
-                  - service: light.turn_off
-                    target:
-                      entity_id: !input main_lights
-                  - service: light.turn_off
-                    target:
-                      entity_id: !input night_lights
-                  - service: logbook.log
-                    data:
-                      name: Rörelsestyrning
-                      message: >
-                        Failsafe natt utförd; alla tända nattlampor & huvudlampor av efter !input failsafe_timer_night min.
+          - delay:
+              minutes: !input failsafe_timer_night
+          - service: light.turn_off
+            target:
+              entity_id: !input main_lights
+          - service: light.turn_off
+            target:
+              entity_id: !input night_lights
+          - service: logbook.log
+            data:
+              name: Rörelsestyrning
+              message: >
+                Failsafe natt utförd; alla tända nattlampor & huvudlampor av efter !input failsafe_timer_night min.
