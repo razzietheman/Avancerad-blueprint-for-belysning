@@ -6,7 +6,6 @@ blueprint:
     snapshots och loggning. Auto-off-tider körs bara om ingen fast avstängningstid är aktiv.
   domain: automation
   input:
-    
     # --- Sensorer & brytare ---
     
     motion_sensors:
@@ -381,7 +380,6 @@ variables:
 condition: []
 
 action:
-
   # --- Rörelse/Brytare PÅ ---
   
   - choose:
@@ -451,15 +449,13 @@ action:
                             value_template: "{{ day_lights_var | length > 0 }}"
                         sequence:
                           - service: light.turn_on
-                            target:
-                              entity_id: !input day_lights
+                            target: !input day_lights
                       - conditions:
                           - condition: template
                             value_template: "{{ main_lights_var | length > 0 }}"
                         sequence:
                           - service: light.turn_on
-                            target:
-                              entity_id: !input main_lights
+                            target: !input main_lights
 
           # --- Nattscen ---
           
@@ -485,15 +481,13 @@ action:
                             value_template: "{{ night_lights_var | length > 0 }}"
                         sequence:
                           - service: light.turn_on
-                            target:
-                              entity_id: !input night_lights
+                            target: !input night_lights
                       - conditions:
                           - condition: template
                             value_template: "{{ main_lights_var | length > 0 }}"
                         sequence:
                           - service: light.turn_on
-                            target:
-                              entity_id: !input main_lights
+                            target: !input main_lights
 
           # --- Spara senaste scen ---
           
@@ -533,8 +527,7 @@ action:
                     value_template: "{{ main_lights_var | length > 0 }}"
                 sequence:
                   - service: light.turn_off
-                    target:
-                      entity_id: !input main_lights
+                    target: !input main_lights
           - delay:
               minutes: !input auto_off_day
           - choose:
@@ -543,8 +536,7 @@ action:
                     value_template: "{{ day_lights_var | length > 0 }}"
                 sequence:
                   - service: light.turn_off
-                    target:
-                      entity_id: !input day_lights
+                    target: !input day_lights
           - delay:
               minutes: !input auto_off_night
           - choose:
@@ -553,8 +545,7 @@ action:
                     value_template: "{{ night_lights_var | length > 0 }}"
                 sequence:
                   - service: light.turn_off
-                    target:
-                      entity_id: !input night_lights
+                    target: !input night_lights
           - service: logbook.log
             data:
               name: Rörelsestyrning
@@ -578,24 +569,21 @@ action:
                     value_template: "{{ main_lights_var | length > 0 }}"
                 sequence:
                   - service: light.turn_off
-                    target:
-                      entity_id: !input main_lights
+                    target: !input main_lights
           - choose:
               - conditions:
                   - condition: template
                     value_template: "{{ day_lights_var | length > 0 }}"
                 sequence:
                   - service: light.turn_off
-                    target:
-                      entity_id: !input day_lights
+                    target: !input day_lights
           - choose:
               - conditions:
                   - condition: template
                     value_template: "{{ night_lights_var | length > 0 }}"
                 sequence:
                   - service: light.turn_off
-                    target:
-                      entity_id: !input night_lights
+                    target: !input night_lights
           - service: logbook.log
             data:
               name: Rörelsestyrning
@@ -612,29 +600,25 @@ action:
                     value_template: "{{ main_lights_var | length > 0 }}"
                 sequence:
                   - service: light.turn_off
-                    target:
-                      entity_id: !input main_lights
+                    target: !input main_lights
           - choose:
               - conditions:
                   - condition: template
                     value_template: "{{ day_lights_var | length > 0 }}"
                 sequence:
                   - service: light.turn_off
-                    target:
-                      entity_id: !input day_lights
+                    target: !input day_lights
           - choose:
               - conditions:
                   - condition: template
                     value_template: "{{ night_lights_var | length > 0 }}"
                 sequence:
                   - service: light.turn_off
-                    target:
-                      entity_id: !input night_lights
+                    target: !input night_lights
           - service: logbook.log
             data:
               name: Rörelsestyrning
               message: "Fast avstängningstid 2 utförd."
-
 
   # --- Failsafe dag/natt ---
   
@@ -643,9 +627,6 @@ action:
           - condition: template
             value_template: "{{ enable_failsafe_var }}"
         sequence:
-
-          # Dag failsafe
-          
           - choose:
               - conditions:
                   - condition: template
@@ -658,20 +639,10 @@ action:
                 sequence:
                   - delay:
                       minutes: !input failsafe_timer_day
-                  - service: light.turn_off
-                    target:
-                      entity_id: !input main_lights
-                  - service: light.turn_off
-                    target:
-                      entity_id: !input day_lights
                   - service: logbook.log
                     data:
                       name: Rörelsestyrning
-                      message: >
-                        Failsafe dag utförd; alla tända daglampor & huvudlampor av efter !input failsafe_timer_day min.
-
-          # Natt failsafe
-          
+                      message: "Failsafe dag klar."
           - choose:
               - conditions:
                   - condition: template
@@ -684,14 +655,7 @@ action:
                 sequence:
                   - delay:
                       minutes: !input failsafe_timer_night
-                  - service: light.turn_off
-                    target:
-                      entity_id: !input main_lights
-                  - service: light.turn_off
-                    target:
-                      entity_id: !input night_lights
                   - service: logbook.log
                     data:
                       name: Rörelsestyrning
-                      message: >
-                        Failsafe natt utförd; alla tända nattlampor & huvudlampor av efter !input failsafe_timer_night min.
+                      message: "Failsafe natt klar."
