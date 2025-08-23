@@ -177,12 +177,14 @@ blueprint:
         
     day_end:
       name: Dagslut
+      description: "Dagslut kan inte ha samma starttid som Nattstart. Exempel: 22:00:00"
       default: "22:00:00"
       selector:
         time: {}
         
     night_start:
       name: Nattstart
+      description: "Nattstart kan inte ha samma starttid som Dagslut. Exempel: 22:00:01"
       default: "22:00:01"
       selector:
         time: {}
@@ -246,6 +248,7 @@ blueprint:
       selector:
         entity:
           domain: binary_sensor
+          
     enable_failsafe:
       name: Aktivera failsafe
       default: true
