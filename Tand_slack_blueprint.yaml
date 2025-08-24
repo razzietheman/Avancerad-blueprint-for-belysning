@@ -569,7 +569,8 @@ action:
         sequence:
           - service: light.turn_off
             target:
-              entity_id: "{{ main_lights_var + day_lights_var + night_lights_var }}"
+              entity_id: >
+                {{ (main_lights_var + day_lights_var + night_lights_var) | map(attribute='entity_id') | list }}
           - service: logbook.log
             data:
               name: Rörelsestyrning
@@ -616,7 +617,7 @@ action:
                       sequence:
                         - service: light.turn_off
                           target:
-                            entity_id: "{{ fs.lights }}"
+                            entity_id: "{{ fs.lights | map(attribute='entity_id') | list }}"
                         - service: logbook.log
                           data:
                             name: Rörelsestyrning
