@@ -472,7 +472,12 @@ action:
                         sequence:
                           - service: scene.turn_on
                             target:
-                              entity_id: "{{ scene_day_var }}"
+                              entity_id: >
+                                {% if scene_day_var is iterable %}
+                                  {{ scene_day_var[0].entity_id }}
+                                {% else %}
+                                  {{ scene_day_var }}
+                                {% endif %}
                       - conditions:
                           - condition: template
                             value_template: "{{ day_lights_var | length > 0 }}"
@@ -507,7 +512,12 @@ action:
                         sequence:
                           - service: scene.turn_on
                             target:
-                              entity_id: "{{ scene_night_var }}"
+                              entity_id: >
+                                {% if scene_night_var is iterable %}
+                                  {{ scene_night_var[0].entity_id }}
+                                {% else %}
+                                  {{ scene_night_var }}
+                                {% endif %}
                       - conditions:
                           - condition: template
                             value_template: "{{ night_lights_var | length > 0 }}"
