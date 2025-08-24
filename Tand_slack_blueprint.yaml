@@ -686,7 +686,6 @@ action:
                 {% else %}
                   {{ main_lights_var | join(',') }}
                 {% endif %}
-
   - choose:
       - conditions:
           - condition: trigger
