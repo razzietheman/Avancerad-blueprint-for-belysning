@@ -1,5 +1,5 @@
 blueprint:
-  name: Rörelsestyrd belysning 4.9 – Stabil release med korrekt LUX & failsafe dag/natt , stabil release
+  name: Rörelsestyrd belysning 4.10 – Stabil release med förbättrat GUI samt beskrivning på varje enhet, stabil release
   description: >
     Rörelsestyrd belysning med dag/natt, scener, lux, soluppgång/solnedgång,
     arbetsdag, failsafe (separat dag/natt), fasta avstängningstider (med veckodagar),
@@ -11,6 +11,7 @@ blueprint:
     
     motion_sensors:
       name: Rörelsesensor(er)
+      description: "En eller flera rörelsesensorer som ska styra belysningen."
       default: []
       selector:
         entity:
@@ -18,7 +19,8 @@ blueprint:
           multiple: true
           
     optional_switches:
-      name: Valfri manuell brytare
+      name: Smarta uttag eller strömbrytare
+      description: "Valfria smarta uttag eller strömbrytare som kan styra lamporna/enheterna."
       default: []
       selector:
         entity:
@@ -30,6 +32,7 @@ blueprint:
     
     main_lights:
       name: Huvudlampor
+      description: "Lampor som alltid ska tändas vid rörelse (oavsett dag/natt)."
       default: []
       selector:
         target:
@@ -38,17 +41,19 @@ blueprint:
             
     auto_off_main:
       name: Huvudlampors varaktighet (minuter)
+      description: "Hur länge huvudlamporna ska lysa efter senaste rörelse."
       default: 10
       selector:
         number:
-          min: 1
-          max: 120
+          min: 0
+          max: 1200
           step: 1
           unit_of_measurement: min
           mode: box
     
     scene_day:
       name: Dagscen
+      description: "Scen som aktiveras under dagtid (om vald)."
       default: []
       selector:
         entity:
@@ -57,6 +62,7 @@ blueprint:
           
     day_lights:
       name: Dagslampor
+      description: "Lampor som bara ska tändas under dagtid."
       default: []
       selector:
         target:
@@ -65,17 +71,19 @@ blueprint:
     
     auto_off_day:
       name: Dagslampors varaktighet (minuter)
+      description: "Hur länge dagslamporna ska lysa efter senaste rörelse."
       default: 5
       selector:
         number:
-          min: 1
-          max: 120
+          min: 0
+          max: 1200
           step: 1
           unit_of_measurement: min
           mode: box
     
     scene_night:
       name: Nattscen
+      description: "Scen som aktiveras under nattetid (om vald)."
       default: []
       selector:
         entity:
@@ -84,6 +92,7 @@ blueprint:
                     
     night_lights:
       name: Nattlampor
+      description: "Lampor som bara ska tändas under nattetid."
       default: []
       selector:
         target:
@@ -92,11 +101,12 @@ blueprint:
             
     auto_off_night:
       name: Nattlampors varaktighet (minuter)
+      description: "Hur länge nattlamporna ska lysa efter senaste rörelse."
       default: 1
       selector:
         number:
-          min: 1
-          max: 120
+          min: 0
+          max: 1200
           step: 1
           unit_of_measurement: min
           mode: box
@@ -105,6 +115,7 @@ blueprint:
     
     lux_sensor:
       name: Luxsensor
+      description: "Sensor som mäter ljusstyrka (lux)."
       default: []
       selector:
         entity:
@@ -113,6 +124,7 @@ blueprint:
           
     lux_threshold:
       name: Luxgräns
+      description: "Lampor tänds bara om luxvärdet är lägre än denna gräns."
       default: 50
       selector:
         number:
@@ -123,18 +135,21 @@ blueprint:
           
     use_sun_times:
       name: Använd soluppgång/solnedgång
+      description: "Om automationen ska använda solens tider istället för fasta klockslag."
       default: false
       selector:
         boolean: {}
         
     sunset_offset:
       name: Offset för solnedgång
+      description: "Justering av tiden för solnedgång, tidigare eller senare."
       default: "00:00:00"
       selector:
         time: {}
         
     sunrise_offset:
       name: Offset för soluppgång
+      description: "Justering av tiden för soluppgång, tidigare eller senare."
       default: "00:00:00"
       selector:
         time: {}
@@ -144,12 +159,14 @@ blueprint:
     
     fixed_off_time_1:
       name: Fast avstängningstid 1 (valfri)
+      description: "Klockslag då lampor eller smarta uttag automatiskt släcks/stängs av."
       default: []
       selector:
         time: {}
         
     fixed_off_weekdays_1:
       name: Aktiva veckodagar (Fast tid 1)
+      description: Vilka veckodagar avstängningstid 1 ska gälla.
       default: []
       selector:
         select:
@@ -172,12 +189,14 @@ blueprint:
               
     fixed_off_time_2:
       name: Fast avstängningstid 2 (valfri)
+      description: "Klockslag då lampor eller smarta uttag automatiskt släcks/stängs av."
       default: []
       selector:
         time: {}
         
     fixed_off_weekdays_2:
       name: Aktiva veckodagar (Fast tid 2)
+      description: Vilka veckodagar avstängningstid 2 ska gälla.
       default: []
       selector:
         select:
@@ -202,19 +221,21 @@ blueprint:
     
     day_start:
       name: Dagsstart
+      description: "Tidpunkt då dagsläget aktiveras."
       default: "07:00:00"
       selector:
         time: {}
         
     day_end:
       name: Dagslut
-      description: "Dagslut kan inte ha samma starttid som Nattstart. Exempel: 22:00:00"
+      description: "Tidpunkt då dagsläget avaktiveras. Dagslut kan inte ha samma starttid som Nattstart. Exempel: 22:00:00"
       default: "22:00:00"
       selector:
         time: {}
         
     active_weekdays_day:
       name: Aktiva veckodagar (Dag)
+      description: "Välj vilka dagar dagsläget ska vara aktivt."
       default: []
       selector:
         select:
@@ -237,19 +258,21 @@ blueprint:
     
     night_start:
       name: Nattstart
-      description: "Nattstart kan inte ha samma starttid som Dagslut. Exempel: 22:00:01"
+      description: "Tidpunkt då nattläget aktiveras. Nattstart kan inte ha samma starttid som Dagslut. Exempel: 22:00:01"
       default: "22:00:01"
       selector:
         time: {}
         
     night_end:
       name: Nattslut
+      description: "Tidpunkt då nattläget avaktiveras."
       default: "07:00:00"
       selector:
         time: {}
         
     active_weekdays_night:
       name: Aktiva veckodagar (Natt)
+      description: "Välj vilka dagar nattläget ska vara aktivt."
       default: []
       selector:
         select:
@@ -275,6 +298,7 @@ blueprint:
     
     workday_sensor:
       name: Arbetsdagsensor
+      description: "Sensor som indikerar arbetsdagar. Används för att aktivera dagsläget endast under arbetsdagar."
       default: []
       selector:
         entity:
@@ -282,12 +306,14 @@ blueprint:
           
     enable_failsafe:
       name: Aktivera failsafe
+      description: "Slår på failsafe-funktionen som automatiskt släcker lampor om auto-off inte har triggats korrekt."
       default: true
       selector:
         boolean: {}
         
     failsafe_timer_day:
       name: Failsafe-timer dag (minuter)
+      description: "Antal minuter innan dagslampor automatiskt släcks om auto-off inte har aktiverats som förväntat."
       default: 15
       selector:
         number:
@@ -298,6 +324,7 @@ blueprint:
           
     failsafe_timer_night:
       name: Failsafe-timer natt (minuter)
+      description: "Antal minuter innan nattlampor automatiskt släcks om auto-off inte har aktiverats som förväntat."
       default: 15
       selector:
         number:
@@ -308,6 +335,7 @@ blueprint:
           
     input_text_last_scene:
       name: Input Text - Senaste scen
+      description: "Input Text-enhet som sparar namnet på den senast aktiva scenen."
       default: []
       selector:
         entity:
@@ -537,14 +565,14 @@ action:
                 dagslampor {{ auto_off_day_var }} min,
                 nattlampor {{ auto_off_night_var }} min.
 
-  # --- Fasta avstängningstider ---
+  # --- Fasta avstängningstider med arbetsdagsensor ---
   
   - choose:
       - conditions:
           - condition: trigger
             id: fixed_off_1
           - condition: template
-            value_template: "{{ now().strftime('%a').lower() in fixed_off_weekdays_1_var }}"
+            value_template: "{{ workday_sensor_var == [] or is_state(workday_sensor_var[0], 'on') }}"
         sequence:
           - service: light.turn_off
             target:
@@ -553,11 +581,12 @@ action:
             data:
               name: Rörelsestyrning
               message: "Fast avstängningstid 1 utförd."
+              
       - conditions:
           - condition: trigger
             id: fixed_off_2
           - condition: template
-            value_template: "{{ now().strftime('%a').lower() in fixed_off_weekdays_2_var }}"
+            value_template: "{{ workday_sensor_var != [] and not is_state(workday_sensor_var[0], 'on') }}"
         sequence:
           - service: light.turn_off
             target:
