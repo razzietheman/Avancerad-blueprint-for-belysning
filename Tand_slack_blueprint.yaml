@@ -569,7 +569,7 @@ action:
               name: Rörelsestyrning
               message: "Dag/natt PÅ aktiverad via rörelse eller brytare."
 
-  # --- Rörelse/Brytare AV med auto-off ---
+  # --- Auto-off för Huvudlampor ---
   
   - choose:
       - conditions:
@@ -584,6 +584,48 @@ action:
           - service: light.turn_off
             target:
               entity_id: "{{ main_lights_var | map(attribute='entity_id') | list | join(',') }}"
+
+  # --- Auto-off för Dagslampor ---
+  
+  - choose:
+      - conditions:
+          - condition: template
+            value_template: >
+              {% set t = now().time() %}
+              {% set start = strptime(day_start_var, '%H:%M:%S').time() %}
+              {% set end = strptime(day_end_var, '%H:%M:%S').time() %}
+              {% if start <= end %} {{ t >= start and t <= end }}
+              {% else %} {{ t >= start or t <= end }} {% endif %}
+        sequence:
+          - delay: "00:{{ auto_off_day_var }}:00"
+          - service: light.turn_off
+            target:
+              entity_id: "{{ day_lights_var | map(attribute='entity_id') | list | join(',') }}"
+          - service: logbook.log
+            data:
+              name: Rörelsestyrning
+              message: "Auto-off dag: Daglampor släckta."
+
+  # --- Auto-off för Nattlampor ---
+  
+  - choose:
+      - conditions:
+          - condition: template
+            value_template: >
+              {% set t = now().time() %}
+              {% set start = strptime(night_start_var, '%H:%M:%S').time() %}
+              {% set end = strptime(night_end_var, '%H:%M:%S').time() %}
+              {% if start <= end %} {{ t >= start and t <= end }}
+              {% else %} {{ t >= start or t <= end }} {% endif %}
+        sequence:
+          - delay: "00:{{ auto_off_night_var }}:00"
+          - service: light.turn_off
+            target:
+              entity_id: "{{ night_lights_var | map(attribute='entity_id') | list | join(',') }}"
+          - service: logbook.log
+            data:
+              name: Rörelsestyrning
+              message: "Auto-off natt: Nattlampor släckta."
 
   # --- Fasta avstängningstider med veckodag ---
   
