@@ -422,10 +422,10 @@ action:
           
           - condition: template
             value_template: >
-              {% if lux_sensor_var | length == 0 %}
+              {% if lux_sensor_var == '' %}
                 true
               {% else %}
-                {% set val = states(lux_sensor_var[0]).state %}
+                {% set val = states(lux_sensor_var).state %}
                 {% if val in ['unknown', 'unavailable', 'none', 'None', ''] %}
                   false
                 {% else %}
@@ -454,10 +454,10 @@ action:
           
           - condition: template
             value_template: >
-              {% if workday_sensor_var == [] %}
+              {% if workday_sensor_var == '' %}
                 true
               {% else %}
-                {{ is_state(workday_sensor_var[0], 'on') }}
+                {{ is_state(workday_sensor_var, 'on') }}
               {% endif %}
         sequence:
 
@@ -466,7 +466,7 @@ action:
           - choose:
               - conditions:
                   - condition: template
-                    value_template: "{{ main_lights_var | length > 0 }}"
+                    value_template: "{{ main_lights_var != '' }}"
                 sequence:
                   - service: scene.create
                     data:
@@ -503,7 +503,7 @@ action:
                               entity_id: "{{ scene_day_var }}"
                       - conditions:
                           - condition: template
-                            value_template: "{{ day_lights_var | length > 0 }}"
+                            value_template: "{{ day_lights_var != '' }}"
                         sequence:
                           - service: light.turn_on
                             target:
@@ -515,7 +515,7 @@ action:
                                 {% endif %}
                       - conditions:
                           - condition: template
-                            value_template: "{{ main_lights_var | length > 0 }}"
+                            value_template: "{{ main_lights_var != '' }}"
                         sequence:
                           - service: light.turn_on
                             target:
@@ -551,7 +551,7 @@ action:
                               entity_id: "{{ scene_night_var }}"
                       - conditions:
                           - condition: template
-                            value_template: "{{ night_lights_var | length > 0 }}"
+                            value_template: "{{ night_lights_var != '' }}"
                         sequence:
                           - service: light.turn_on
                             target:
@@ -563,7 +563,7 @@ action:
                                 {% endif %}
                       - conditions:
                           - condition: template
-                            value_template: "{{ main_lights_var | length > 0 }}"
+                            value_template: "{{ main_lights_var != '' }}"
                         sequence:
                           - service: light.turn_on
                             target:
@@ -579,11 +579,11 @@ action:
           - choose:
               - conditions:
                   - condition: template
-                    value_template: "{{ last_scene_entity | length > 0 }}"
+                    value_template: "{{ last_scene_entity != '' }}"
                 sequence:
                   - service: input_text.set_value
                     data:
-                      entity_id: "{{ last_scene_entity | join(',') }}"
+                      entity_id: "{{ last_scene_entity }}"
                       value: "dag/natt PÅ"
 
           # --- Loggning ---
