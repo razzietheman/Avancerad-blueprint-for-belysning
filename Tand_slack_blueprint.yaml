@@ -451,7 +451,7 @@ action:
                   - service: scene.create
                     data:
                       scene_id: snapshot_before_on
-                      snapshot_entities: {{ main_lights_var }}
+                      snapshot_entities: "{{ main_lights_var }}"
 
           # --- Dagscen ---
           
