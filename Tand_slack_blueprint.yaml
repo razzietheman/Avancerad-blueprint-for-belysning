@@ -417,10 +417,9 @@ action:
                 id: motion_on
               - condition: trigger
                 id: switch_on
-          - condition: template
-               
-            # --- Luxkontroll ---
-            
+          
+          # --- Luxkontroll ---
+          
           - condition: template
             value_template: >
               {% set val = states(lux_sensor_var) %}
@@ -429,24 +428,33 @@ action:
               {% else %}
                 {{ val | float(0) < lux_threshold_var }}
               {% endif %}
-            
-            # --- Dagkontroll ---
-            
+          
+          # --- Dagkontroll ---
+          
+          - condition: template
             value_template: >
               {% if not use_sun_times_var %}
                 {% set t = now().time() %}
                 {% set start = strptime(day_start_var, '%H:%M:%S').time() %}
                 {% set end = strptime(day_end_var, '%H:%M:%S').time() %}
-                {% if start <= end %} {{ t >= start and t <= end }}
-                {% else %} {{ t >= start or t <= end }} {% endif %}
-              {% else %} true {% endif %}
+                {% if start <= end %}
+                  {{ t >= start and t <= end }}
+                {% else %}
+                  {{ t >= start or t <= end }}
+                {% endif %}
+              {% else %}
+                true
+              {% endif %}
+          
+          # --- Arbetsdag ---
+          
           - condition: template
-            
-            # --- Arbetsdag ---
-            
             value_template: >
-              {% if workday_sensor_var == [] %} true
-              {% else %} {{ is_state(workday_sensor_var[0].entity_id,'on') }} {% endif %}
+              {% if workday_sensor_var == [] %}
+                true
+              {% else %}
+                {{ is_state(workday_sensor_var[0].entity_id,'on') }}
+              {% endif %}
         sequence:
 
           # --- Snapshot ---
@@ -477,8 +485,11 @@ action:
                       {% set t = now().time() %}
                       {% set start = strptime(day_start_var, '%H:%M:%S').time() %}
                       {% set end = strptime(day_end_var, '%H:%M:%S').time() %}
-                      {% if start <= end %} {{ t >= start and t <= end }}
-                      {% else %} {{ t >= start or t <= end }} {% endif %}
+                      {% if start <= end %}
+                        {{ t >= start and t <= end }}
+                      {% else %}
+                        {{ t >= start or t <= end }}
+                      {% endif %}
                 sequence:
                   - choose:
                       - conditions:
@@ -517,8 +528,11 @@ action:
                       {% set t = now().time() %}
                       {% set start = strptime(night_start_var, '%H:%M:%S').time() %}
                       {% set end = strptime(night_end_var, '%H:%M:%S').time() %}
-                      {% if start <= end %} {{ t >= start and t <= end }}
-                      {% else %} {{ t >= start or t <= end }} {% endif %}
+                      {% if start <= end %}
+                        {{ t >= start and t <= end }}
+                      {% else %}
+                        {{ t >= start or t <= end }}
+                      {% endif %}
                 sequence:
                   - choose:
                       - conditions:
@@ -592,8 +606,11 @@ action:
               {% set t = now().time() %}
               {% set start = strptime(day_start_var, '%H:%M:%S').time() %}
               {% set end = strptime(day_end_var, '%H:%M:%S').time() %}
-              {% if start <= end %} {{ t >= start and t <= end }}
-              {% else %} {{ t >= start or t <= end }} {% endif %}
+              {% if start <= end %}
+                {{ t >= start and t <= end }}
+              {% else %}
+                {{ t >= start or t <= end }}
+              {% endif %}
         sequence:
           - delay: "00:{{ auto_off_day_var }}:00"
           - service: light.turn_off
@@ -613,8 +630,11 @@ action:
               {% set t = now().time() %}
               {% set start = strptime(night_start_var, '%H:%M:%S').time() %}
               {% set end = strptime(night_end_var, '%H:%M:%S').time() %}
-              {% if start <= end %} {{ t >= start and t <= end }}
-              {% else %} {{ t >= start or t <= end }} {% endif %}
+              {% if start <= end %}
+                {{ t >= start and t <= end }}
+              {% else %}
+                {{ t >= start or t <= end }}
+              {% endif %}
         sequence:
           - delay: "00:{{ auto_off_night_var }}:00"
           - service: light.turn_off
