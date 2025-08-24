@@ -1,5 +1,5 @@
 blueprint:
-  name: Rörelsestyrd belysning 4.10 – Stabil release med förbättrat GUI samt beskrivning på varje enhet, stabil release
+  name: Rörelsestyrd belysning 4.11 – Stabil release med förbättrat GUI samt beskrivning på varje enhet, förbättrad failsafe-logik , stabil release
   description: >
     Rörelsestyrd belysning med dag/natt, scener, lux, soluppgång/solnedgång,
     arbetsdag, failsafe (separat dag/natt), fasta avstängningstider (med veckodagar),
@@ -392,7 +392,6 @@ variables:
 condition: []
 
 action:
-  
   # --- Rörelse/Brytare PÅ ---
   
   - choose:
@@ -596,7 +595,7 @@ action:
               name: Rörelsestyrning
               message: "Fast avstängningstid 2 utförd."
 
-  # --- Failsafe dag/natt ---
+  # --- Failsafe dag/natt (uppdaterad logik med flera sensorer och auto-off) ---
   
   - choose:
       - conditions:
@@ -618,9 +617,9 @@ action:
                     - conditions:
                         - condition: template
                           value_template: >
-                            {% set motion_ok = motion_sensors | length > 0 and is_state(motion_sensors[0], 'off') %}
-                            {% set motion_missing = motion_sensors | length == 0 %}
-                            {{ motion_ok or motion_missing }}
+                            {% set any_motion_on = motion_sensors | map('states') | select('equalto','on') | list | count > 0 %}
+                            {% set lights_on = fs.lights | map('states') | select('equalto','on') | list | count > 0 %}
+                            {{ not any_motion_on and lights_on }}
                       sequence:
                         - service: light.turn_off
                           target:
@@ -629,4 +628,4 @@ action:
                           data:
                             name: Rörelsestyrning
                             message: >
-                              Failsafe {{ fs.name }}: Lamporna släcktes efter {{ fs.timer }} min utan rörelse eller sensor saknas.
+                              Failsafe {{ fs.name }}: Lamporna släcktes efter {{ fs.timer }} min, alla sensorer off och lampor fortfarande på.
