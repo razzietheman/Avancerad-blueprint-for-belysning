@@ -422,24 +422,18 @@ action:
                 id: motion_on
               - condition: trigger
                 id: switch_on
-          
-          # --- Luxkontroll ---
-          
           - condition: template
             value_template: >
-              {% if lux_sensor_var == [] %}
+              {% if lux_sensor_var == '' %}
                 true
               {% else %}
-                {% set val = states(lux_sensor_var|string) %}
-                {% if val in ['unknown','unavailable','none','None',''] %}
+                {% set val = states(lux_sensor_var).state %}
+                {% if val in ['unknown', 'unavailable', 'none', 'None', ''] %}
                   false
                 {% else %}
                   {{ val | float < lux_threshold_var }}
                 {% endif %}
               {% endif %}
-          
-          # --- Dagkontroll ---
-          
           - condition: template
             value_template: >
               {% if not use_sun_times_var %}
@@ -454,12 +448,9 @@ action:
               {% else %}
                 true
               {% endif %}
-          
-          # --- Arbetsdag ---
-          
           - condition: template
             value_template: >
-              {% if workday_sensor_var == [] %}
+              {% if workday_sensor_var == '' %}
                 true
               {% else %}
                 {{ is_state(workday_sensor_var, 'on') }}
@@ -695,6 +686,7 @@ action:
                 {% else %}
                   {{ main_lights_var | join(',') }}
                 {% endif %}
+
   - choose:
       - conditions:
           - condition: trigger
