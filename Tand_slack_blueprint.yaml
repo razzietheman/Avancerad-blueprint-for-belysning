@@ -1,14 +1,13 @@
 blueprint:
-  name: Rörelsestyrd belysning 4.13 – Stabil release med förbättrat GUI samt beskrivning på varje enhet, förbättrad failsafe-logik , stabil release
+  name: Rörelsestyrd belysning 4.13 – Stabil release
   description: >
     Rörelsestyrd belysning med dag/natt, scener, lux, soluppgång/solnedgång,
-    arbetsdag, failsafe (separat dag/natt), fasta avstängningstider (med veckodagar),
-    snapshots och loggning. Auto-off-tider körs bara om ingen fast avstängningstid är aktiv.
+    arbetsdag, failsafe, fasta avstängningstider, snapshots och loggning.
   domain: automation
   input:
-  
+
     # --- Sensorer & brytare ---
-  
+    
     motion_sensors:
       name: Rörelsesensor(er)
       description: "En eller flera rörelsesensorer som ska styra belysningen."
@@ -40,7 +39,6 @@ blueprint:
 
     auto_off_main:
       name: Huvudlampors varaktighet (minuter)
-      description: "Hur länge huvudlamporna ska lysa efter senaste rörelse."
       default: 10
       selector:
         number:
@@ -52,7 +50,6 @@ blueprint:
 
     scene_day:
       name: Dagscen
-      description: "Scen som aktiveras under dagtid (om vald)."
       default: []
       selector:
         entity:
@@ -61,7 +58,6 @@ blueprint:
 
     day_lights:
       name: Dagslampor
-      description: "Lampor som bara ska tändas under dagtid."
       default: []
       selector:
         target:
@@ -70,7 +66,6 @@ blueprint:
 
     auto_off_day:
       name: Dagslampors varaktighet (minuter)
-      description: "Hur länge dagslamporna ska lysa efter senaste rörelse."
       default: 5
       selector:
         number:
@@ -82,7 +77,6 @@ blueprint:
 
     scene_night:
       name: Nattscen
-      description: "Scen som aktiveras under nattetid (om vald)."
       default: []
       selector:
         entity:
@@ -91,7 +85,6 @@ blueprint:
 
     night_lights:
       name: Nattlampor
-      description: "Lampor som bara ska tändas under nattetid."
       default: []
       selector:
         target:
@@ -100,7 +93,6 @@ blueprint:
 
     auto_off_night:
       name: Nattlampors varaktighet (minuter)
-      description: "Hur länge nattlamporna ska lysa efter senaste rörelse."
       default: 1
       selector:
         number:
@@ -114,7 +106,6 @@ blueprint:
     
     lux_sensor:
       name: Luxsensor
-      description: "Sensor som mäter ljusstyrka (lux)."
       default: []
       selector:
         entity:
@@ -123,7 +114,6 @@ blueprint:
 
     lux_threshold:
       name: Luxgräns
-      description: "Lampor tänds bara om luxvärdet är lägre än denna gräns."
       default: 50
       selector:
         number:
@@ -134,21 +124,18 @@ blueprint:
 
     use_sun_times:
       name: Använd soluppgång/solnedgång
-      description: "Om automationen ska använda solens tider istället för fasta klockslag."
       default: false
       selector:
         boolean: {}
 
     sunset_offset:
       name: Offset för solnedgång
-      description: "Justering av tiden för solnedgång, tidigare eller senare."
       default: "00:00:00"
       selector:
         time: {}
 
     sunrise_offset:
       name: Offset för soluppgång
-      description: "Justering av tiden för soluppgång, tidigare eller senare."
       default: "00:00:00"
       selector:
         time: {}
@@ -157,14 +144,12 @@ blueprint:
     
     fixed_off_time_1:
       name: Fast avstängningstid 1 (valfri)
-      description: "Klockslag då lampor eller smarta uttag automatiskt släcks/stängs av."
       default: []
       selector:
         time: {}
 
     fixed_off_weekdays_1:
       name: Aktiva veckodagar (Fast tid 1)
-      description: Vilka veckodagar avstängningstid 1 ska gälla.
       default: []
       selector:
         select:
@@ -187,14 +172,12 @@ blueprint:
 
     fixed_off_time_2:
       name: Fast avstängningstid 2 (valfri)
-      description: "Klockslag då lampor eller smarta uttag automatiskt släcks/stängs av."
       default: []
       selector:
         time: {}
 
     fixed_off_weekdays_2:
       name: Aktiva veckodagar (Fast tid 2)
-      description: Vilka veckodagar avstängningstid 2 ska gälla.
       default: []
       selector:
         select:
@@ -219,21 +202,18 @@ blueprint:
     
     day_start:
       name: Dagsstart
-      description: "Tidpunkt då dagsläget aktiveras."
       default: "07:00:00"
       selector:
         time: {}
 
     day_end:
       name: Dagslut
-      description: "Tidpunkt då dagsläget avaktiveras."
       default: "22:00:00"
       selector:
         time: {}
 
     active_weekdays_day:
       name: Aktiva veckodagar (Dag)
-      description: "Välj vilka dagar dagsläget ska vara aktivt."
       default: []
       selector:
         select:
@@ -256,21 +236,18 @@ blueprint:
 
     night_start:
       name: Nattstart
-      description: "Tidpunkt då nattläget aktiveras."
       default: "22:00:01"
       selector:
         time: {}
 
     night_end:
       name: Nattslut
-      description: "Tidpunkt då nattläget avaktiveras."
       default: "07:00:00"
       selector:
         time: {}
 
     active_weekdays_night:
       name: Aktiva veckodagar (Natt)
-      description: "Välj vilka dagar nattläget ska vara aktivt."
       default: []
       selector:
         select:
@@ -295,7 +272,6 @@ blueprint:
     
     workday_sensor:
       name: Arbetsdagsensor
-      description: "Sensor som indikerar arbetsdagar."
       default: []
       selector:
         entity:
@@ -303,14 +279,12 @@ blueprint:
 
     enable_failsafe:
       name: Aktivera failsafe
-      description: "Slår på failsafe-funktionen som automatiskt släcker lampor om auto-off inte har triggats korrekt."
       default: true
       selector:
         boolean: {}
 
     failsafe_timer_day:
       name: Failsafe-timer dag (minuter)
-      description: "Antal minuter innan dagslampor automatiskt släcks om auto-off inte har aktiverats som förväntat."
       default: 15
       selector:
         number:
@@ -321,7 +295,6 @@ blueprint:
 
     failsafe_timer_night:
       name: Failsafe-timer natt (minuter)
-      description: "Antal minuter innan nattlampor automatiskt släcks om auto-off inte har aktiverats som förväntat."
       default: 15
       selector:
         number:
@@ -332,7 +305,6 @@ blueprint:
 
     input_text_last_scene:
       name: Input Text - Senaste scen
-      description: "Input Text-enhet som sparar namnet på den senast aktiva scenen."
       default: []
       selector:
         entity:
@@ -421,12 +393,8 @@ action:
               {% if lux_sensor_var == [] %}
                 true
               {% else %}
-                {% set val = states(lux_sensor_var[0].entity_id) %}
-                {% if val in ['unknown','unavailable','none','None',''] %}
-                  false
-                {% else %}
-                  {{ val | float < lux_threshold_var }}
-                {% endif %}
+                {% set val = states(lux_sensor_var[0].entity_id) | float(default=9999) %}
+                {{ val < lux_threshold_var }}
               {% endif %}
           - condition: template
             value_template: >
@@ -442,7 +410,7 @@ action:
               {% if workday_sensor_var == [] %} true
               {% else %} {{ is_state(workday_sensor_var[0].entity_id,'on') }} {% endif %}
         sequence:
-          
+
           # --- Snapshot ---
           
           - choose:
@@ -452,8 +420,8 @@ action:
                 sequence:
                   - service: scene.create
                     data:
-                      scene_id: snapshot_before_on
-                      snapshot_entities: "{{ main_lights_var | map(attribute='entity_id') | list | join(',') }}"
+                      scene_id: "snapshot_before_on_{{ now().timestamp() | int }}"
+                      snapshot_entities: "{{ main_lights_var | map(attribute='entity_id') | join(',') }}"
 
           # --- Dagscen ---
           
@@ -481,14 +449,14 @@ action:
                         sequence:
                           - service: light.turn_on
                             target:
-                              entity_id: "{{ day_lights_var | map(attribute='entity_id') | list | join(',') }}"
+                              entity_id: "{{ day_lights_var | map(attribute='entity_id') | join(',') }}"
                       - conditions:
                           - condition: template
                             value_template: "{{ main_lights_var | length > 0 }}"
                         sequence:
                           - service: light.turn_on
                             target:
-                              entity_id: "{{ main_lights_var | map(attribute='entity_id') | list | join(',') }}"
+                              entity_id: "{{ main_lights_var | map(attribute='entity_id') | join(',') }}"
 
           # --- Nattscen ---
           
@@ -516,14 +484,14 @@ action:
                         sequence:
                           - service: light.turn_on
                             target:
-                              entity_id: "{{ night_lights_var | map(attribute='entity_id') | list | join(',') }}"
+                              entity_id: "{{ night_lights_var | map(attribute='entity_id') | join(',') }}"
                       - conditions:
                           - condition: template
                             value_template: "{{ main_lights_var | length > 0 }}"
                         sequence:
                           - service: light.turn_on
                             target:
-                              entity_id: "{{ main_lights_var | map(attribute='entity_id') | list | join(',') }}"
+                              entity_id: "{{ main_lights_var | map(attribute='entity_id') | join(',') }}"
 
           # --- Spara senaste scen ---
           
@@ -555,12 +523,16 @@ action:
               - condition: trigger
                 id: switch_off
         sequence:
-          - delay: "00:{{ auto_off_main_var }}:00"
+          - delay: >
+              {% set mins = auto_off_main_var | int %}
+              {% set h = (mins // 60) %}
+              {% set m = (mins % 60) %}
+              00:{{ "%02d"|format(h) }}:{{ "%02d"|format(m) }}
           - service: light.turn_off
             target:
-              entity_id: "{{ main_lights_var | map(attribute='entity_id') | list | join(',') }}"
+              entity_id: "{{ main_lights_var | map(attribute='entity_id') | join(',') }}"
 
-  # --- Fasta avstängningstider med arbetsdag och veckodag ---
+  # --- Fasta avstängningstider ---
   
   - choose:
       - conditions:
@@ -572,7 +544,7 @@ action:
         sequence:
           - service: light.turn_off
             target:
-              entity_id: "{{ main_lights_var | map(attribute='entity_id') | list | join(',') }}"
+              entity_id: "{{ main_lights_var | map(attribute='entity_id') | join(',') }}"
   - choose:
       - conditions:
           - condition: trigger
@@ -583,8 +555,7 @@ action:
         sequence:
           - service: light.turn_off
             target:
-              entity_id: "{{ main_lights_var | map(attribute='entity_id') | list | join(',') }}"
-
+              entity_id: "{{ main_lights_var | map(attribute='entity_id') | join(',') }}"
 
   # --- Failsafe dag ---
   
@@ -592,15 +563,19 @@ action:
       - conditions:
           - condition: template
             value_template: "{{ enable_failsafe_var }}"
-      sequence:
-        - delay: "00:{{ failsafe_timer_day_var }}:00"
-        - service: light.turn_off
-          target:
-            entity_id: "{{ day_lights_var | map(attribute='entity_id') | list | join(',') }}"
-        - service: logbook.log
-          data:
-            name: Rörelsestyrning
-            message: "Failsafe dag: Daglampor släckta automatiskt."
+        sequence:
+          - delay: >
+              {% set mins = failsafe_timer_day_var | int %}
+              {% set h = (mins // 60) %}
+              {% set m = (mins % 60) %}
+              00:{{ "%02d"|format(h) }}:{{ "%02d"|format(m) }}
+          - service: light.turn_off
+            target:
+              entity_id: "{{ day_lights_var | map(attribute='entity_id') | join(',') }}"
+          - service: logbook.log
+            data:
+              name: Rörelsestyrning
+              message: "Failsafe dag: Daglampor släckta automatiskt."
 
   # --- Failsafe natt ---
   
@@ -608,12 +583,16 @@ action:
       - conditions:
           - condition: template
             value_template: "{{ enable_failsafe_var }}"
-      sequence:
-        - delay: "00:{{ failsafe_timer_night_var }}:00"
-        - service: light.turn_off
-          target:
-            entity_id: "{{ night_lights_var | map(attribute='entity_id') | list | join(',') }}"
-        - service: logbook.log
-          data:
-            name: Rörelsestyrning
-            message: "Failsafe natt: Nattlampor släckta automatiskt."
+        sequence:
+          - delay: >
+              {% set mins = failsafe_timer_night_var | int %}
+              {% set h = (mins // 60) %}
+              {% set m = (mins % 60) %}
+              00:{{ "%02d"|format(h) }}:{{ "%02d"|format(m) }}
+          - service: light.turn_off
+            target:
+              entity_id: "{{ night_lights_var | map(attribute='entity_id') | join(',') }}"
+          - service: logbook.log
+            data:
+              name: Rörelsestyrning
+              message: "Failsafe natt: Nattlampor släckta automatiskt."
