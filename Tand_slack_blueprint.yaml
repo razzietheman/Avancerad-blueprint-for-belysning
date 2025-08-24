@@ -1,5 +1,5 @@
 blueprint:
-  name: Rörelsestyrd belysning 4.13 – Stabil release med förbättrat GUI samt beskrivning på varje enhet, förbättrad failsafe-logik , stabil release
+  name: Rörelsestyrd belysning 4.14 – Patchad med full funktion och förbättrat GUI
   description: >
     Rörelsestyrd belysning med dag/natt, scener, lux, soluppgång/solnedgång,
     arbetsdag, failsafe (separat dag/natt), fasta avstängningstider (med veckodagar),
@@ -27,7 +27,7 @@ blueprint:
           domain: switch
           multiple: true
     
-        # --- Lampor & scener ---
+    # --- Lampor & scener ---
     
     main_lights:
       name: Huvudlampor
@@ -408,7 +408,7 @@ variables:
 action:
 
   # --- Rörelse/Brytare PÅ ---
-
+  
   - choose:
       - conditions:
           - condition: or
@@ -418,6 +418,9 @@ action:
               - condition: trigger
                 id: switch_on
           - condition: template
+            
+            # --- Luxkontroll ---
+            
             value_template: >-
               {% set sensor_id = lux_sensor_var %}
               {% set val = states(sensor_id) %}
@@ -428,6 +431,9 @@ action:
                 {{ val_float < lux_threshold_var }}
               {% endif %}
           - condition: template
+            
+            # --- Dagkontroll ---
+            
             value_template: >
               {% if not use_sun_times_var %}
                 {% set t = now().time() %}
@@ -437,13 +443,16 @@ action:
                 {% else %} {{ t >= start or t <= end }} {% endif %}
               {% else %} true {% endif %}
           - condition: template
+            
+            # --- Arbetsdag ---
+            
             value_template: >
               {% if workday_sensor_var == [] %} true
               {% else %} {{ is_state(workday_sensor_var[0].entity_id,'on') }} {% endif %}
         sequence:
 
           # --- Snapshot ---
-
+          
           - choose:
               - conditions:
                   - condition: template
@@ -462,7 +471,7 @@ action:
                         {% endif %}
 
           # --- Dagscen ---
-
+          
           - choose:
               - conditions:
                   - condition: template
@@ -502,7 +511,7 @@ action:
                               entity_id: "{{ main_lights_var | map(attribute='entity_id') | list | join(',') }}"
 
           # --- Nattscen ---
-
+          
           - choose:
               - conditions:
                   - condition: template
@@ -542,7 +551,7 @@ action:
                               entity_id: "{{ main_lights_var | map(attribute='entity_id') | list | join(',') }}"
 
           # --- Spara senaste scen ---
-
+          
           - choose:
               - conditions:
                   - condition: template
@@ -554,14 +563,14 @@ action:
                       value: "dag/natt PÅ"
 
           # --- Loggning ---
-
+          
           - service: logbook.log
             data:
               name: Rörelsestyrning
               message: "Dag/natt PÅ aktiverad via rörelse eller brytare."
 
   # --- Rörelse/Brytare AV med auto-off ---
-
+  
   - choose:
       - conditions:
           - condition: or
@@ -576,8 +585,8 @@ action:
             target:
               entity_id: "{{ main_lights_var | map(attribute='entity_id') | list | join(',') }}"
 
-  # --- Fasta avstängningstider med arbetsdag och veckodag ---
-
+  # --- Fasta avstängningstider med veckodag ---
+  
   - choose:
       - conditions:
           - condition: trigger
@@ -602,7 +611,7 @@ action:
               entity_id: "{{ main_lights_var | map(attribute='entity_id') | list | join(',') }}"
 
   # --- Failsafe dag ---
-
+  
   - choose:
       - conditions:
           - condition: template
@@ -618,7 +627,7 @@ action:
               message: "Failsafe dag: Daglampor släckta automatiskt."
 
   # --- Failsafe natt ---
-
+  
   - choose:
       - conditions:
           - condition: template
