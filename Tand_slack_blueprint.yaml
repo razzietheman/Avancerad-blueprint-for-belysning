@@ -357,12 +357,12 @@ trigger:
     entity_id: !input optional_switches
     to: "on"
     id: switch_on
-    condition: "{{ optional_switches != [] }}"
+    
   - platform: state
     entity_id: !input optional_switches
     to: "off"
     id: switch_off
-    condition: "{{ optional_switches != [] }}"
+    
   - platform: sun
     event: sunrise
     offset: !input sunrise_offset
@@ -422,6 +422,8 @@ action:
                 id: motion_on
               - condition: trigger
                 id: switch_on
+          - condition: template
+            value_template: "{{ optional_switches != [] or trigger.id == 'motion_on' }}"
           - condition: template
             value_template: >
               {% if lux_sensor_var == '' %}
@@ -599,6 +601,8 @@ action:
                 id: motion_off
               - condition: trigger
                 id: switch_off
+          - condition: template
+            value_template: "{{ optional_switches != [] or trigger.id == 'motion_off' }}"
         sequence:
           - delay:
               minutes: "{{ auto_off_main_var }}"
@@ -689,6 +693,7 @@ action:
                 {% else %}
                   {{ main_lights_var | join(',') }}
                 {% endif %}
+
   - choose:
       - conditions:
           - condition: trigger
