@@ -1,5 +1,5 @@
 blueprint:
-  name: Rörelsestyrd belysning 4.11 – Stabil release med förbättrat GUI samt beskrivning på varje enhet, förbättrad failsafe-logik , stabil release
+  name: Rörelsestyrd belysning 4.12 – Stabil release med förbättrat GUI samt beskrivning på varje enhet, förbättrad failsafe-logik , stabil release
   description: >
     Rörelsestyrd belysning med dag/natt, scener, lux, soluppgång/solnedgång,
     arbetsdag, failsafe (separat dag/natt), fasta avstängningstider (med veckodagar),
@@ -27,7 +27,6 @@ blueprint:
           domain: switch
           multiple: true
           
-    
     # --- Lampor & scener ---
     
     main_lights:
@@ -89,7 +88,7 @@ blueprint:
         entity:
           domain: scene
           multiple: false
-                    
+          
     night_lights:
       name: Nattlampor
       description: "Lampor som bara ska tändas under nattetid."
@@ -110,7 +109,7 @@ blueprint:
           step: 1
           unit_of_measurement: min
           mode: box
-    
+          
     # --- Lux & sol ---
     
     lux_sensor:
@@ -154,7 +153,6 @@ blueprint:
       selector:
         time: {}
         
-    
     # --- Fasta avstängningstider ---
     
     fixed_off_time_1:
@@ -216,7 +214,7 @@ blueprint:
               value: sat
             - label: Söndag
               value: sun
-                  
+              
     # --- Tidinställningar ---
     
     day_start:
@@ -255,7 +253,7 @@ blueprint:
               value: sat
             - label: Söndag
               value: sun 
-    
+              
     night_start:
       name: Nattstart
       description: "Tidpunkt då nattläget aktiveras. Nattstart kan inte ha samma starttid som Dagslut. Exempel: 22:00:01"
@@ -293,7 +291,6 @@ blueprint:
             - label: Söndag
               value: sun
               
-    
     # --- Arbetsdag & failsafe ---
     
     workday_sensor:
@@ -348,8 +345,16 @@ trigger:
     entity_id: !input motion_sensors
     id: motion_on
   - platform: state
+    entity_id: !input motion_sensors
+    to: "off"
+    id: motion_off
+  - platform: state
     entity_id: !input optional_switches
     id: switch_on
+  - platform: state
+    entity_id: !input optional_switches
+    to: "off"
+    id: switch_off
   - platform: sun
     event: sunrise
     offset: !input sunrise_offset
@@ -360,10 +365,10 @@ trigger:
     id: sunset_trigger
   - platform: time
     at: !input fixed_off_time_1
-    id: fixed_off_time_1_trigger
+    id: fixed_off_1
   - platform: time
     at: !input fixed_off_time_2
-    id: fixed_off_time_2_trigger
+    id: fixed_off_2
 
 mode: restart
 
@@ -398,6 +403,7 @@ variables:
 condition: []
 
 action:
+  
   # --- Rörelse/Brytare PÅ ---
   
   - choose:
@@ -445,7 +451,7 @@ action:
                   - service: scene.create
                     data:
                       scene_id: snapshot_before_on
-                      snapshot_entities: "{{ main_lights_var }}"
+                      snapshot_entities: {{ main_lights_var }}
 
           # --- Dagscen ---
           
@@ -586,7 +592,6 @@ action:
             data:
               name: Rörelsestyrning
               message: "Fast avstängningstid 1 utförd."
-              
       - conditions:
           - condition: trigger
             id: fixed_off_2
