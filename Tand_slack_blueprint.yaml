@@ -452,7 +452,14 @@ action:
                   - service: scene.create
                     data:
                       scene_id: snapshot_before_on
-                      snapshot_entities: "{{ main_lights_var | map(attribute='entity_id') | list | join(',') }}"
+                      snapshot_entities: >-
+                        {% if main_lights_var is string %}
+                          {{ main_lights_var }}
+                        {% elif main_lights_var is mapping %}
+                          {{ main_lights_var.entity_id }}
+                        {% else %}
+                          {{ main_lights_var | map(attribute='entity_id') | list | join(',') }}
+                        {% endif %}
 
           # --- Dagscen ---
 
