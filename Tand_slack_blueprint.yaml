@@ -421,8 +421,10 @@ action:
             
             # --- Luxkontroll ---
             
-          - condition: template  
-            value_template: {{ states(lux_sensor_var) | float(0) < lux_threshold_var }}
+          - condition: template
+            value_template: >
+              {% set val = states(lux_sensor_var) %}
+              {{ val | float(0) < lux_threshold_var }}
             
             # --- Dagkontroll ---
             
