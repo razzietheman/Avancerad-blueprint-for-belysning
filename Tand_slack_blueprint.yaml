@@ -1,4 +1,4 @@
-blueprint:
+blueprint: 
   name: Rörelsestyrd belysning 4.14 – Patchad med full funktion och förbättrat GUI
   description: >
     Rörelsestyrd belysning med dag/natt, scener, lux, soluppgång/solnedgång,
@@ -350,14 +350,19 @@ trigger:
     from: "on"
     to: "off"
     id: motion_off
+    
+  # --- Optional switches fix ---
+  
   - platform: state
     entity_id: !input optional_switches
     to: "on"
     id: switch_on
+    condition: "{{ optional_switches != [] }}"
   - platform: state
     entity_id: !input optional_switches
     to: "off"
     id: switch_off
+    condition: "{{ optional_switches != [] }}"
   - platform: sun
     event: sunrise
     offset: !input sunrise_offset
@@ -422,11 +427,11 @@ action:
           
           - condition: template
             value_template: >
-              {% if lux_sensor_var == '' %}
+              {% if lux_sensor_var == [] %}
                 true
               {% else %}
-                {% set val = states(lux_sensor_var).state %}
-                {% if val in ['unknown', 'unavailable', 'none', 'None', ''] %}
+                {% set val = states(lux_sensor_var|string) %}
+                {% if val in ['unknown','unavailable','none','None',''] %}
                   false
                 {% else %}
                   {{ val | float < lux_threshold_var }}
@@ -454,7 +459,7 @@ action:
           
           - condition: template
             value_template: >
-              {% if workday_sensor_var == '' %}
+              {% if workday_sensor_var == [] %}
                 true
               {% else %}
                 {{ is_state(workday_sensor_var, 'on') }}
