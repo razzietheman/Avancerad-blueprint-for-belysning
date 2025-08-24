@@ -600,7 +600,8 @@ action:
               - condition: trigger
                 id: switch_off
         sequence:
-          - delay: "00:{{ auto_off_main_var }}:00"
+          - delay:
+              minutes: "{{ auto_off_main_var }}"
           - service: light.turn_off
             target:
               entity_id: >
@@ -625,7 +626,8 @@ action:
                 {{ t >= start or t <= end }}
               {% endif %}
         sequence:
-          - delay: "00:{{ auto_off_day_var }}:00"
+          - delay:
+              minutes: "{{ auto_off_day_var }}"
           - service: light.turn_off
             target:
               entity_id: >
@@ -654,7 +656,8 @@ action:
                 {{ t >= start or t <= end }}
               {% endif %}
         sequence:
-          - delay: "00:{{ auto_off_night_var }}:00"
+          - delay:
+              minutes: "{{ auto_off_night_var }}"
           - service: light.turn_off
             target:
               entity_id: >
@@ -710,7 +713,8 @@ action:
           - condition: template
             value_template: "{{ enable_failsafe_var }}"
         sequence:
-          - delay: "00:{{ failsafe_timer_day_var }}:00"
+          - delay:
+              minutes: "{{ failsafe_timer_day_var }}"
           - service: light.turn_off
             target:
               entity_id: >
@@ -731,7 +735,8 @@ action:
           - condition: template
             value_template: "{{ enable_failsafe_var }}"
         sequence:
-          - delay: "00:{{ failsafe_timer_night_var }}:00"
+          - delay:
+              minutes: "{{ failsafe_timer_night_var }}"
           - service: light.turn_off
             target:
               entity_id: >
