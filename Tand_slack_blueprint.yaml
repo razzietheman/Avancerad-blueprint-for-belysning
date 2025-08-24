@@ -418,7 +418,7 @@ action:
               - condition: trigger
                 id: switch_on
           - condition: template
-            value_template: >
+            value_template: >-
               {% set sensor_id = lux_sensor_var %}
               {% set val = states(sensor_id) %}
               {% if val in ['unknown', 'unavailable', 'none', 'None', ''] %}
