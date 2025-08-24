@@ -446,7 +446,7 @@ action:
           - choose:
               - conditions:
                   - condition: template
-                    value_template: "{{ main_lights_var | length > 0 }}"
+                    value_template: "{{ main_lights_var is defined and main_lights_var | length > 0 }}"
                 sequence:
                   - service: scene.create
                     data:
