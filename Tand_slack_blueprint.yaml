@@ -419,11 +419,13 @@ action:
                 id: switch_on
           - condition: template
             value_template: >
-              {% set val = states(lux_sensor_var) %}
-              {% if val in ['unknown','unavailable','none','None',''] %}
+              {% set sensor_id = lux_sensor_var %}
+              {% set val = states(sensor_id) %}
+              {% if val in ['unknown', 'unavailable', 'none', 'None', ''] %}
                 false
               {% else %}
-                {{ val | float < lux_threshold_var }}
+                {% if val in ['unknown', 'unavailable', 'none', 'None', ''] %}
+                {{ val_float < lux_threshold_var }}
               {% endif %}
           - condition: template
             value_template: >
