@@ -1,5 +1,5 @@
 blueprint:
-  name: Rörelsestyrd belysning 4.12 – Stabil release med förbättrat GUI samt beskrivning på varje enhet, förbättrad failsafe-logik , stabil release
+  name: Rörelsestyrd belysning 4.13 – Stabil release med förbättrat GUI samt beskrivning på varje enhet, förbättrad failsafe-logik , stabil release
   description: >
     Rörelsestyrd belysning med dag/natt, scener, lux, soluppgång/solnedgång,
     arbetsdag, failsafe (separat dag/natt), fasta avstängningstider (med veckodagar),
@@ -403,9 +403,9 @@ variables:
 condition: []
 
 action:
-  
+
   # --- Rörelse/Brytare PÅ ---
-  
+
   - choose:
       - conditions:
           - condition: or
@@ -419,7 +419,7 @@ action:
               {% if lux_sensor_var == [] %}
                 true
               {% else %}
-                {% set val = states(lux_sensor_var[0]) %}
+                {% set val = states(lux_sensor_var[0].entity_id) %}
                 {% if val in ['unknown','unavailable','none','None',''] %}
                   false
                 {% else %}
@@ -438,23 +438,23 @@ action:
           - condition: template
             value_template: >
               {% if workday_sensor_var == [] %} true
-              {% else %} {{ is_state(workday_sensor_var[0],'on') }} {% endif %}
+              {% else %} {{ is_state(workday_sensor_var[0].entity_id,'on') }} {% endif %}
         sequence:
 
           # --- Snapshot ---
-          
+
           - choose:
               - conditions:
                   - condition: template
-                    value_template: "{{ main_lights_var is defined and main_lights_var | length > 0 }}"
+                    value_template: "{{ main_lights_var | length > 0 }}"
                 sequence:
                   - service: scene.create
                     data:
                       scene_id: snapshot_before_on
-                      snapshot_entities: "{{ main_lights_var }}"
+                      snapshot_entities: "{{ main_lights_var | map(attribute='entity_id') | list }}"
 
           # --- Dagscen ---
-          
+
           - choose:
               - conditions:
                   - condition: template
@@ -468,28 +468,28 @@ action:
                   - choose:
                       - conditions:
                           - condition: template
-                            value_template: "{{ scene_day_var | length > 0 }}"
+                            value_template: "{{ scene_day_var != '' }}"
                         sequence:
                           - service: scene.turn_on
                             target:
-                              entity_id: "{{ scene_day_var[0] }}"
+                              entity_id: "{{ scene_day_var }}"
                       - conditions:
                           - condition: template
                             value_template: "{{ day_lights_var | length > 0 }}"
                         sequence:
                           - service: light.turn_on
                             target:
-                              entity_id: "{{ day_lights_var }}"
+                              entity_id: "{{ day_lights_var | map(attribute='entity_id') | list }}"
                       - conditions:
                           - condition: template
                             value_template: "{{ main_lights_var | length > 0 }}"
                         sequence:
                           - service: light.turn_on
                             target:
-                              entity_id: "{{ main_lights_var }}"
+                              entity_id: "{{ main_lights_var | map(attribute='entity_id') | list }}"
 
           # --- Nattscen ---
-          
+
           - choose:
               - conditions:
                   - condition: template
@@ -503,28 +503,28 @@ action:
                   - choose:
                       - conditions:
                           - condition: template
-                            value_template: "{{ scene_night_var | length > 0 }}"
+                            value_template: "{{ scene_night_var != '' }}"
                         sequence:
                           - service: scene.turn_on
                             target:
-                              entity_id: "{{ scene_night_var[0] }}"
+                              entity_id: "{{ scene_night_var }}"
                       - conditions:
                           - condition: template
                             value_template: "{{ night_lights_var | length > 0 }}"
                         sequence:
                           - service: light.turn_on
                             target:
-                              entity_id: "{{ night_lights_var }}"
+                              entity_id: "{{ night_lights_var | map(attribute='entity_id') | list }}"
                       - conditions:
                           - condition: template
                             value_template: "{{ main_lights_var | length > 0 }}"
                         sequence:
                           - service: light.turn_on
                             target:
-                              entity_id: "{{ main_lights_var }}"
+                              entity_id: "{{ main_lights_var | map(attribute='entity_id') | list }}"
 
           # --- Spara senaste scen ---
-          
+
           - choose:
               - conditions:
                   - condition: template
@@ -532,18 +532,18 @@ action:
                 sequence:
                   - service: input_text.set_value
                     data:
-                      entity_id: "{{ last_scene_entity[0] }}"
+                      entity_id: "{{ last_scene_entity[0].entity_id }}"
                       value: "dag/natt PÅ"
 
           # --- Loggning ---
-          
+
           - service: logbook.log
             data:
               name: Rörelsestyrning
               message: "Dag/natt PÅ aktiverad via rörelse eller brytare."
 
   # --- Rörelse/Brytare AV med auto-off ---
-  
+
   - choose:
       - conditions:
           - condition: or
@@ -553,28 +553,10 @@ action:
               - condition: trigger
                 id: switch_off
         sequence:
-          - delay:
-              minutes: "{{ auto_off_main_var }}"
+          - delay: "00:{{ auto_off_main_var }}:00"
           - service: light.turn_off
             target:
-              entity_id: "{{ main_lights_var }}"
-          - delay:
-              minutes: "{{ auto_off_day_var }}"
-          - service: light.turn_off
-            target:
-              entity_id: "{{ day_lights_var }}"
-          - delay:
-              minutes: "{{ auto_off_night_var }}"
-          - service: light.turn_off
-            target:
-              entity_id: "{{ night_lights_var }}"
-          - service: logbook.log
-            data:
-              name: Rörelsestyrning
-              message: >
-                Auto-off timers utförda: huvudlampor {{ auto_off_main_var }} min,
-                dagslampor {{ auto_off_day_var }} min,
-                nattlampor {{ auto_off_night_var }} min.
+              entity_id: "{{ main_lights_var | map(attribute='entity_id') | list }}"
 
   # --- Fasta avstängningstider med arbetsdagsensor ---
   
