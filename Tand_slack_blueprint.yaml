@@ -422,11 +422,11 @@ action:
           
           - condition: template
             value_template: >
-              {% set val = states(lux_sensor_var) %}
+              {% set val = states(lux_sensor_var).state %}
               {% if val in ['unknown', 'unavailable', 'none', 'None', ''] %}
                 false
               {% else %}
-                {{ val | float(0) < lux_threshold_var }}
+                {{ val | float < lux_threshold_var }}
               {% endif %}
           
           # --- Dagkontroll ---
@@ -510,14 +510,24 @@ action:
                         sequence:
                           - service: light.turn_on
                             target:
-                              entity_id: "{{ day_lights_var | map(attribute='entity_id') | list | join(',') }}"
+                              entity_id: >
+                                {% if day_lights_var is string %}
+                                  {{ day_lights_var }}
+                                {% else %}
+                                  {{ day_lights_var | map(attribute='entity_id') | list | join(',') }}
+                                {% endif %}
                       - conditions:
                           - condition: template
                             value_template: "{{ main_lights_var | length > 0 }}"
                         sequence:
                           - service: light.turn_on
                             target:
-                              entity_id: "{{ main_lights_var | map(attribute='entity_id') | list | join(',') }}"
+                              entity_id: >
+                                {% if main_lights_var is string %}
+                                  {{ main_lights_var }}
+                                {% else %}
+                                  {{ main_lights_var | map(attribute='entity_id') | list | join(',') }}
+                                {% endif %}
 
           # --- Nattscen ---
           
