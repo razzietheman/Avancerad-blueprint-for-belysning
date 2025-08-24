@@ -422,11 +422,15 @@ action:
           
           - condition: template
             value_template: >
-              {% set val = states(lux_sensor_var).state %}
-              {% if val in ['unknown', 'unavailable', 'none', 'None', ''] %}
-                false
+              {% if lux_sensor_var | length == 0 %}
+                true
               {% else %}
-                {{ val | float < lux_threshold_var }}
+                {% set val = states(lux_sensor_var[0]).state %}
+                {% if val in ['unknown', 'unavailable', 'none', 'None', ''] %}
+                  false
+                {% else %}
+                  {{ val | float < lux_threshold_var }}
+                {% endif %}
               {% endif %}
           
           # --- Dagkontroll ---
@@ -453,7 +457,7 @@ action:
               {% if workday_sensor_var == [] %}
                 true
               {% else %}
-                {{ is_state(workday_sensor_var[0].entity_id,'on') }}
+                {{ is_state(workday_sensor_var[0], 'on') }}
               {% endif %}
         sequence:
 
@@ -467,13 +471,11 @@ action:
                   - service: scene.create
                     data:
                       scene_id: snapshot_before_on
-                      snapshot_entities: >-
+                      snapshot_entities: >
                         {% if main_lights_var is string %}
                           {{ main_lights_var }}
-                        {% elif main_lights_var is mapping %}
-                          {{ main_lights_var.entity_id }}
                         {% else %}
-                          {{ main_lights_var | map(attribute='entity_id') | list | join(',') }}
+                          {{ main_lights_var | join(',') }}
                         {% endif %}
 
           # --- Dagscen ---
@@ -498,12 +500,7 @@ action:
                         sequence:
                           - service: scene.turn_on
                             target:
-                              entity_id: >
-                                {% if scene_day_var is iterable %}
-                                  {{ scene_day_var[0].entity_id }}
-                                {% else %}
-                                  {{ scene_day_var }}
-                                {% endif %}
+                              entity_id: "{{ scene_day_var }}"
                       - conditions:
                           - condition: template
                             value_template: "{{ day_lights_var | length > 0 }}"
@@ -514,7 +511,7 @@ action:
                                 {% if day_lights_var is string %}
                                   {{ day_lights_var }}
                                 {% else %}
-                                  {{ day_lights_var | map(attribute='entity_id') | list | join(',') }}
+                                  {{ day_lights_var | join(',') }}
                                 {% endif %}
                       - conditions:
                           - condition: template
@@ -526,7 +523,7 @@ action:
                                 {% if main_lights_var is string %}
                                   {{ main_lights_var }}
                                 {% else %}
-                                  {{ main_lights_var | map(attribute='entity_id') | list | join(',') }}
+                                  {{ main_lights_var | join(',') }}
                                 {% endif %}
 
           # --- Nattscen ---
@@ -551,26 +548,31 @@ action:
                         sequence:
                           - service: scene.turn_on
                             target:
-                              entity_id: >
-                                {% if scene_night_var is iterable %}
-                                  {{ scene_night_var[0].entity_id }}
-                                {% else %}
-                                  {{ scene_night_var }}
-                                {% endif %}
+                              entity_id: "{{ scene_night_var }}"
                       - conditions:
                           - condition: template
                             value_template: "{{ night_lights_var | length > 0 }}"
                         sequence:
                           - service: light.turn_on
                             target:
-                              entity_id: "{{ night_lights_var | map(attribute='entity_id') | list | join(',') }}"
+                              entity_id: >
+                                {% if night_lights_var is string %}
+                                  {{ night_lights_var }}
+                                {% else %}
+                                  {{ night_lights_var | join(',') }}
+                                {% endif %}
                       - conditions:
                           - condition: template
                             value_template: "{{ main_lights_var | length > 0 }}"
                         sequence:
                           - service: light.turn_on
                             target:
-                              entity_id: "{{ main_lights_var | map(attribute='entity_id') | list | join(',') }}"
+                              entity_id: >
+                                {% if main_lights_var is string %}
+                                  {{ main_lights_var }}
+                                {% else %}
+                                  {{ main_lights_var | join(',') }}
+                                {% endif %}
 
           # --- Spara senaste scen ---
           
@@ -581,7 +583,7 @@ action:
                 sequence:
                   - service: input_text.set_value
                     data:
-                      entity_id: "{{ last_scene_entity[0].entity_id }}"
+                      entity_id: "{{ last_scene_entity | join(',') }}"
                       value: "dag/natt PÅ"
 
           # --- Loggning ---
@@ -605,7 +607,12 @@ action:
           - delay: "00:{{ auto_off_main_var }}:00"
           - service: light.turn_off
             target:
-              entity_id: "{{ main_lights_var | map(attribute='entity_id') | list | join(',') }}"
+              entity_id: >
+                {% if main_lights_var is string %}
+                  {{ main_lights_var }}
+                {% else %}
+                  {{ main_lights_var | join(',') }}
+                {% endif %}
 
   # --- Auto-off för Dagslampor ---
   
@@ -625,7 +632,12 @@ action:
           - delay: "00:{{ auto_off_day_var }}:00"
           - service: light.turn_off
             target:
-              entity_id: "{{ day_lights_var | map(attribute='entity_id') | list | join(',') }}"
+              entity_id: >
+                {% if day_lights_var is string %}
+                  {{ day_lights_var }}
+                {% else %}
+                  {{ day_lights_var | join(',') }}
+                {% endif %}
           - service: logbook.log
             data:
               name: Rörelsestyrning
@@ -649,7 +661,12 @@ action:
           - delay: "00:{{ auto_off_night_var }}:00"
           - service: light.turn_off
             target:
-              entity_id: "{{ night_lights_var | map(attribute='entity_id') | list | join(',') }}"
+              entity_id: >
+                {% if night_lights_var is string %}
+                  {{ night_lights_var }}
+                {% else %}
+                  {{ night_lights_var | join(',') }}
+                {% endif %}
           - service: logbook.log
             data:
               name: Rörelsestyrning
@@ -667,7 +684,12 @@ action:
         sequence:
           - service: light.turn_off
             target:
-              entity_id: "{{ main_lights_var | map(attribute='entity_id') | list | join(',') }}"
+              entity_id: >
+                {% if main_lights_var is string %}
+                  {{ main_lights_var }}
+                {% else %}
+                  {{ main_lights_var | join(',') }}
+                {% endif %}
   - choose:
       - conditions:
           - condition: trigger
@@ -678,7 +700,12 @@ action:
         sequence:
           - service: light.turn_off
             target:
-              entity_id: "{{ main_lights_var | map(attribute='entity_id') | list | join(',') }}"
+              entity_id: >
+                {% if main_lights_var is string %}
+                  {{ main_lights_var }}
+                {% else %}
+                  {{ main_lights_var | join(',') }}
+                {% endif %}
 
   # --- Failsafe dag ---
   
@@ -690,7 +717,12 @@ action:
           - delay: "00:{{ failsafe_timer_day_var }}:00"
           - service: light.turn_off
             target:
-              entity_id: "{{ day_lights_var | map(attribute='entity_id') | list | join(',') }}"
+              entity_id: >
+                {% if day_lights_var is string %}
+                  {{ day_lights_var }}
+                {% else %}
+                  {{ day_lights_var | join(',') }}
+                {% endif %}
           - service: logbook.log
             data:
               name: Rörelsestyrning
@@ -706,7 +738,12 @@ action:
           - delay: "00:{{ failsafe_timer_night_var }}:00"
           - service: light.turn_off
             target:
-              entity_id: "{{ night_lights_var | map(attribute='entity_id') | list | join(',') }}"
+              entity_id: >
+                {% if night_lights_var is string %}
+                  {{ night_lights_var }}
+                {% else %}
+                  {{ night_lights_var | join(',') }}
+                {% endif %}
           - service: logbook.log
             data:
               name: Rörelsestyrning
