@@ -408,7 +408,7 @@ action:
                 true
               {% else %}
                 {% set val = states(lux_sensor_var[0]) %}
-                {% if val in ['unknown','unavailable'] %}
+                {% if val in ['unknown','unavailable','none','None',''] %}
                   false
                 {% else %}
                   {{ val | float < lux_threshold_var }}
