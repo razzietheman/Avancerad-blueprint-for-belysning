@@ -464,7 +464,7 @@ action:
           - choose:
               - conditions:
                   - condition: template
-                    value_template: "{{ main_lights_var != '' }}"
+                    value_template: "{{ main_lights_var != '' and main_lights_var is not none }}"
                 sequence:
                   - service: scene.create
                     data:
@@ -494,14 +494,14 @@ action:
                   - choose:
                       - conditions:
                           - condition: template
-                            value_template: "{{ scene_day_var != '' }}"
+                            value_template: "{{ scene_day_var != '' and scene_day_var is not none }}"
                         sequence:
                           - service: scene.turn_on
                             target:
                               entity_id: "{{ scene_day_var }}"
                       - conditions:
                           - condition: template
-                            value_template: "{{ day_lights_var != '' }}"
+                            value_template: "{{ day_lights_var != '' and day_lights_var is not none }}"
                         sequence:
                           - service: light.turn_on
                             target:
@@ -513,7 +513,7 @@ action:
                                 {% endif %}
                       - conditions:
                           - condition: template
-                            value_template: "{{ main_lights_var != '' }}"
+                            value_template: "{{ main_lights_var != '' and main_lights_var is not none }}"
                         sequence:
                           - service: light.turn_on
                             target:
@@ -542,14 +542,14 @@ action:
                   - choose:
                       - conditions:
                           - condition: template
-                            value_template: "{{ scene_night_var != '' }}"
+                            value_template: "{{ scene_night_var != '' and scene_night_var is not none }}"
                         sequence:
                           - service: scene.turn_on
                             target:
                               entity_id: "{{ scene_night_var }}"
                       - conditions:
                           - condition: template
-                            value_template: "{{ night_lights_var != '' }}"
+                            value_template: "{{ night_lights_var != '' and night_lights_var is not none }}"
                         sequence:
                           - service: light.turn_on
                             target:
@@ -561,7 +561,7 @@ action:
                                 {% endif %}
                       - conditions:
                           - condition: template
-                            value_template: "{{ main_lights_var != '' }}"
+                            value_template: "{{ main_lights_var != '' and main_lights_var is not none }}"
                         sequence:
                           - service: light.turn_on
                             target:
@@ -577,7 +577,7 @@ action:
           - choose:
               - conditions:
                   - condition: template
-                    value_template: "{{ last_scene_entity != '' }}"
+                    value_template: "{{ last_scene_entity != '' and last_scene_entity is not none }}"
                 sequence:
                   - service: input_text.set_value
                     data:
@@ -606,14 +606,19 @@ action:
         sequence:
           - delay:
               minutes: "{{ auto_off_main_var }}"
-          - service: light.turn_off
-            target:
-              entity_id: >
-                {% if main_lights_var is string %}
-                  {{ main_lights_var }}
-                {% else %}
-                  {{ main_lights_var | join(',') }}
-                {% endif %}
+          - choose:
+              - conditions:
+                  - condition: template
+                    value_template: "{{ main_lights_var != '' and main_lights_var is not none }}"
+                sequence:
+                  - service: light.turn_off
+                    target:
+                      entity_id: >
+                        {% if main_lights_var is string %}
+                          {{ main_lights_var }}
+                        {% else %}
+                          {{ main_lights_var | join(',') }}
+                        {% endif %}
 
   # --- Auto-off för Dagslampor ---
   
@@ -632,14 +637,19 @@ action:
         sequence:
           - delay:
               minutes: "{{ auto_off_day_var }}"
-          - service: light.turn_off
-            target:
-              entity_id: >
-                {% if day_lights_var is string %}
-                  {{ day_lights_var }}
-                {% else %}
-                  {{ day_lights_var | join(',') }}
-                {% endif %}
+          - choose:
+              - conditions:
+                  - condition: template
+                    value_template: "{{ day_lights_var != '' and day_lights_var is not none }}"
+                sequence:
+                  - service: light.turn_off
+                    target:
+                      entity_id: >
+                        {% if day_lights_var is string %}
+                          {{ day_lights_var }}
+                        {% else %}
+                          {{ day_lights_var | join(',') }}
+                        {% endif %}
           - service: logbook.log
             data:
               name: Rörelsestyrning
@@ -662,14 +672,19 @@ action:
         sequence:
           - delay:
               minutes: "{{ auto_off_night_var }}"
-          - service: light.turn_off
-            target:
-              entity_id: >
-                {% if night_lights_var is string %}
-                  {{ night_lights_var }}
-                {% else %}
-                  {{ night_lights_var | join(',') }}
-                {% endif %}
+          - choose:
+              - conditions:
+                  - condition: template
+                    value_template: "{{ night_lights_var != '' and night_lights_var is not none }}"
+                sequence:
+                  - service: light.turn_off
+                    target:
+                      entity_id: >
+                        {% if night_lights_var is string %}
+                          {{ night_lights_var }}
+                        {% else %}
+                          {{ night_lights_var | join(',') }}
+                        {% endif %}
           - service: logbook.log
             data:
               name: Rörelsestyrning
@@ -685,14 +700,19 @@ action:
             value_template: >
               {{ now().strftime('%a').lower() in fixed_off_weekdays_1_var }}
         sequence:
-          - service: light.turn_off
-            target:
-              entity_id: >
-                {% if main_lights_var is string %}
-                  {{ main_lights_var }}
-                {% else %}
-                  {{ main_lights_var | join(',') }}
-                {% endif %}
+          - choose:
+              - conditions:
+                  - condition: template
+                    value_template: "{{ main_lights_var != '' and main_lights_var is not none }}"
+                sequence:
+                  - service: light.turn_off
+                    target:
+                      entity_id: >
+                        {% if main_lights_var is string %}
+                          {{ main_lights_var }}
+                        {% else %}
+                          {{ main_lights_var | join(',') }}
+                        {% endif %}
 
   - choose:
       - conditions:
@@ -702,14 +722,19 @@ action:
             value_template: >
               {{ now().strftime('%a').lower() in fixed_off_weekdays_2_var }}
         sequence:
-          - service: light.turn_off
-            target:
-              entity_id: >
-                {% if main_lights_var is string %}
-                  {{ main_lights_var }}
-                {% else %}
-                  {{ main_lights_var | join(',') }}
-                {% endif %}
+          - choose:
+              - conditions:
+                  - condition: template
+                    value_template: "{{ main_lights_var != '' and main_lights_var is not none }}"
+                sequence:
+                  - service: light.turn_off
+                    target:
+                      entity_id: >
+                        {% if main_lights_var is string %}
+                          {{ main_lights_var }}
+                        {% else %}
+                          {{ main_lights_var | join(',') }}
+                        {% endif %}
 
   # --- Failsafe dag ---
   
@@ -720,14 +745,19 @@ action:
         sequence:
           - delay:
               minutes: "{{ failsafe_timer_day_var }}"
-          - service: light.turn_off
-            target:
-              entity_id: >
-                {% if day_lights_var is string %}
-                  {{ day_lights_var }}
-                {% else %}
-                  {{ day_lights_var | join(',') }}
-                {% endif %}
+          - choose:
+              - conditions:
+                  - condition: template
+                    value_template: "{{ day_lights_var != '' and day_lights_var is not none }}"
+                sequence:
+                  - service: light.turn_off
+                    target:
+                      entity_id: >
+                        {% if day_lights_var is string %}
+                          {{ day_lights_var }}
+                        {% else %}
+                          {{ day_lights_var | join(',') }}
+                        {% endif %}
           - service: logbook.log
             data:
               name: Rörelsestyrning
@@ -742,14 +772,19 @@ action:
         sequence:
           - delay:
               minutes: "{{ failsafe_timer_night_var }}"
-          - service: light.turn_off
-            target:
-              entity_id: >
-                {% if night_lights_var is string %}
-                  {{ night_lights_var }}
-                {% else %}
-                  {{ night_lights_var | join(',') }}
-                {% endif %}
+          - choose:
+              - conditions:
+                  - condition: template
+                    value_template: "{{ night_lights_var != '' and night_lights_var is not none }}"
+                sequence:
+                  - service: light.turn_off
+                    target:
+                      entity_id: >
+                        {% if night_lights_var is string %}
+                          {{ night_lights_var }}
+                        {% else %}
+                          {{ night_lights_var | join(',') }}
+                        {% endif %}
           - service: logbook.log
             data:
               name: Rörelsestyrning
