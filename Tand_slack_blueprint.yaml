@@ -464,7 +464,7 @@ action:
           - choose:
               - conditions:
                   - condition: template
-                    value_template: "{{ main_lights_var != '' and main_lights_var is not none }}"
+                    value_template: "{{ main_lights_var != '' }}"
                 sequence:
                   - service: scene.create
                     data:
@@ -494,14 +494,14 @@ action:
                   - choose:
                       - conditions:
                           - condition: template
-                            value_template: "{{ scene_day_var != '' and scene_day_var is not none }}"
+                            value_template: "{{ scene_day_var != '' }}"
                         sequence:
                           - service: scene.turn_on
                             target:
                               entity_id: "{{ scene_day_var }}"
                       - conditions:
                           - condition: template
-                            value_template: "{{ day_lights_var != '' and day_lights_var is not none }}"
+                            value_template: "{{ day_lights_var != '' }}"
                         sequence:
                           - service: light.turn_on
                             target:
@@ -513,7 +513,7 @@ action:
                                 {% endif %}
                       - conditions:
                           - condition: template
-                            value_template: "{{ main_lights_var != '' and main_lights_var is not none }}"
+                            value_template: "{{ main_lights_var != '' }}"
                         sequence:
                           - service: light.turn_on
                             target:
@@ -542,14 +542,14 @@ action:
                   - choose:
                       - conditions:
                           - condition: template
-                            value_template: "{{ scene_night_var != '' and scene_night_var is not none }}"
+                            value_template: "{{ scene_night_var != '' }}"
                         sequence:
                           - service: scene.turn_on
                             target:
                               entity_id: "{{ scene_night_var }}"
                       - conditions:
                           - condition: template
-                            value_template: "{{ night_lights_var != '' and night_lights_var is not none }}"
+                            value_template: "{{ night_lights_var != '' }}"
                         sequence:
                           - service: light.turn_on
                             target:
@@ -561,7 +561,7 @@ action:
                                 {% endif %}
                       - conditions:
                           - condition: template
-                            value_template: "{{ main_lights_var != '' and main_lights_var is not none }}"
+                            value_template: "{{ main_lights_var != '' }}"
                         sequence:
                           - service: light.turn_on
                             target:
@@ -577,7 +577,7 @@ action:
           - choose:
               - conditions:
                   - condition: template
-                    value_template: "{{ last_scene_entity != '' and last_scene_entity is not none }}"
+                    value_template: "{{ last_scene_entity != '' }}"
                 sequence:
                   - service: input_text.set_value
                     data:
@@ -609,7 +609,7 @@ action:
           - choose:
               - conditions:
                   - condition: template
-                    value_template: "{{ main_lights_var != '' and main_lights_var is not none }}"
+                    value_template: "{{ main_lights_var != '' }}"
                 sequence:
                   - service: light.turn_off
                     target:
@@ -640,7 +640,7 @@ action:
           - choose:
               - conditions:
                   - condition: template
-                    value_template: "{{ day_lights_var != '' and day_lights_var is not none }}"
+                    value_template: "{{ day_lights_var != '' }}"
                 sequence:
                   - service: light.turn_off
                     target:
@@ -675,7 +675,7 @@ action:
           - choose:
               - conditions:
                   - condition: template
-                    value_template: "{{ night_lights_var != '' and night_lights_var is not none }}"
+                    value_template: "{{ night_lights_var != '' }}"
                 sequence:
                   - service: light.turn_off
                     target:
@@ -703,7 +703,7 @@ action:
           - choose:
               - conditions:
                   - condition: template
-                    value_template: "{{ main_lights_var != '' and main_lights_var is not none }}"
+                    value_template: "{{ main_lights_var != '' }}"
                 sequence:
                   - service: light.turn_off
                     target:
@@ -725,7 +725,7 @@ action:
           - choose:
               - conditions:
                   - condition: template
-                    value_template: "{{ main_lights_var != '' and main_lights_var is not none }}"
+                    value_template: "{{ main_lights_var != '' }}"
                 sequence:
                   - service: light.turn_off
                     target:
@@ -748,7 +748,7 @@ action:
           - choose:
               - conditions:
                   - condition: template
-                    value_template: "{{ day_lights_var != '' and day_lights_var is not none }}"
+                    value_template: "{{ day_lights_var != '' }}"
                 sequence:
                   - service: light.turn_off
                     target:
@@ -775,7 +775,7 @@ action:
           - choose:
               - conditions:
                   - condition: template
-                    value_template: "{{ night_lights_var != '' and night_lights_var is not none }}"
+                    value_template: "{{ night_lights_var != '' }}"
                 sequence:
                   - service: light.turn_off
                     target:
