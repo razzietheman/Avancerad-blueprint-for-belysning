@@ -429,11 +429,12 @@ action:
               {% if lux_sensor_var == '' %}
                 true
               {% else %}
-                {% set val = states(lux_sensor_var) %}
-                {% if val in ['unknown', 'unavailable', 'none', 'None', ''] %}
+                {% set raw_val = states(lux_sensor_var) %}
+                {% if raw_val in ['unknown', 'unavailable', 'none', 'None', ''] %}
                   false
                 {% else %}
-                  {{ val | float < lux_threshold_var }}
+                  {% set val = raw_val | replace(',', '.') | float(0) %}
+                  {{ val < lux_threshold_var }}
                 {% endif %}
               {% endif %}
           - condition: template
