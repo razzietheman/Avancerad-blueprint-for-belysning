@@ -423,40 +423,40 @@ action:
               - condition: trigger
                 id: switch_on
           - condition: template
-            value_template: "{{ optional_switches != [] or trigger.id == 'motion_on' }}"
+            value_template: "{{ (optional_switches | default([])) != [] or trigger.id == 'motion_on' }}"
           - condition: template
             value_template: >
-              {% if lux_sensor_var == '' %}
+              {% if lux_sensor_var in ['', [], None] %}
                 true
               {% else %}
-                {% set entity = lux_sensor_var if lux_sensor_var is string else lux_sensor_var[0] %}
-                {% set raw_val = states[entity] %}
-                {% if raw_val.state in ['unknown','unavailable','none','None',''] %}
+                {% if lux_sensor_var is string %}
+                  {% set entity = lux_sensor_var %}
+                {% elif lux_sensor_var is mapping %}
+                  {% set entity = lux_sensor_var.entity_id %}
+                {% else %}
+                  {% set entity = lux_sensor_var[0] %}
+                {% endif %}
+                {% set raw = states.get(entity) %}
+                {% if raw is none or raw.state in ['unknown','unavailable','none','None',''] %}
                   false
                 {% else %}
-                  {{ (raw_val.state | replace(',','.') | float(0)) < lux_threshold_var }}
+                  {{ (raw.state | replace(',','.') | float(0)) < lux_threshold_var }}
                 {% endif %}
               {% endif %}
           - condition: template
-            value_template: >
-              {% if not use_sun_times_var %}
-                {% set t = now().time() %}
-                {% set start = strptime(day_start_var, '%H:%M:%S').time() %}
-                {% set end = strptime(day_end_var, '%H:%M:%S').time() %}
-                {% if start <= end %}
-                  {{ t >= start and t <= end }}
-                {% else %}
-                  {{ t >= start or t <= end }}
-                {% endif %}
-              {% else %}
-                true
-              {% endif %}
+            value_template: "true"
           - condition: template
             value_template: >
-              {% if workday_sensor_var == '' %}
+              {% if workday_sensor_var in ['', [], None] %}
                 true
               {% else %}
-                {{ is_state(workday_sensor_var, 'on') }}
+                {% set w = workday_sensor_var %}
+                {% if w is mapping %}
+                  {% set w = w.entity_id %}
+                {% elif not (w is string) %}
+                  {% set w = w[0] %}
+                {% endif %}
+                {{ is_state(w, 'on') }}
               {% endif %}
         sequence:
 
@@ -613,7 +613,7 @@ action:
               - condition: trigger
                 id: switch_off
           - condition: template
-            value_template: "{{ optional_switches != [] or trigger.id == 'motion_off' }}"
+            value_template: "{{ (optional_switches | default([])) != [] or trigger.id == 'motion_off' }}"
         sequence:
           - delay:
               minutes: "{{ auto_off_main_var }}"
