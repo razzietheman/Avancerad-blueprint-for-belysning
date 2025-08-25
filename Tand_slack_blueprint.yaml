@@ -714,6 +714,32 @@ action:
                         {% else %}
                           {{ main_lights_var | join(',') }}
                         {% endif %}
+          - choose:
+              - conditions:
+                  - condition: template
+                    value_template: "{{ day_lights_var != '' }}"
+                sequence:
+                  - service: light.turn_off
+                    target:
+                      entity_id: >
+                        {% if day_lights_var is string %}
+                          {{ day_lights_var }}
+                        {% else %}
+                          {{ day_lights_var | join(',') }}
+                        {% endif %}
+          - choose:
+              - conditions:
+                  - condition: template
+                    value_template: "{{ night_lights_var != '' }}"
+                sequence:
+                  - service: light.turn_off
+                    target:
+                      entity_id: >
+                        {% if night_lights_var is string %}
+                          {{ night_lights_var }}
+                        {% else %}
+                          {{ night_lights_var | join(',') }}
+                        {% endif %}
 
   - choose:
       - conditions:
@@ -735,6 +761,32 @@ action:
                           {{ main_lights_var }}
                         {% else %}
                           {{ main_lights_var | join(',') }}
+                        {% endif %}
+          - choose:
+              - conditions:
+                  - condition: template
+                    value_template: "{{ day_lights_var != '' }}"
+                sequence:
+                  - service: light.turn_off
+                    target:
+                      entity_id: >
+                        {% if day_lights_var is string %}
+                          {{ day_lights_var }}
+                        {% else %}
+                          {{ day_lights_var | join(',') }}
+                        {% endif %}
+          - choose:
+              - conditions:
+                  - condition: template
+                    value_template: "{{ night_lights_var != '' }}"
+                sequence:
+                  - service: light.turn_off
+                    target:
+                      entity_id: >
+                        {% if night_lights_var is string %}
+                          {{ night_lights_var }}
+                        {% else %}
+                          {{ night_lights_var | join(',') }}
                         {% endif %}
 
   # --- Failsafe dag ---
