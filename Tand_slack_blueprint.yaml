@@ -429,7 +429,8 @@ action:
               {% if lux_sensor_var == '' %}
                 true
               {% else %}
-                {% set raw_val = states(lux_sensor_var) %}
+                {% set entity = lux_sensor_var if lux_sensor_var is string else lux_sensor_var[0] %}
+                {% set raw_val = states[entity] %}
                 {% if raw_val.state in ['unknown','unavailable','none','None',''] %}
                   false
                 {% else %}
