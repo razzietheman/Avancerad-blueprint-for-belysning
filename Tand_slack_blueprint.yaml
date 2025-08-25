@@ -473,6 +473,8 @@ action:
                       snapshot_entities: >
                         {% if main_lights_var is string %}
                           {{ main_lights_var }}
+                        {% elif main_lights_var is mapping %}
+                          {{ main_lights_var.entity_id }}
                         {% else %}
                           {{ main_lights_var | join(',') }}
                         {% endif %}
@@ -509,6 +511,8 @@ action:
                               entity_id: >
                                 {% if day_lights_var is string %}
                                   {{ day_lights_var }}
+                                {% elif day_lights_var is mapping %}
+                                  {{ day_lights_var.entity_id }}
                                 {% else %}
                                   {{ day_lights_var | join(',') }}
                                 {% endif %}
@@ -521,6 +525,8 @@ action:
                               entity_id: >
                                 {% if main_lights_var is string %}
                                   {{ main_lights_var }}
+                                {% elif main_lights_var is mapping %}
+                                  {{ main_lights_var.entity_id }}
                                 {% else %}
                                   {{ main_lights_var | join(',') }}
                                 {% endif %}
@@ -557,6 +563,8 @@ action:
                               entity_id: >
                                 {% if night_lights_var is string %}
                                   {{ night_lights_var }}
+                                {% elif night_lights_var is mapping %}
+                                  {{ night_lights_var.entity_id }}
                                 {% else %}
                                   {{ night_lights_var | join(',') }}
                                 {% endif %}
@@ -569,6 +577,8 @@ action:
                               entity_id: >
                                 {% if main_lights_var is string %}
                                   {{ main_lights_var }}
+                                {% elif main_lights_var is mapping %}
+                                  {{ main_lights_var.entity_id }}
                                 {% else %}
                                   {{ main_lights_var | join(',') }}
                                 {% endif %}
@@ -617,6 +627,8 @@ action:
                       entity_id: >
                         {% if main_lights_var is string %}
                           {{ main_lights_var }}
+                        {% elif main_lights_var is mapping %}
+                          {{ main_lights_var.entity_id }}
                         {% else %}
                           {{ main_lights_var | join(',') }}
                         {% endif %}
@@ -648,6 +660,8 @@ action:
                       entity_id: >
                         {% if day_lights_var is string %}
                           {{ day_lights_var }}
+                        {% elif day_lights_var is mapping %}
+                          {{ day_lights_var.entity_id }}
                         {% else %}
                           {{ day_lights_var | join(',') }}
                         {% endif %}
@@ -683,6 +697,8 @@ action:
                       entity_id: >
                         {% if night_lights_var is string %}
                           {{ night_lights_var }}
+                        {% elif night_lights_var is mapping %}
+                          {{ night_lights_var.entity_id }}
                         {% else %}
                           {{ night_lights_var | join(',') }}
                         {% endif %}
@@ -711,6 +727,8 @@ action:
                       entity_id: >
                         {% if main_lights_var is string %}
                           {{ main_lights_var }}
+                        {% elif main_lights_var is mapping %}
+                          {{ main_lights_var.entity_id }}
                         {% else %}
                           {{ main_lights_var | join(',') }}
                         {% endif %}
@@ -724,6 +742,8 @@ action:
                       entity_id: >
                         {% if day_lights_var is string %}
                           {{ day_lights_var }}
+                        {% elif day_lights_var is mapping %}
+                          {{ day_lights_var.entity_id }}
                         {% else %}
                           {{ day_lights_var | join(',') }}
                         {% endif %}
@@ -737,6 +757,8 @@ action:
                       entity_id: >
                         {% if night_lights_var is string %}
                           {{ night_lights_var }}
+                        {% elif night_lights_var is mapping %}
+                          {{ night_lights_var.entity_id }}
                         {% else %}
                           {{ night_lights_var | join(',') }}
                         {% endif %}
@@ -759,6 +781,8 @@ action:
                       entity_id: >
                         {% if main_lights_var is string %}
                           {{ main_lights_var }}
+                        {% elif main_lights_var is mapping %}
+                          {{ main_lights_var.entity_id }}
                         {% else %}
                           {{ main_lights_var | join(',') }}
                         {% endif %}
@@ -772,6 +796,8 @@ action:
                       entity_id: >
                         {% if day_lights_var is string %}
                           {{ day_lights_var }}
+                        {% elif day_lights_var is mapping %}
+                          {{ day_lights_var.entity_id }}
                         {% else %}
                           {{ day_lights_var | join(',') }}
                         {% endif %}
@@ -785,6 +811,8 @@ action:
                       entity_id: >
                         {% if night_lights_var is string %}
                           {{ night_lights_var }}
+                        {% elif night_lights_var is mapping %}
+                          {{ night_lights_var.entity_id }}
                         {% else %}
                           {{ night_lights_var | join(',') }}
                         {% endif %}
@@ -808,6 +836,8 @@ action:
                       entity_id: >
                         {% if day_lights_var is string %}
                           {{ day_lights_var }}
+                        {% elif day_lights_var is mapping %}
+                          {{ day_lights_var.entity_id }}
                         {% else %}
                           {{ day_lights_var | join(',') }}
                         {% endif %}
@@ -835,6 +865,8 @@ action:
                       entity_id: >
                         {% if night_lights_var is string %}
                           {{ night_lights_var }}
+                        {% elif night_lights_var is mapping %}
+                          {{ night_lights_var.entity_id }}
                         {% else %}
                           {{ night_lights_var | join(',') }}
                         {% endif %}
