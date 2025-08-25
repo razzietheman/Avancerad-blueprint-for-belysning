@@ -423,10 +423,10 @@ action:
               - condition: trigger
                 id: switch_on
           - condition: template
-            value_template: "{{ optional_switches != [] or trigger.id == 'motion_on' }}"
+            value_template: "{{ optional_switches | length > 0 or trigger.id == 'motion_on' }}"
           - condition: template
             value_template: >
-              {% if lux_sensor_var == '' %}
+              {% if lux_sensor_var in ['', None] %}
                 true
               {% else %}
                 {% set raw_val = states(lux_sensor_var) %}
@@ -452,7 +452,7 @@ action:
               {% endif %}
           - condition: template
             value_template: >
-              {% if workday_sensor_var == '' %}
+              {% if workday_sensor_var in ['', None] %}
                 true
               {% else %}
                 {{ is_state(workday_sensor_var, 'on') }}
@@ -464,17 +464,13 @@ action:
           - choose:
               - conditions:
                   - condition: template
-                    value_template: "{{ main_lights_var != '' and main_lights_var is not none }}"
+                    value_template: "{{ main_lights_var not in ['', None] }}"
                 sequence:
                   - service: scene.create
                     data:
                       scene_id: snapshot_before_on
                       snapshot_entities: >
-                        {% if main_lights_var is string %}
-                          {{ main_lights_var }}
-                        {% else %}
-                          {{ main_lights_var | join(',') }}
-                        {% endif %}
+                        {{ main_lights_var | join(',') if main_lights_var is iterable else main_lights_var }}
 
           # --- Dagscen ---
           
@@ -494,35 +490,27 @@ action:
                   - choose:
                       - conditions:
                           - condition: template
-                            value_template: "{{ scene_day_var != '' and scene_day_var is not none }}"
+                            value_template: "{{ scene_day_var not in ['', None] }}"
                         sequence:
                           - service: scene.turn_on
                             target:
                               entity_id: "{{ scene_day_var }}"
                       - conditions:
                           - condition: template
-                            value_template: "{{ day_lights_var != '' and day_lights_var is not none }}"
+                            value_template: "{{ day_lights_var not in ['', None] }}"
                         sequence:
                           - service: light.turn_on
                             target:
                               entity_id: >
-                                {% if day_lights_var is string %}
-                                  {{ day_lights_var }}
-                                {% else %}
-                                  {{ day_lights_var | join(',') }}
-                                {% endif %}
+                                {{ day_lights_var | join(',') if day_lights_var is iterable else day_lights_var }}
                       - conditions:
                           - condition: template
-                            value_template: "{{ main_lights_var != '' and main_lights_var is not none }}"
+                            value_template: "{{ main_lights_var not in ['', None] }}"
                         sequence:
                           - service: light.turn_on
                             target:
                               entity_id: >
-                                {% if main_lights_var is string %}
-                                  {{ main_lights_var }}
-                                {% else %}
-                                  {{ main_lights_var | join(',') }}
-                                {% endif %}
+                                {{ main_lights_var | join(',') if main_lights_var is iterable else main_lights_var }}
 
           # --- Nattscen ---
           
@@ -542,42 +530,34 @@ action:
                   - choose:
                       - conditions:
                           - condition: template
-                            value_template: "{{ scene_night_var != '' and scene_night_var is not none }}"
+                            value_template: "{{ scene_night_var not in ['', None] }}"
                         sequence:
                           - service: scene.turn_on
                             target:
                               entity_id: "{{ scene_night_var }}"
                       - conditions:
                           - condition: template
-                            value_template: "{{ night_lights_var != '' and night_lights_var is not none }}"
+                            value_template: "{{ night_lights_var not in ['', None] }}"
                         sequence:
                           - service: light.turn_on
                             target:
                               entity_id: >
-                                {% if night_lights_var is string %}
-                                  {{ night_lights_var }}
-                                {% else %}
-                                  {{ night_lights_var | join(',') }}
-                                {% endif %}
+                                {{ night_lights_var | join(',') if night_lights_var is iterable else night_lights_var }}
                       - conditions:
                           - condition: template
-                            value_template: "{{ main_lights_var != '' and main_lights_var is not none }}"
+                            value_template: "{{ main_lights_var not in ['', None] }}"
                         sequence:
                           - service: light.turn_on
                             target:
                               entity_id: >
-                                {% if main_lights_var is string %}
-                                  {{ main_lights_var }}
-                                {% else %}
-                                  {{ main_lights_var | join(',') }}
-                                {% endif %}
+                                {{ main_lights_var | join(',') if main_lights_var is iterable else main_lights_var }}
 
           # --- Spara senaste scen ---
           
           - choose:
               - conditions:
                   - condition: template
-                    value_template: "{{ last_scene_entity != '' and last_scene_entity is not none }}"
+                    value_template: "{{ last_scene_entity not in ['', None] }}"
                 sequence:
                   - service: input_text.set_value
                     data:
@@ -591,7 +571,7 @@ action:
               name: Rörelsestyrning
               message: "Dag/natt PÅ aktiverad via rörelse eller brytare."
 
-  # --- Auto-off för Huvudlampor ---
+  # --- Auto-off för lampor (Huvud, Dag, Natt) ---
   
   - choose:
       - conditions:
@@ -601,27 +581,19 @@ action:
                 id: motion_off
               - condition: trigger
                 id: switch_off
-          - condition: template
-            value_template: "{{ optional_switches != [] or trigger.id == 'motion_off' }}"
         sequence:
           - delay:
               minutes: "{{ auto_off_main_var }}"
           - choose:
               - conditions:
                   - condition: template
-                    value_template: "{{ main_lights_var != '' and main_lights_var is not none }}"
+                    value_template: "{{ main_lights_var not in ['', None] }}"
                 sequence:
                   - service: light.turn_off
                     target:
                       entity_id: >
-                        {% if main_lights_var is string %}
-                          {{ main_lights_var }}
-                        {% else %}
-                          {{ main_lights_var | join(',') }}
-                        {% endif %}
+                        {{ main_lights_var | join(',') if main_lights_var is iterable else main_lights_var }}
 
-  # --- Auto-off för Dagslampor ---
-  
   - choose:
       - conditions:
           - condition: template
@@ -640,23 +612,17 @@ action:
           - choose:
               - conditions:
                   - condition: template
-                    value_template: "{{ day_lights_var != '' and day_lights_var is not none }}"
+                    value_template: "{{ day_lights_var not in ['', None] }}"
                 sequence:
                   - service: light.turn_off
                     target:
                       entity_id: >
-                        {% if day_lights_var is string %}
-                          {{ day_lights_var }}
-                        {% else %}
-                          {{ day_lights_var | join(',') }}
-                        {% endif %}
+                        {{ day_lights_var | join(',') if day_lights_var is iterable else day_lights_var }}
           - service: logbook.log
             data:
               name: Rörelsestyrning
               message: "Auto-off dag: Daglampor släckta."
 
-  # --- Auto-off för Nattlampor ---
-  
   - choose:
       - conditions:
           - condition: template
@@ -675,16 +641,12 @@ action:
           - choose:
               - conditions:
                   - condition: template
-                    value_template: "{{ night_lights_var != '' and night_lights_var is not none }}"
+                    value_template: "{{ night_lights_var not in ['', None] }}"
                 sequence:
                   - service: light.turn_off
                     target:
                       entity_id: >
-                        {% if night_lights_var is string %}
-                          {{ night_lights_var }}
-                        {% else %}
-                          {{ night_lights_var | join(',') }}
-                        {% endif %}
+                        {{ night_lights_var | join(',') if night_lights_var is iterable else night_lights_var }}
           - service: logbook.log
             data:
               name: Rörelsestyrning
@@ -697,44 +659,24 @@ action:
           - condition: trigger
             id: fixed_off_1
           - condition: template
-            value_template: >
-              {{ now().strftime('%a').lower() in fixed_off_weekdays_1_var }}
+            value_template: "{{ now().strftime('%a').lower() in fixed_off_weekdays_1_var }}"
         sequence:
-          - choose:
-              - conditions:
-                  - condition: template
-                    value_template: "{{ main_lights_var != '' and main_lights_var is not none }}"
-                sequence:
-                  - service: light.turn_off
-                    target:
-                      entity_id: >
-                        {% if main_lights_var is string %}
-                          {{ main_lights_var }}
-                        {% else %}
-                          {{ main_lights_var | join(',') }}
-                        {% endif %}
+          - service: light.turn_off
+            target:
+              entity_id: >
+                {{ main_lights_var | join(',') if main_lights_var is iterable else main_lights_var }}
 
   - choose:
       - conditions:
           - condition: trigger
             id: fixed_off_2
           - condition: template
-            value_template: >
-              {{ now().strftime('%a').lower() in fixed_off_weekdays_2_var }}
+            value_template: "{{ now().strftime('%a').lower() in fixed_off_weekdays_2_var }}"
         sequence:
-          - choose:
-              - conditions:
-                  - condition: template
-                    value_template: "{{ main_lights_var != '' and main_lights_var is not none }}"
-                sequence:
-                  - service: light.turn_off
-                    target:
-                      entity_id: >
-                        {% if main_lights_var is string %}
-                          {{ main_lights_var }}
-                        {% else %}
-                          {{ main_lights_var | join(',') }}
-                        {% endif %}
+          - service: light.turn_off
+            target:
+              entity_id: >
+                {{ main_lights_var | join(',') if main_lights_var is iterable else main_lights_var }}
 
   # --- Failsafe dag ---
   
@@ -748,16 +690,12 @@ action:
           - choose:
               - conditions:
                   - condition: template
-                    value_template: "{{ day_lights_var != '' and day_lights_var is not none }}"
+                    value_template: "{{ day_lights_var not in ['', None] }}"
                 sequence:
                   - service: light.turn_off
                     target:
                       entity_id: >
-                        {% if day_lights_var is string %}
-                          {{ day_lights_var }}
-                        {% else %}
-                          {{ day_lights_var | join(',') }}
-                        {% endif %}
+                        {{ day_lights_var | join(',') if day_lights_var is iterable else day_lights_var }}
           - service: logbook.log
             data:
               name: Rörelsestyrning
@@ -775,16 +713,12 @@ action:
           - choose:
               - conditions:
                   - condition: template
-                    value_template: "{{ night_lights_var != '' and night_lights_var is not none }}"
+                    value_template: "{{ night_lights_var not in ['', None] }}"
                 sequence:
                   - service: light.turn_off
                     target:
                       entity_id: >
-                        {% if night_lights_var is string %}
-                          {{ night_lights_var }}
-                        {% else %}
-                          {{ night_lights_var | join(',') }}
-                        {% endif %}
+                        {{ night_lights_var | join(',') if night_lights_var is iterable else night_lights_var }}
           - service: logbook.log
             data:
               name: Rörelsestyrning
