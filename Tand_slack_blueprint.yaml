@@ -492,7 +492,7 @@ action:
                               entity_id: "{{ scene_day_var }}"
                       - conditions:
                           - condition: template
-                            value_template: "{{ day_lights_var | default('') != '' }}"
+                            value_template: "{{ day_lights_var | default('') != '' and (lux_sensor_var | default('') == '' or states(lux_sensor_var) | float < lux_threshold_var | float) }}"
                         sequence:
                           - service: light.turn_on
                             target:
@@ -506,7 +506,7 @@ action:
                                 {% endif %}
                       - conditions:
                           - condition: template
-                            value_template: "{{ main_lights_var | default('') != '' }}"
+                            value_template: "{{ main_lights_var | default('') != '' and (lux_sensor_var | default('') == '' or states(lux_sensor_var) | float < lux_threshold_var | float) }}"
                         sequence:
                           - service: light.turn_on
                             target:
@@ -544,7 +544,7 @@ action:
                               entity_id: "{{ scene_night_var }}"
                       - conditions:
                           - condition: template
-                            value_template: "{{ night_lights_var | default('') != '' }}"
+                            value_template: "{{ night_lights_var | default('') != '' and (lux_sensor_var | default('') == '' or states(lux_sensor_var) | float < lux_threshold_var | float) }}"
                         sequence:
                           - service: light.turn_on
                             target:
@@ -558,7 +558,7 @@ action:
                                 {% endif %}
                       - conditions:
                           - condition: template
-                            value_template: "{{ main_lights_var | default('') != '' }}"
+                            value_template: "{{ main_lights_var | default('') != '' and (lux_sensor_var | default('') == '' or states(lux_sensor_var) | float < lux_threshold_var | float) }}"
                         sequence:
                           - service: light.turn_on
                             target:
