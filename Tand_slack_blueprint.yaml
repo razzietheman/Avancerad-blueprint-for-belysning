@@ -426,7 +426,7 @@ variables:
   active_weekdays_day_var: !input active_weekdays_day
   active_weekdays_night_var: !input active_weekdays_night
   enable_failsafe_var: !input enable_failsafe
-  failsafe_timer_day_var: !input failsafe_timer_day
+  failsafe_timer_main_var: !input failsafe_timer_main
   failsafe_timer_day_var: !input failsafe_timer_day
   failsafe_timer_night_var: !input failsafe_timer_night
 
@@ -846,7 +846,16 @@ action:
           - condition: template
             value_template: "{{ enable_failsafe_var }}"
           - condition: template
-            value_template: "{{ main_lights_var != '' and states(main_lights_var) | select('eq','on') | list | length > 0 }}"
+            value_template: >
+              {% set lights = [] %}
+              {% if main_lights_var is string %}
+                {% set lights = [main_lights_var] %}
+              {% elif main_lights_var is mapping %}
+                {% set lights = [main_lights_var.entity_id] %}
+              {% elif main_lights_var is iterable %}
+                {% set lights = main_lights_var %}
+              {% endif %}
+              {{ lights | select('is_state','on') | list | count > 0 }}
         sequence:
           - delay:
               minutes: "{{ failsafe_timer_main_var }}"
