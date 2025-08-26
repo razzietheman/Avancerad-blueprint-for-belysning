@@ -427,6 +427,7 @@ variables:
   active_weekdays_night_var: !input active_weekdays_night
   enable_failsafe_var: !input enable_failsafe
   failsafe_timer_day_var: !input failsafe_timer_day
+  failsafe_timer_day_var: !input failsafe_timer_day
   failsafe_timer_night_var: !input failsafe_timer_night
 
 # --- Actions ---
