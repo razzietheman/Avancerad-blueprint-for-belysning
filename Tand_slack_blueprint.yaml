@@ -101,7 +101,7 @@ blueprint:
     auto_off_night:
       name: Nattlampors varaktighet (minuter)
       description: "Hur länge nattlamporna ska lysa efter senaste rörelse."
-      default: 1
+      default: []
       selector:
         number:
           min: 0
