@@ -839,7 +839,7 @@ action:
                           {{ night_lights_var | join(',') }}
                         {% endif %}
 
-    # --- Failsafe för Huvudlampor ---
+  # --- Failsafe för Huvudlampor ---
   
   - choose:
       - conditions:
@@ -872,13 +872,15 @@ action:
                         {% elif main_lights_var is mapping %}
                           {{ main_lights_var.entity_id }}
                         {% elif main_lights_var is iterable %}
-                          {{ main_lights_var | join('\n  - ') }}
+                        {% for e in main_lights_var %}
+                          - {{ e }}
+                        {% endfor %}
                         {% endif %}
           - service: logbook.log
             data:
               name: Rörelsestyrning
               message: "Failsafe huvudlampor: Släckta automatiskt."
-  
+
   # --- Failsafe dag ---
   
   - choose:
