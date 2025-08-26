@@ -343,8 +343,10 @@ blueprint:
 trigger:
   - platform: state
     entity_id: !input motion_sensors
+    from: "off"
     to: "on"
     id: motion_on
+    
   - platform: state
     entity_id: !input motion_sensors
     from: "on"
@@ -367,13 +369,16 @@ trigger:
     event: sunrise
     offset: !input sunrise_offset
     id: sunrise_trigger
+    
   - platform: sun
     event: sunset
     offset: !input sunset_offset
     id: sunset_trigger
+    
   - platform: time
     at: !input fixed_off_time_1
     id: fixed_off_1
+    
   - platform: time
     at: !input fixed_off_time_2
     id: fixed_off_2
