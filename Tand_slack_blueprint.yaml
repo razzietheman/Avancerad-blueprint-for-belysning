@@ -1,5 +1,5 @@
 blueprint: 
-  name: Rörelsestyrd belysning 5.0 – Patchad med full funktion, förbättrat GUI och failsafe-funktioner
+  name: Rörelsestyrd belysning 5.1 – Mindre patch utav failsafe-funktioner
   description: >
     Rörelsestyrd belysning med dag/natt, scener, lux, soluppgång/solnedgång,
     arbetsdag, failsafe (separat dag/natt), fasta avstängningstider (med veckodagar),
@@ -41,7 +41,7 @@ blueprint:
     auto_off_main:
       name: Huvudlampors varaktighet (minuter)
       description: "Hur länge huvudlamporna ska lysa efter senaste rörelse."
-      default: 10
+      default: []
       selector:
         number:
           min: 0
@@ -71,7 +71,7 @@ blueprint:
     auto_off_day:
       name: Dagslampors varaktighet (minuter)
       description: "Hur länge dagslamporna ska lysa efter senaste rörelse."
-      default: 5
+      default: []
       selector:
         number:
           min: 0
@@ -311,7 +311,7 @@ blueprint:
     failsafe_timer_main:
       name: Failsafe-timer huvudbelysning (minuter)
       description: "Antal minuter innan huvudlampor automatiskt släcks om auto-off inte har aktiverats som förväntat."
-      default: 20
+      default: []
       selector:
         number:
           min: 1
@@ -322,7 +322,7 @@ blueprint:
     failsafe_timer_day:
       name: Failsafe-timer dag (minuter)
       description: "Antal minuter innan dagslampor automatiskt släcks om auto-off inte har aktiverats som förväntat."
-      default: 15
+      default: []
       selector:
         number:
           min: 1
@@ -333,7 +333,7 @@ blueprint:
     failsafe_timer_night:
       name: Failsafe-timer natt (minuter)
       description: "Antal minuter innan nattlampor automatiskt släcks om auto-off inte har aktiverats som förväntat."
-      default: 10
+      default: []
       selector:
         number:
           min: 1
@@ -719,6 +719,7 @@ action:
                 {% endfor %}
                 {{ lights | join(',') }}
 
+  
   # --- Failsafe Huvudlampor ---
   
   - choose:
