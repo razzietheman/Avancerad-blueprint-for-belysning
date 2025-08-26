@@ -1,5 +1,5 @@
 blueprint: 
-  name: Rörelsestyrd belysning 4.14 – Patchad med full funktion och förbättrat GUI
+  name: Rörelsestyrd belysning 5.0 – Patchad med full funktion, förbättrat GUI och failsafe-funktioner
   description: >
     Rörelsestyrd belysning med dag/natt, scener, lux, soluppgång/solnedgång,
     arbetsdag, failsafe (separat dag/natt), fasta avstängningstider (med veckodagar),

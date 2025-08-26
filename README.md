@@ -1,4 +1,4 @@
-# 🌟 Rörelsestyrd belysning 4.8 – Fullständig och uppdaterad 🌟
+# 🌟 Rörelsestyrd belysning 5.0 – Fullständig och uppdaterad 🌟
 
 # ✨ Beskrivning
 
@@ -7,7 +7,7 @@ Rörelsestyrd belysning 4.8 är en total omskrivning av all kod som inkluderar f
 
 ---
 
-# 🚀 Höjdpunkter i 4.8
+# 🚀 Höjdpunkter i 5.0
 
 - 🚶‍♂️ **Rörelsesensorer** – Tänd lampor med en eller flera sensorer  
 - 🔘 **Valfri manuell brytare** – Överstyrning med ett klick  
