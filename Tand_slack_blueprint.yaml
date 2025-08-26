@@ -226,7 +226,7 @@ blueprint:
 
     day_end:
       name: Dagslut
-      description: "Tidpunkt då dagsläget avaktiveras."
+      description: "Tidpunkt då dagsläget avaktiveras. Dagslut kan inte ha samma starttid som Nattstart. Exempel: 22:00:00 "
       default: "22:00:00"
       selector:
         time: {}
@@ -256,7 +256,7 @@ blueprint:
 
     night_start:
       name: Nattstart
-      description: "Tidpunkt då nattläget aktiveras."
+      description: "Tidpunkt då nattläget aktiveras. Nattstart kan inte ha samma starttid som Dagslut. Exempel: 22:00:01"
       default: "22:00:01"
       selector:
         time: {}
@@ -264,7 +264,7 @@ blueprint:
     night_end:
       name: Nattslut
       description: "Tidpunkt då nattläget avaktiveras."
-      default: "07:00:00"
+      default: "06:59:59"
       selector:
         time: {}
 
