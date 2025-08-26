@@ -308,6 +308,17 @@ blueprint:
       selector:
         boolean: {}
 
+    failsafe_timer_main:
+      name: Failsafe-timer huvudbelysning (minuter)
+      description: "Antal minuter innan huvudlampor automatiskt släcks om auto-off inte har aktiverats som förväntat."
+      default: 20
+      selector:
+        number:
+          min: 1
+          max: 240
+          step: 1
+          unit_of_measurement: min
+    
     failsafe_timer_day:
       name: Failsafe-timer dag (minuter)
       description: "Antal minuter innan dagslampor automatiskt släcks om auto-off inte har aktiverats som förväntat."
@@ -322,7 +333,7 @@ blueprint:
     failsafe_timer_night:
       name: Failsafe-timer natt (minuter)
       description: "Antal minuter innan nattlampor automatiskt släcks om auto-off inte har aktiverats som förväntat."
-      default: 15
+      default: 10
       selector:
         number:
           min: 1
@@ -827,6 +838,37 @@ action:
                           {{ night_lights_var | join(',') }}
                         {% endif %}
 
+    # --- Failsafe för Huvudlampor ---
+  
+  - choose:
+      - conditions:
+          - condition: template
+            value_template: "{{ enable_failsafe_var }}"
+          - condition: template
+            value_template: "{{ main_lights_var != '' and states(main_lights_var) | select('eq','on') | list | length > 0 }}"
+        sequence:
+          - delay:
+              minutes: "{{ failsafe_timer_main_var }}"
+          - choose:
+              - conditions:
+                  - condition: template
+                    value_template: "{{ main_lights_var != '' }}"
+                sequence:
+                  - service: light.turn_off
+                    target:
+                      entity_id: >
+                        {% if main_lights_var is string %}
+                          {{ main_lights_var }}
+                        {% elif main_lights_var is mapping %}
+                          {{ main_lights_var.entity_id }}
+                        {% else %}
+                          {{ main_lights_var | join(',') }}
+                        {% endif %}
+          - service: logbook.log
+            data:
+              name: Rörelsestyrning
+              message: "Failsafe huvudlampor: Släckta automatiskt."
+  
   # --- Failsafe dag ---
   
   - choose:
