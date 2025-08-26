@@ -3,7 +3,7 @@
 # ✨ Beskrivning
 
 Föreställ dig ett hem som vaknar, följer solen och somnar helt på egen hand – nu med ännu större flexibilitet, bättre stabilitet och full kontroll över alla ljusnivåer.  
-Rörelsestyrd belysning 4.8 är en total omskrivning av all kod som inkluderar förbättrad failsafe, snapshots och loggning samt att även GUI fått sig en uppdatering.
+Rörelsestyrd belysning 5.0 är en total omskrivning av all kod som inkluderar förbättrad failsafe, snapshots och loggning samt att även GUI fått sig en uppdatering.
 
 ---
 
@@ -99,4 +99,4 @@ Frågor eller förslag?
 
 ---
 
-Med **Rörelsestyrd belysning 4.8** får du ett smart, mysigt och energisnålt hem – helt utan att lyfta ett finger. ✨
+Med **Rörelsestyrd belysning 5.0** får du ett smart, mysigt och energisnålt hem – helt utan att lyfta ett finger. ✨
