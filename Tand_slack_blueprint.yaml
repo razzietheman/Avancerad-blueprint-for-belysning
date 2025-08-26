@@ -124,11 +124,11 @@ blueprint:
     lux_threshold:
       name: Luxgräns
       description: "Lampor tänds bara om luxvärdet är lägre än denna gräns."
-      default: 500
+      default: 150
       selector:
         number:
           min: 0
-          max: 5000
+          max: 1000
           step: 1
           unit_of_measurement: lx
 
