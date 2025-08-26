@@ -124,11 +124,11 @@ blueprint:
     lux_threshold:
       name: Luxgräns
       description: "Lampor tänds bara om luxvärdet är lägre än denna gräns."
-      default: 50
+      default: 500
       selector:
         number:
           min: 0
-          max: 1000
+          max: 50000
           step: 1
           unit_of_measurement: lx
 
@@ -343,6 +343,11 @@ blueprint:
 trigger:
   - platform: state
     entity_id: !input motion_sensors
+    to: "on"
+    id: motion_on
+
+  - platform: state
+    entity_id: !input motion_sensors
     from: "off"
     to: "on"
     id: motion_on
@@ -441,11 +446,11 @@ action:
                 {% else %}
                   {% set entity = lux_sensor_var[0] %}
                 {% endif %}
-                {% set raw = states.get(entity) %}
-                {% if raw is none or raw.state in ['unknown','unavailable','none','None',''] %}
+                {% set raw = states(entity) %}
+                {% if raw in ['unknown','unavailable','none','None',''] %}
                   false
                 {% else %}
-                  {{ (raw.state | replace(',','.') | float(0)) < lux_threshold_var }}
+                  {{ (raw | replace(',','.') | float(0)) < lux_threshold_var }}
                 {% endif %}
               {% endif %}
           - condition: template
