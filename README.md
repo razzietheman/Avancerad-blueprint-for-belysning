@@ -105,4 +105,9 @@ Frågor eller förslag?
 
 ---
 
+# 👨‍💻 Skapare
+
+Skapad med kärlek ❤️ utav Rasmus Sjöberg @razzietheman
+2025
+
 Med **Rörelsestyrd belysning 5.2** får du ett smart, mysigt och energisnålt hem – helt utan att lyfta ett finger. ✨
