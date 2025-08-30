@@ -16,7 +16,7 @@ Allt för att ge ditt hem en naturlig, levande belysning som du styr helt själv
 # 🚀 Höjdpunkter i 5.2
 
 - 🚶‍♂️ **Rörelsesensorer** – Tänd lampor med en eller flera sensorer  
-- 🔘 **Valfri manuell brytare** – Överstyrning med ett klick  
+- 🔘 **Smarta uttag eller strömbrytare** – Styr lampor som sitter i smarta uttag
 - 💡 **Lux-beroende** – Tänd bara när det verkligen är mörkt  
 - 🌅 **Soluppgång/solnedgång med offset** – Perfekt timing varje dag  
 - 🎨 **Dag- & natt-scener** – Ställ in stämning med scener eller individuella lampor  
