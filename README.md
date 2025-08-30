@@ -1,6 +1,6 @@
 # 🌟 Rörelsestyrd belysning 5.2 – Smidigare, säkrare och mer levande 🌟
 
-# # ✨ Beskrivning
+# ✨ Beskrivning
 
 Föreställ dig ett hem som vaknar med dig, följer solens rytm och somnar på egen hand – nu ännu smidigare, mer robust och med total kontroll över alla ljusnivåer.  
 Rörelsestyrd belysning 5.2 är en vidareutveckling av 5.0 med:
