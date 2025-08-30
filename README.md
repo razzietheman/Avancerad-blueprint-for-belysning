@@ -1,13 +1,19 @@
 # 🌟 Rörelsestyrd belysning 5.0 – Fullständig och uppdaterad 🌟
 
-# ✨ Beskrivning
+# # ✨ Beskrivning
 
-Föreställ dig ett hem som vaknar, följer solen och somnar helt på egen hand – nu med ännu större flexibilitet, bättre stabilitet och full kontroll över alla ljusnivåer.  
-Rörelsestyrd belysning 5.0 är en total omskrivning av all kod som inkluderar förbättrad failsafe, snapshots och loggning samt att även GUI fått sig en uppdatering.
+Föreställ dig ett hem som vaknar med dig, följer solens rytm och somnar på egen hand – nu ännu smidigare, mer robust och med total kontroll över alla ljusnivåer.  
+Rörelsestyrd belysning 5.2 är en vidareutveckling av 5.0 med:
+
+- Förbättrad **failsafe-logik** (släcker lampor bara om de fortfarande är på, utan att störa auto-off)  
+- Smidigare **snapshot-hantering**  
+- Förfinad **loggning**  
+- Uppdaterat GUI med tydligare val och indikatorer  
+
+Allt för att ge ditt hem en naturlig, levande belysning som du styr helt själv.
 
 ---
-
-# 🚀 Höjdpunkter i 5.0
+# 🚀 Höjdpunkter i 5.2
 
 - 🚶‍♂️ **Rörelsesensorer** – Tänd lampor med en eller flera sensorer  
 - 🔘 **Valfri manuell brytare** – Överstyrning med ett klick  
@@ -16,9 +22,9 @@ Rörelsestyrd belysning 5.0 är en total omskrivning av all kod som inkluderar f
 - 🎨 **Dag- & natt-scener** – Ställ in stämning med scener eller individuella lampor  
 - ⏰ **Två fasta släcktider** – Lampor släcks alltid på schema  
 - 📅 **Arbetsdagsmedveten** – Olika beteende vardag/helg  
-- 🛡️ **Failsafe-skydd** – Maximal körtid för trygghet  
-- 📸 **Snapshots** – Bevara föredragna ljuslägen innan aktivering  
-- 📝 **Loggning** – Följ varje åtgärd  
+- 🛡️ **Förbättrad failsafe** – Släcker lampor bara om de är på, med maximal trygghet  
+- 📸 **Snapshots** – Bevara dina favoritljus innan aktivering  
+- 📝 **Loggning** – Håll koll på varje handling 
 
 …och varje funktion är helt valfri. Du bestämmer rytmen. Du bestämmer stämningen.
 
@@ -34,8 +40,8 @@ Om solen redan är uppe tar naturligt ljus över – ingen energi går till spil
 # 🌞 Dagljus med sol-trigger
 
 Lampor tänds X minuter före solnedgång (offset).  
-Perfekt för mörka vinterkvällar eller sena sommarkvällar.  
-Kan kombineras med fasta släcktider 1 och 2.
+Perfekt för mörka vinterkvällar eller sena sommarstunder.  
+Kan kombineras med fasta släcktider för maximal flexibilitet.
 
 # 🌙 Kvällsmys
 
@@ -50,9 +56,8 @@ På helger kan tändningen ske senare – eller inte alls.
 
 # 🛡️ Failsafe
 
-Säkerställer att lampor inte lyser för evigt.  
-Släcker automatiskt efter angiven timeout, även om något glömts bort.
-
+Säkerställer att lampor inte lyser för länge.  
+Släcker automatiskt efter timeout, men bara om lamporna fortfarande är på – inga krockar med auto-off.
 ---
 
 ## 🔧 Funktioner i detalj
@@ -79,7 +84,7 @@ Släcker automatiskt efter angiven timeout, även om något glömts bort.
 - Lämna fält tomma för enkel installation – eller finjustera varje detalj  
 - Aktivera failsafe för maximal trygghet  
 
-Med **Rörelsestyrd belysning 4.0** blir ditt hem inte bara smart – det känns levande. ✨
+Med **Rörelsestyrd belysning 5.2** blir ditt hem inte bara smart – det känns levande. ✨
 
 ---
 
@@ -99,4 +104,4 @@ Frågor eller förslag?
 
 ---
 
-Med **Rörelsestyrd belysning 5.0** får du ett smart, mysigt och energisnålt hem – helt utan att lyfta ett finger. ✨
+Med **Rörelsestyrd belysning 5.2** får du ett smart, mysigt och energisnålt hem – helt utan att lyfta ett finger. ✨
