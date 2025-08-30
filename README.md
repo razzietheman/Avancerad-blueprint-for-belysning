@@ -1,4 +1,4 @@
-# 🌟 Rörelsestyrd belysning 5.0 – Fullständig och uppdaterad 🌟
+# 🌟 Rörelsestyrd belysning 5.2 – Smidigare, säkrare och mer levande 🌟
 
 # # ✨ Beskrivning
 
