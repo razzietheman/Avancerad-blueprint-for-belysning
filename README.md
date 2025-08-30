@@ -107,7 +107,7 @@ Frågor eller förslag?
 
 # 👨‍💻 Skapare
 
-Skapad med ❤️ utav Rasmus Sjöberg @razzietheman
+Skapad med ❤️ utav Rasmus Sjöberg [razzietheman](https://github.com/razzietheman/)
 2025
 
 ---
