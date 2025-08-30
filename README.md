@@ -56,8 +56,9 @@ På helger kan tändningen ske senare – eller inte alls.
 
 # 🛡️ Failsafe
 
-Säkerställer att lampor inte lyser för länge.  
+Säkerställer att lampor inte lyser för länge.
 Släcker automatiskt efter timeout, men bara om lamporna fortfarande är på – inga krockar med auto-off.
+
 ---
 
 ## 🔧 Funktioner i detalj
