@@ -146,7 +146,7 @@ blueprint:
     lux_threshold:
       name: Luxgräns
       description: "Lampor tänds bara om luxvärdet är lägre än denna gräns."
-      default: 150
+      default: []
       selector:
         number:
           min: 0
