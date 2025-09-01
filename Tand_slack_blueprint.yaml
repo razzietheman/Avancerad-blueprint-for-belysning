@@ -634,12 +634,6 @@ action:
   
   - choose:
       - conditions:
-          - condition: or
-            conditions:
-              - condition: trigger
-                id: motion_off
-              - condition: trigger
-                id: switch_off
           - condition: template
             value_template: "{{ main_lights_var | default('') != '' }}"
         sequence:
@@ -653,7 +647,7 @@ action:
           - choose:
               - conditions:
                   - condition: template
-                    value_template: "{{ main_lights_var | default('') != '' }}"
+                    value_template: "{{ main_lights_var | default('') != '' and (lux_sensor_var | default('') == '' or states(lux_sensor_var) | float < lux_threshold_var | float) }}"
                 sequence:
                   - service: light.turn_off
                     target:
@@ -665,6 +659,10 @@ action:
                         {% elif main_lights_var is iterable %}
                           {{ main_lights_var | join(',') }}
                         {% endif %}
+                  - service: logbook.log
+                    data:
+                      name: Rörelsestyrning
+                      message: "Auto-off Main: Huvudlampor släckta."
 
   # --- Auto-off Daglampor ---
   
@@ -882,7 +880,6 @@ action:
                     data:
                       name: Rörelsestyrning
                       message: "Failsafe Day: Dagscen stängd av automatiskt."
-
 
   # --- Failsafe Nattlampor ---
   
