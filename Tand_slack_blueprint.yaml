@@ -828,7 +828,7 @@ action:
   - choose:
       - conditions:
           - condition: template
-            value_template: "{{ enable_failsafe_var and day_lights_var | default('') != '' }}"
+            value_template: "{{ enable_failsafe_var and (day_lights_var | default('') != '' or scene_day_var | default('') != '') }}"
           - condition: template
             value_template: >
               {% set lights = [] %}
@@ -839,7 +839,7 @@ action:
               {% elif day_lights_var is iterable %}
                 {% set lights = day_lights_var %}
               {% endif %}
-              {{ lights | select('is_state','on') | list | count > 0 }}
+              {{ (lights | select('is_state','on') | list | count > 0) or (scene_day_var | default('') != '') }}
         sequence:
           - delay:
               minutes: "{{ failsafe_timer_day_var }}"
@@ -871,6 +871,18 @@ action:
                     data:
                       name: Rörelsestyrning
                       message: "Failsafe Day: Daglampor släckta automatiskt (endast om fortfarande på)."
+              - conditions:
+                  - condition: template
+                    value_template: "{{ scene_day_var | default('') != '' }}"
+                sequence:
+                  - service: scene.turn_off
+                    target:
+                      entity_id: "{{ scene_day_var }}"
+                  - service: logbook.log
+                    data:
+                      name: Rörelsestyrning
+                      message: "Failsafe Day: Dagscen stängd av automatiskt."
+
 
   # --- Failsafe Nattlampor ---
   
