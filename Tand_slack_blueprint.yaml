@@ -1,5 +1,5 @@
 blueprint: 
-  name: Rörelsestyrd belysning 5.2.1 – Bättre scenhantering, Robust failsafe & Dag/Natt-ljusstyrka
+  name: Rörelsestyrd belysning 5.2.2 – Bättre scenhantering, Robust failsafe & Dag/Natt-ljusstyrka
   description: >
     Rörelsestyrd belysning med dag/natt, scener, lux, soluppgång/solnedgång,
     arbetsdag, failsafe (separat dag/natt), fasta avstängningstider (med veckodagar),
@@ -877,7 +877,7 @@ action:
   - choose:
       - conditions:
           - condition: template
-            value_template: "{{ enable_failsafe_var and night_lights_var | default('') != '' }}"
+            value_template: "{{ enable_failsafe_var and (night_lights_var | default('') != '' or scene_night_var | default('') != '') }}"
           - condition: template
             value_template: >
               {% set lights = [] %}
@@ -888,7 +888,7 @@ action:
               {% elif night_lights_var is iterable %}
                 {% set lights = night_lights_var %}
               {% endif %}
-              {{ lights | select('is_state','on') | list | count > 0 }}
+              {{ (lights | select('is_state','on') | list | count > 0) or (scene_night_var | default('') != '') }}
         sequence:
           - delay:
               minutes: "{{ failsafe_timer_night_var }}"
@@ -920,3 +920,14 @@ action:
                     data:
                       name: Rörelsestyrning
                       message: "Failsafe Night: Nattlampor släckta automatiskt (endast om fortfarande på)."
+              - conditions:
+                  - condition: template
+                    value_template: "{{ scene_night_var | default('') != '' }}"
+                sequence:
+                  - service: scene.turn_off
+                    target:
+                      entity_id: "{{ scene_night_var }}"
+                  - service: logbook.log
+                    data:
+                      name: Rörelsestyrning
+                      message: "Failsafe Night: Nattscen stängd av automatiskt."
