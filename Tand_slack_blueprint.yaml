@@ -1,5 +1,5 @@
 blueprint: 
-  name: Rörelsestyrd belysning 5.2 – Robust failsafe & Dag/Natt-ljusstyrka
+  name: Rörelsestyrd belysning 5.2.1 – Bättre scenhantering, Robust failsafe & Dag/Natt-ljusstyrka
   description: >
     Rörelsestyrd belysning med dag/natt, scener, lux, soluppgång/solnedgång,
     arbetsdag, failsafe (separat dag/natt), fasta avstängningstider (med veckodagar),
@@ -455,6 +455,7 @@ variables:
   failsafe_timer_night_var: !input failsafe_timer_night
 
 # --- Actions ---
+
 action:
 
   # --- Rörelse/Brytare PÅ ---
@@ -629,7 +630,7 @@ action:
               name: Rörelsestyrning
               message: "Dag/Natt ON aktiverad via rörelse eller brytare."
 
-  # --- Auto-off för Huvudlampor ---
+  # --- Auto-off Huvudlampor ---
   
   - choose:
       - conditions:
