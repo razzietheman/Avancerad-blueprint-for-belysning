@@ -1,5 +1,5 @@
 blueprint: 
-  name: Rörelsestyrd belysning 5.2.2 – Bättre scenhantering, Robust failsafe & Dag/Natt-ljusstyrka
+  name: Rörelsestyrd belysning 5.2.3 – Bättre scenhantering, Robust failsafe & Dag/Natt-ljusstyrka
   description: >
     Rörelsestyrd belysning med dag/natt, scener, lux, soluppgång/solnedgång,
     arbetsdag, failsafe (separat dag/natt), fasta avstängningstider (med veckodagar),
@@ -634,6 +634,12 @@ action:
   
   - choose:
       - conditions:
+          - condition: or
+            conditions:
+              - condition: trigger
+                id: motion_off
+              - condition: trigger
+                id: switch_off
           - condition: template
             value_template: "{{ main_lights_var | default('') != '' }}"
         sequence:
@@ -647,7 +653,7 @@ action:
           - choose:
               - conditions:
                   - condition: template
-                    value_template: "{{ main_lights_var | default('') != '' and (lux_sensor_var | default('') == '' or states(lux_sensor_var) | float < lux_threshold_var | float) }}"
+                    value_template: "{{ main_lights_var | default('') != '' }}"
                 sequence:
                   - service: light.turn_off
                     target:
@@ -659,10 +665,6 @@ action:
                         {% elif main_lights_var is iterable %}
                           {{ main_lights_var | join(',') }}
                         {% endif %}
-                  - service: logbook.log
-                    data:
-                      name: Rörelsestyrning
-                      message: "Auto-off Main: Huvudlampor släckta."
 
   # --- Auto-off Daglampor ---
   
@@ -873,13 +875,13 @@ action:
                   - condition: template
                     value_template: "{{ scene_day_var | default('') != '' }}"
                 sequence:
-                  - service: scene.turn_off
+                  - service: scene.turn_on
                     target:
-                      entity_id: "{{ scene_day_var }}"
+                      entity_id: snapshot_before_on
                   - service: logbook.log
                     data:
                       name: Rörelsestyrning
-                      message: "Failsafe Day: Dagscen stängd av automatiskt."
+                      message: "Failsafe Day: Dagscen återställd automatiskt."
 
   # --- Failsafe Nattlampor ---
   
@@ -933,10 +935,10 @@ action:
                   - condition: template
                     value_template: "{{ scene_night_var | default('') != '' }}"
                 sequence:
-                  - service: scene.turn_off
+                  - service: scene.turn_on
                     target:
-                      entity_id: "{{ scene_night_var }}"
+                      entity_id: snapshot_before_on
                   - service: logbook.log
                     data:
                       name: Rörelsestyrning
-                      message: "Failsafe Night: Nattscen stängd av automatiskt."
+                      message: "Failsafe Night: Nattscen återställd automatiskt."
