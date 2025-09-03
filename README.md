@@ -1,4 +1,4 @@
-#🌟 Rörelsestyrd belysning 5.2.6 – Robust, flexibel och scenmedveten 🌟
+# 🌟 Rörelsestyrd belysning 5.2.6 – Robust, flexibel och scenmedveten 🌟
 
 #✨ Beskrivning
 
