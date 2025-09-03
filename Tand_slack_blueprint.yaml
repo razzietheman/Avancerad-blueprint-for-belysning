@@ -1,5 +1,5 @@
 blueprint: 
-  name: Rörelsestyrd belysning 5.2.4 – Bättre scenhantering, Robust failsafe & Dag/Natt-ljusstyrka
+  name: Rörelsestyrd belysning 5.2.6 – Bättre scenhantering, Dag/Natt Off Scenes , Robust failsafe & Dag/Natt-ljusstyrka
   description: >
     Rörelsestyrd belysning med dag/natt, scener, lux, soluppgång/solnedgång,
     arbetsdag, failsafe (separat dag/natt), fasta avstängningstider (med veckodagar),
@@ -59,6 +59,15 @@ blueprint:
           domain: scene
           multiple: false
 
+    off_scene_day:
+      name: Off Scene Dag
+      description: "Scen som aktiveras när daglamporna ska stängas av."
+      default: []
+      selector:
+        entity:
+          domain: scene
+          multiple: false
+    
     day_lights:
       name: Dagslampor
       description: "Lampor som bara ska tändas under dagtid."
@@ -100,6 +109,15 @@ blueprint:
           domain: scene
           multiple: false
 
+    off_scene_night:
+      name: Off Scene Natt
+      description: "Scen som aktiveras när nattlamporna ska stängas av."
+      default: []
+      selector:
+        entity:
+          domain: scene
+          multiple: false
+    
     night_lights:
       name: Nattlampor
       description: "Lampor som bara ska tändas under nattetid."
@@ -248,8 +266,8 @@ blueprint:
 
     day_end:
       name: Dagslut
-      description: "Tidpunkt då dagsläget avaktiveras. Dagslut kan inte ha samma starttid som Nattstart. Exempel: 21:59:59 "
-      default: "21:59:59"
+      description: "Tidpunkt då dagsläget avaktiveras. Dagslut kan inte ha samma starttid som Nattstart. Exempel: 22:00:00 "
+      default: "22:00:00"
       selector:
         time: {}
 
@@ -278,8 +296,8 @@ blueprint:
 
     night_start:
       name: Nattstart
-      description: "Tidpunkt då nattläget aktiveras. Nattstart kan inte ha samma starttid som Dagslut. Exempel: 22:00:00"
-      default: "22:00:00"
+      description: "Tidpunkt då nattläget aktiveras. Nattstart kan inte ha samma starttid som Dagslut. Exempel: 22:00:01"
+      default: "22:00:01"
       selector:
         time: {}
 
@@ -432,7 +450,9 @@ variables:
   night_lights_var: !input night_lights
   brightness_night_var: !input brightness_night
   scene_day_var: !input scene_day
+  off_scene_day_var: !input off_scene_day
   scene_night_var: !input scene_night
+  off_scene_night_var: !input off_scene_night
   last_scene_entity: !input input_text_last_scene
   lux_sensor_var: !input lux_sensor
   lux_threshold_var: !input lux_threshold
@@ -459,7 +479,7 @@ variables:
 action:
 
   # --- Rörelse/Brytare PÅ ---
-  
+
   - choose:
       - conditions:
           - condition: or
@@ -473,7 +493,7 @@ action:
         sequence:
 
           # --- Snapshot ---
-          
+
           - choose:
               - conditions:
                   - condition: template
@@ -494,7 +514,7 @@ action:
                       snapshot_entities: "{{ lights | join(',') }}"
 
           # --- Dagscen ---
-          
+
           - choose:
               - conditions:
                   - condition: template
@@ -553,7 +573,7 @@ action:
                                 {% endif %}
 
           # --- Nattscen ---
-          
+
           - choose:
               - conditions:
                   - condition: template
@@ -612,7 +632,7 @@ action:
                                 {% endif %}
 
           # --- Spara senaste scen ---
-          
+
           - choose:
               - conditions:
                   - condition: template
@@ -624,14 +644,14 @@ action:
                       value: "Dag/Natt ON"
 
           # --- Loggning ---
-          
+
           - service: logbook.log
             data:
               name: Rörelsestyrning
               message: "Dag/Natt ON aktiverad via rörelse eller brytare."
 
   # --- Auto-off Huvudlampor ---
-  
+
   - choose:
       - conditions:
           - condition: or
@@ -667,7 +687,7 @@ action:
                         {% endif %}
 
   # --- Auto-off Daglampor ---
-  
+
   - choose:
       - conditions:
           - condition: template
@@ -696,7 +716,7 @@ action:
               message: "Auto-off Dag: Daglampor släckta."
 
   # --- Auto-off Nattlampor ---
-  
+
   - choose:
       - conditions:
           - condition: template
@@ -725,7 +745,7 @@ action:
               message: "Auto-off Natt: Nattlampor släckta."
 
   # --- Fasta avstängningstider med veckodag ---
-  
+
   - choose:
       - conditions:
           - condition: trigger
@@ -775,7 +795,7 @@ action:
                 {{ lights | join(',') }}
 
   # --- Failsafe Huvudlampor ---
-  
+
   - choose:
       - conditions:
           - condition: template
@@ -824,7 +844,7 @@ action:
                       message: "Failsafe Main: Huvudlampor släckta automatiskt (endast om fortfarande på)."
 
   # --- Failsafe Daglampor ---
-  
+
   - choose:
       - conditions:
           - condition: template
@@ -884,7 +904,7 @@ action:
                       message: "Failsafe Day: Dagscen återställd automatiskt."
 
   # --- Failsafe Nattlampor ---
-  
+
   - choose:
       - conditions:
           - condition: template
