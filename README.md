@@ -1,67 +1,56 @@
-# 🌟 Rörelsestyrd belysning 5.2 – Smidigare, säkrare och mer levande 🌟
+#🌟 Rörelsestyrd belysning 5.2.6 – Robust, flexibel och scenmedveten 🌟
 
-# ✨ Beskrivning
+#✨ Beskrivning
 
-Föreställ dig ett hem som vaknar med dig, följer solens rytm och somnar på egen hand – nu ännu smidigare, mer robust och med total kontroll över alla ljusnivåer.  
-Rörelsestyrd belysning 5.2 är en vidareutveckling av 5.0 med:
+Det här är inte bara en automation – det är en komplett ljushjärna för ditt hem.
+Med Rörelsestyrd belysning 5.2.6 får du en lösning som inte bara tänder och släcker lampor – utan förstår scener, tar hänsyn till sol, veckodagar, luxnivåer och ser till att inget ljus blir bortglömt.
 
-- Förbättrad **failsafe-logik** (släcker lampor bara om de fortfarande är på, utan att störa auto-off)  
-- Smidigare **snapshot-hantering**  
-- Förfinad **loggning**  
-- Uppdaterat GUI med tydligare val och indikatorer  
+Byggd för robusthet ⭐⭐⭐⭐⭐, enkel felsökning och maximal flexibilitet.
 
-Allt för att ge ditt hem en naturlig, levande belysning som du styr helt själv.
+# 🚀 Nyheter i 5.2.6
 
----
-# 🚀 Höjdpunkter i 5.2
+🎨 Off Scenes (Dag/Natt) – egna scener som triggas vid släckning
 
-- 🚶‍♂️ **Rörelsesensorer** – Tänd lampor med en eller flera sensorer  
-- 🔘 **Smarta uttag eller strömbrytare** – Styr lampor som sitter i smarta uttag
-- 💡 **Lux-beroende** – Tänd bara när det verkligen är mörkt  
-- 🌅 **Soluppgång/solnedgång med offset** – Perfekt timing varje dag  
-- 🎨 **Dag- & natt-scener** – Ställ in stämning med scener eller individuella lampor  
-- ⏰ **Två fasta släcktider** – Lampor släcks alltid på schema  
-- 📅 **Arbetsdagsmedveten** – Olika beteende vardag/helg  
-- 🛡️ **Förbättrad failsafe** – Släcker lampor bara om de är på, med maximal trygghet  
-- 📸 **Snapshots** – Bevara dina favoritljus innan aktivering  
-- 📝 **Loggning** – Håll koll på varje handling 
+💡 Auto-off med scenåterställning – återställer automatiskt tidigare ljusläge via snapshots
 
-…och varje funktion är helt valfri. Du bestämmer rytmen. Du bestämmer stämningen.
+🛡️ Failsafe per kategori – huvud, dag, natt – släcker bara om lamporna verkligen är på
 
----
+🌙 Dag- och nattljusstyrka – dynamisk dimning för rätt känsla dygnet runt
+
+📅 Veckodagslogik – fasta tider och dag/natt kan styras olika per veckodag
+
+📸 Snapshot-hantering – få tillbaka ditt gamla ljusläge efter automationen
+
+📝 Loggning – full spårbarhet i loggboken
 
 # 🌅 Exempel på scenarion
 
-# 🌄 Morgonljus – Mjuk start på dagen
+# 🌄 Morgonstart
 
-Vardagar 07:00. Rörelsesensor tänder din dag-scen.  
-Om solen redan är uppe tar naturligt ljus över – ingen energi går till spillo.
+07:00 på vardagar. Rörelse triggar dagscen eller dagslampor.
+Ljusstyrkan anpassas automatiskt.
 
-# 🌞 Dagljus med sol-trigger
+# 🌞 Dagläge + solkontroll
 
-Lampor tänds X minuter före solnedgång (offset).  
-Perfekt för mörka vinterkvällar eller sena sommarstunder.  
-Kan kombineras med fasta släcktider för maximal flexibilitet.
+Lamporna tänds bara om luxnivån är låg – inget slöseri.
+Kan kombineras med fasta avstängningstider.
 
 # 🌙 Kvällsmys
 
-Aktiveras via rörelse eller manuell brytare.  
-Lampor tänds i diskret nattläge, med möjlighet till scenstyrning.  
-Släcks gradvis efter inställd tändtid om ingen rörelse detekteras.
+Efter nattstart tänds nattscen eller nattlampor med dimmad belysning.
+Släcks mjukt efter inställd tid om ingen rörelse sker.
 
 # ⏰ Arbetsdag vs Helg
 
-Anpassa tändning och släckning efter veckodag.  
-På helger kan tändningen ske senare – eller inte alls.
+Styr ljuslogik olika beroende på arbetsdag/helg.
+Perfekt om helgen ska ha lugnare kvällar.
 
 # 🛡️ Failsafe
 
-Säkerställer att lampor inte lyser för länge.
-Släcker automatiskt efter timeout, men bara om lamporna fortfarande är på – inga krockar med auto-off.
+Säkerhetsnät som släcker lampor bara om de verkligen är på –
+och bara om auto-off inte redan gjort sitt jobb.
 
----
-
-## 🔧 Funktioner i detalj
+# 🔧 Funktioner i detalj  
 
 | Funktion | Beskrivning |
 |----------|-------------|
@@ -72,44 +61,32 @@ Släcker automatiskt efter timeout, men bara om lamporna fortfarande är på –
 | 🌅 Soluppgång/solnedgång | Offset för exakt timing |
 | ⏱ Två fasta släcktider | Bestäm exakt klockslag för släckning – t.ex. vardag och helg |
 | 📅 Arbetsdagskontroll | Anpassar belysning beroende på vardag eller helg |
-| 🛡️ Failsafe | Säkerställer att lampor inte lyser för länge, med valbar aktiverings-switch |
-| ⏳ Tändtid | Hur länge lampor ska vara tända efter inaktivitet |
-| 📸 Snapshots | Sparar föredragna ljuslägen innan aktivering |
+| ⏳ Auto-off per kategori | Separata timers för huvud, dag och natt |
+| 📸 Snapshots | Sparar och återställer föredragna ljuslägen |
+| 🛡️ Failsafe | Säkerställer att lampor inte lyser för länge |
 | 📝 Loggning | Följ varje aktivering och ändring |
 
----
+# 🌈 Pro Tips
 
-## 🌈 Pro Tips
-- Kombinera sol-trigger, arbetsdag/helg och fasta släcktider för perfekt automation  
-- Använd separata dag- och natt-scener för dynamisk stämning  
-- Lämna fält tomma för enkel installation – eller finjustera varje detalj  
-- Aktivera failsafe för maximal trygghet  
+Använd off scenes för att få rätt stämning även vid släckning.
 
-Med **Rörelsestyrd belysning 5.2** blir ditt hem inte bara smart – det känns levande. ✨
+Kombinera luxsensor + soloffset + veckodagar för total kontroll.
 
----
+Låt snapshots återställa rummet – automationen blir osynlig.
+
+Aktivera failsafe om du vill sova tryggt utan oro för glömda lampor.
 
 # 📥 Installation
 
-1. [Importera blueprint i Home Assistant](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https://github.com/razzietheman/Avancerad-blueprint-for-belysning/blob/main/Tand_slack_blueprint.yaml)  
+1. [Importera blueprint i Home Assistant](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https://github.com/razzietheman/Avancerad-blueprint-for-belysning/blob/main/Tand_slack_blueprint.yaml)
 2. Skapa en automation baserad på den  
 3. Välj dina lampor, sensorer och valfria tillbehör  
 4. Njut av perfekt anpassad smart belysning 🎉
 
----
-
-# 🤝 Support
-
-Frågor eller förslag?  
-👉 Öppna ett ärende i [GitHub-repot](https://github.com/razzietheman/Avancerad-blueprint-for-belysning)
-
----
-
 # 👨‍💻 Skapare
 
-Skapad med ❤️ utav Rasmus Sjöberg [razzietheman](https://github.com/razzietheman/)
-2025
+Byggd med ❤️ av Rasmus Sjöberg [razzietheman](https://github.com/razzietheman/)
+ – 2025
 
----
-
-Med **Rörelsestyrd belysning 5.2** får du ett smart, mysigt och energisnålt hem – helt utan att lyfta ett finger. ✨
+✨ Med Rörelsestyrd belysning **5.2.6** får du det bästa av två världar:
+maximal automation när du vill, full kontroll när du behöver.
