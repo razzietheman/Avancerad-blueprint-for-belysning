@@ -1,6 +1,6 @@
 # 🌟 Rörelsestyrd belysning 5.2.6 – Robust, flexibel och scenmedveten 🌟
 
-#✨ Beskrivning
+# ✨ Beskrivning
 
 Det här är inte bara en automation – det är en komplett ljushjärna för ditt hem.
 Med Rörelsestyrd belysning 5.2.6 får du en lösning som inte bara tänder och släcker lampor – utan förstår scener, tar hänsyn till sol, veckodagar, luxnivåer och ser till att inget ljus blir bortglömt.
