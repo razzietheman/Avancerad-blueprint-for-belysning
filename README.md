@@ -55,7 +55,7 @@ och bara om auto-off inte redan gjort sitt jobb.
 | Funktion | Beskrivning |
 |----------|-------------|
 | 🚶‍♂️ Rörelsesensor (valfri) | Tänd/släck med rörelse – lämna tomt för schemastyrning |
-| 🔘 Manuell switch (valfri) | Överstyr lampor manuellt när du vill |
+| 🔘 Smarta uttag eller strömbrytare | Styr lampor som sitter i smarta uttag |
 | 🌞 Dag- och natt-scener | Skapa stämning med scener eller individuella lampor |
 | 💡 Lux-sensor | Tänder bara när det är tillräckligt mörkt |
 | 🌅 Soluppgång/solnedgång | Offset för exakt timing |
