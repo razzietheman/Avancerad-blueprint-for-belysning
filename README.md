@@ -11,15 +11,15 @@ Ditt hem **tänker själv**, känner solens rytm och vet exakt när lamporna ska
 
 ---
 
-# 🚀 **Nyheter i 6.0**
+# 🚀 Nyheter i 6.0
 
-✨ **Off Scenes 2.0** – Släck lampor med stil och mjuk fade
-💡 **Auto-off + Scenåterställning** – Återställ favoritljuslägen automatiskt
-🛡️ **Failsafe per kategori** – Lamporna släcks **bara när de verkligen behöver**
-🌙 **Dynamisk dimning** – Ljusstyrka som följer dygnets rytm
-📅 **Veckodagslogik** – Olika scheman för vardag och helg
-📸 **Snapshot-hantering** – Spara & återställ exakt det ljus du vill ha
-📝 **Smart loggning** – Full kontroll på alla händelser
+- ✨ **Off Scenes 2.0** – Släck lampor med stil och mjuk fade
+- 💡 **Auto-off + Scenåterställning** – Återställ favoritljuslägen automatiskt
+- 🛡️ **Failsafe per kategori** – Lamporna släcks **bara när de verkligen behöver**
+- 🌙 **Dynamisk dimning** – Ljusstyrka som följer dygnets rytm
+- 📅 **Veckodagslogik** – Olika scheman för vardag och helg
+- 📸 **Snapshot-hantering** – Spara & återställ exakt det ljus du vill ha
+- 📝 **Smart loggning** – Full kontroll på alla händelser
 
 ✨ Små tweaks som gör hemmet **levande, personligt och wow**
 
