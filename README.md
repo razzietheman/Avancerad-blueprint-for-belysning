@@ -68,6 +68,7 @@ Ditt hem **tänker själv**, känner solens rytm och vet exakt när lamporna ska
 | 🔘 Smarta uttag/strömbrytare | Styr lampor via Home Assistant-kompatibla enheter      |
 | 🌞 Dag- & natt-scener        | Skapa stämning med scener eller individuella lampor    |
 | 💡 Lux-sensor                | Tänder lampor **endast när det är mörkt**              |
+| 🌓 Circadian Light           | Anpassar färgtemperatur automatiskt efter naturligt dygnsrytm |
 | 🌅 Soluppgång/solnedgång     | Exakt timing med offset                                |
 | ⏱ Två fasta släcktider       | Vardag/helg, automatiskt eller manuellt                |
 | 📅 Arbetsdagskontroll        | Anpassa belysning per veckodag                         |
