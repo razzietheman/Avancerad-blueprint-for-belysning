@@ -1,9 +1,11 @@
 blueprint: 
-  name: Rörelsestyrd belysning 5.2.6 – Bättre scenhantering, Dag/Natt Off Scenes , Robust failsafe & Dag/Natt-ljusstyrka
+  name: "Rörelsestyrd Belysning med Circual Light – Failsafe Pro 5.3"
   description: >
-    Rörelsestyrd belysning med dag/natt, scener, lux, soluppgång/solnedgång,
-    arbetsdag, failsafe (separat dag/natt), fasta avstängningstider (med veckodagar),
-    snapshots och loggning. Auto-off-tider körs bara om ingen fast avstängningstid är aktiv.
+    En komplett automation för ditt smarta hem som kombinerar rörelsestyrning med avancerade failsafe-funktioner 
+    och dynamiskt circadian-ljus. Huvudlampor, dag- och nattlampor, samt circual lights hanteras automatiskt – 
+    ljus släcks efter inställd tid, dag- och nattscener återställs, och circadian-ljus anpassas efter solens höjd. 
+    Allt loggas för full spårbarhet. Enkel att konfigurera, flexibel och säker för daglig drift.
+
   domain: automation
   input:
   
@@ -149,6 +151,80 @@ blueprint:
           step: 1
           unit_of_measurement: min
           mode: box
+    
+    # --- Circadian light ---
+    
+    circadian_enabled:
+      name: Aktivera Circadian
+      description: "Om lamporna ska följa circadian-ljusprofil."
+      default: false
+      selector:
+        boolean: {}
+
+    circadian_lights:
+      name: Circadian-lampor
+      description: "Lampor som ska följa circadian-ljusprofilen."
+      default: []
+      selector:
+        target:
+          entity:
+            domain: light
+
+    update_interval:
+      name: Circadian update interval (min)
+      description: "Hur ofta circadian-lampor uppdateras."
+      default: 15
+      selector:
+        number:
+          min: 1
+          max: 60
+          step: 1
+          unit_of_measurement: min
+    
+    circadian_min_temp:
+      name: Minimum färgtemperatur (K)
+      description: "Färgtemperatur på morgon/natt (varmt ljus)."
+      default: 2700
+      selector:
+        number:
+          min: 1500
+          max: 6500
+          step: 100
+          unit_of_measurement: K
+
+    circadian_max_temp:
+      name: Maximum färgtemperatur (K)
+      description: "Färgtemperatur mitt på dagen (kallt ljus)."
+      default: 5000
+      selector:
+        number:
+          min: 1500
+          max: 6500
+          step: 100
+          unit_of_measurement: K
+    
+    auto_off_circadian:
+      name: Circadian-lampors varaktighet (minuter)
+      description: "Hur länge circadian-lamporna ska lysa efter senaste rörelse eller trigger."
+      default: []
+      selector:
+        number:
+          min: 0
+          max: 1200
+          step: 1
+          unit_of_measurement: min
+          mode: box
+    
+    failsafe_timer_circular:
+      name: Failsafe-timer circadian-lampor (minuter)
+      description: "Antal minuter innan circadian-lampor automatiskt släcks om auto-off inte har aktiverats."
+      default: []
+      selector:
+        number:
+          min: 1
+          max: 120
+          step: 1
+          unit_of_measurement: min
     
     # --- Lux & sol ---
     
@@ -439,6 +515,10 @@ trigger:
     at: !input fixed_off_time_2
     id: fixed_off_2
 
+  - platform: time_pattern
+    minutes: 15  # Intervall för uppdatering, default 15 min
+    id: circadian_update
+
 mode: restart
 
 # --- Variabler ---
@@ -461,6 +541,7 @@ variables:
   auto_off_main_var: !input auto_off_main
   auto_off_day_var: !input auto_off_day
   auto_off_night_var: !input auto_off_night
+  auto_off_circadian_var: !input auto_off_circadian
   fixed_off_weekdays_1_var: !input fixed_off_weekdays_1
   fixed_off_weekdays_2_var: !input fixed_off_weekdays_2
   day_start_var: !input day_start
@@ -473,13 +554,18 @@ variables:
   failsafe_timer_main_var: !input failsafe_timer_main
   failsafe_timer_day_var: !input failsafe_timer_day
   failsafe_timer_night_var: !input failsafe_timer_night
+  circadian_enabled_var: !input circadian_enabled
+  circadian_lights_var: !input circadian_lights
+  circadian_min_temp_var: !input circadian_min_temp
+  circadian_max_temp_var: !input circadian_max_temp
+  failsafe_timer_circular_var: !input failsafe_timer_circular
 
 # --- Actions ---
 
 action:
 
   # --- Rörelse/Brytare PÅ ---
-
+  
   - choose:
       - conditions:
           - condition: or
@@ -493,7 +579,7 @@ action:
         sequence:
 
           # --- Snapshot ---
-
+          
           - choose:
               - conditions:
                   - condition: template
@@ -514,7 +600,7 @@ action:
                       snapshot_entities: "{{ lights | join(',') }}"
 
           # --- Dagscen ---
-
+          
           - choose:
               - conditions:
                   - condition: template
@@ -538,7 +624,8 @@ action:
                               entity_id: "{{ scene_day_var }}"
                       - conditions:
                           - condition: template
-                            value_template: "{{ day_lights_var | default('') != '' and (lux_sensor_var | default('') == '' or states(lux_sensor_var) | float < lux_threshold_var | float) }}"
+                            value_template: >
+                              {{ day_lights_var | default('') != '' and (lux_sensor_var | default('') == '' or states(lux_sensor_var) | float < lux_threshold_var | float) }}
                         sequence:
                           - service: light.turn_on
                             target:
@@ -559,7 +646,8 @@ action:
                                 {% endif %}
                       - conditions:
                           - condition: template
-                            value_template: "{{ main_lights_var | default('') != '' and (lux_sensor_var | default('') == '' or states(lux_sensor_var) | float < lux_threshold_var | float) }}"
+                            value_template: >
+                              {{ main_lights_var | default('') != '' and (lux_sensor_var | default('') == '' or states(lux_sensor_var) | float < lux_threshold_var | float) }}
                         sequence:
                           - service: light.turn_on
                             target:
@@ -573,7 +661,7 @@ action:
                                 {% endif %}
 
           # --- Nattscen ---
-
+          
           - choose:
               - conditions:
                   - condition: template
@@ -597,7 +685,8 @@ action:
                               entity_id: "{{ scene_night_var }}"
                       - conditions:
                           - condition: template
-                            value_template: "{{ night_lights_var | default('') != '' and (lux_sensor_var | default('') == '' or states(lux_sensor_var) | float < lux_threshold_var | float) }}"
+                            value_template: >
+                              {{ night_lights_var | default('') != '' and (lux_sensor_var | default('') == '' or states(lux_sensor_var) | float < lux_threshold_var | float) }}
                         sequence:
                           - service: light.turn_on
                             target:
@@ -618,7 +707,8 @@ action:
                                 {% endif %}
                       - conditions:
                           - condition: template
-                            value_template: "{{ main_lights_var | default('') != '' and (lux_sensor_var | default('') == '' or states(lux_sensor_var) | float < lux_threshold_var | float) }}"
+                            value_template: >
+                              {{ main_lights_var | default('') != '' and (lux_sensor_var | default('') == '' or states(lux_sensor_var) | float < lux_threshold_var | float) }}
                         sequence:
                           - service: light.turn_on
                             target:
@@ -632,7 +722,7 @@ action:
                                 {% endif %}
 
           # --- Spara senaste scen ---
-
+          
           - choose:
               - conditions:
                   - condition: template
@@ -644,14 +734,14 @@ action:
                       value: "Dag/Natt ON"
 
           # --- Loggning ---
-
+          
           - service: logbook.log
             data:
               name: Rörelsestyrning
               message: "Dag/Natt ON aktiverad via rörelse eller brytare."
 
   # --- Auto-off Huvudlampor ---
-
+  
   - choose:
       - conditions:
           - condition: or
@@ -687,7 +777,7 @@ action:
                         {% endif %}
 
   # --- Auto-off Daglampor med scenåterställning ---
-
+  
   - choose:
       - conditions:
           - condition: template
@@ -723,7 +813,7 @@ action:
               message: "Auto-off Dag: Daglampor släckta och scen återställd."
 
   # --- Auto-off Nattlampor med scenåterställning ---
-
+  
   - choose:
       - conditions:
           - condition: template
@@ -758,8 +848,37 @@ action:
               name: Rörelsestyrning
               message: "Auto-off Natt: Nattlampor släckta och scen återställd."
 
-  # --- Fasta avstängningstider med veckodag ---
+  # --- Auto-off Circadian lampor ---
+  
+  - choose:
+      - conditions:
+          - condition: template
+            value_template: "{{ circadian_lights_var | default([]) != [] }}"
+        sequence:
+          - choose:
+              - conditions:
+                  - condition: template
+                    value_template: "{{ failsafe_timer_circular_var | int > 0 }}"
+                sequence:
+                  - delay:
+                      minutes: "{{ failsafe_timer_circular_var }}"
+          - service: light.turn_off
+            target:
+              entity_id: >
+                {% if circadian_lights_var is string %}
+                  {{ circadian_lights_var }}
+                {% elif circadian_lights_var is mapping %}
+                  {{ circadian_lights_var.entity_id }}
+                {% elif circadian_lights_var is iterable %}
+                  {{ circadian_lights_var | join(',') }}
+                {% endif %}
+          - service: logbook.log
+            data:
+              name: Rörelsestyrning
+              message: "Auto-off Circadian: Circadian-lampor släckta automatiskt."
 
+  # --- Fasta avstängningstider med veckodag ---
+  
   - choose:
       - conditions:
           - condition: trigger
@@ -809,7 +928,7 @@ action:
                 {{ lights | join(',') }}
 
   # --- Failsafe Huvudlampor ---
-
+  
   - choose:
       - conditions:
           - condition: template
@@ -858,7 +977,7 @@ action:
                       message: "Failsafe Main: Huvudlampor släckta automatiskt (endast om fortfarande på)."
 
   # --- Failsafe Daglampor ---
-
+  
   - choose:
       - conditions:
           - condition: template
@@ -915,10 +1034,10 @@ action:
                   - service: logbook.log
                     data:
                       name: Rörelsestyrning
-                      message: "Failsafe Day: Dagscen återställd automatiskt."
+                      message: "Failsafe Day: Dag scen återställd."
 
   # --- Failsafe Nattlampor ---
-
+  
   - choose:
       - conditions:
           - condition: template
@@ -975,4 +1094,80 @@ action:
                   - service: logbook.log
                     data:
                       name: Rörelsestyrning
-                      message: "Failsafe Night: Nattscen återställd automatiskt."
+                      message: "Failsafe Night: Natt scen återställd."
+
+  # --- Circadian Light ---
+  
+  - choose:
+      - conditions:
+          - condition: template
+            value_template: "{{ circadian_enabled_var and circadian_lights_var | default([]) != [] }}"
+          - condition: trigger
+            id: motion_on
+        sequence:
+          - service: light.turn_on
+            target:
+              entity_id: >
+                {% if circadian_lights_var is string %}
+                  {{ circadian_lights_var }}
+                {% elif circadian_lights_var is mapping %}
+                  {{ circadian_lights_var.entity_id }}
+                {% elif circadian_lights_var is iterable %}
+                  {{ circadian_lights_var | join(',') }}
+                {% endif %}
+            data:
+              color_temp: "{{ circadian_temp_var }}"
+              brightness: "{{ circadian_brightness_var }}"
+          - service: logbook.log
+            data:
+              name: Rörelsestyrning
+              message: "Circadian Light: Justerad automatiskt."
+
+  # --- Failsafe Circadian Lights ---
+  
+  - choose:
+      - conditions:
+          - condition: template
+            value_template: "{{ enable_failsafe_var and circadian_lights_var | default('') != '' }}"
+          - condition: template
+            value_template: >
+              {% set lights = [] %}
+              {% if circadian_lights_var is string %}
+                {% set lights = [circadian_lights_var] %}
+              {% elif circadian_lights_var is mapping %}
+                {% set lights = [circadian_lights_var.entity_id] %}
+              {% elif circadian_lights_var is iterable %}
+                {% set lights = circadian_lights_var %}
+              {% endif %}
+              {{ lights | select('is_state','on') | list | count > 0 }}
+        sequence:
+          - delay:
+              minutes: "{{ failsafe_timer_circular_var }}"
+          - choose:
+              - conditions:
+                  - condition: template
+                    value_template: >
+                      {% set lights = [] %}
+                      {% if circadian_lights_var is string %}
+                        {% set lights = [circadian_lights_var] %}
+                      {% elif circadian_lights_var is mapping %}
+                        {% set lights = [circadian_lights_var.entity_id] %}
+                      {% elif circadian_lights_var is iterable %}
+                        {% set lights = circadian_lights_var %}
+                      {% endif %}
+                      {{ lights | select('is_state','on') | list | count > 0 }}
+                sequence:
+                  - service: light.turn_off
+                    target:
+                      entity_id: >
+                        {% if circadian_lights_var is string %}
+                          {{ circadian_lights_var }}
+                        {% elif circadian_lights_var is mapping %}
+                          {{ circadian_lights_var.entity_id }}
+                        {% elif circadian_lights_var is iterable %}
+                          {{ circadian_lights_var | join(',') }}
+                        {% endif %}
+                  - service: logbook.log
+                    data:
+                      name: Rörelsestyrning
+                      message: "Failsafe Circular Lights: Circular lights släckta automatiskt."
