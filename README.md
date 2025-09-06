@@ -17,6 +17,7 @@ Ditt hem **tänker själv**, känner solens rytm och vet exakt när lamporna ska
 - 💡 **Auto-off + Scenåterställning** – Återställ favoritljuslägen automatiskt
 - 🛡️ **Failsafe per kategori** – Lamporna släcks **bara när de verkligen behöver**
 - 🌙 **Dynamisk dimning** – Ljusstyrka som följer dygnets rytm
+- 🌓 **Circadian Light** – Färgtemperatur anpassas automatiskt efter dygnets naturliga rytm
 - 📅 **Veckodagslogik** – Olika scheman för vardag och helg
 - 📸 **Snapshot-hantering** – Spara & återställ exakt det ljus du vill ha
 - 📝 **Smart loggning** – Full kontroll på alla händelser
