@@ -80,10 +80,10 @@ Ditt hem **tänker själv**, känner solens rytm och vet exakt när lamporna ska
 
 # 🌈 **Pro Tips** 🌟
 
-💡 **Kombinera luxsensor + soloffset + veckodagar** → Total kontroll
-🎨 **Off Scenes** → Mjuk, stämningsfull släckning
-📸 **Snapshots** → Återställ rummet – automationen blir osynlig
-🛌 **Failsafe** → Sov tryggt, slipp glömda lampor
+- 💡 **Kombinera luxsensor + soloffset + veckodagar** → Total kontroll
+- 🎨 **Off Scenes** → Mjuk, stämningsfull släckning
+- 📸 **Snapshots** → Återställ rummet – automationen blir osynlig
+- 🛌 **Failsafe** → Sov tryggt, slipp glömda lampor
 
 ---
 
