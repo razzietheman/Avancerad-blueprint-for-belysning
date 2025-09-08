@@ -1,5 +1,5 @@
 blueprint: 
-  name: "Rörelsestyrd Belysning med Circual Light – Failsafe Pro 6.3"
+  name: "Rörelsestyrd Belysning med Circual Light – Failsafe Pro 6.4"
   description: >
     En komplett automation för ditt smarta hem som kombinerar rörelsestyrning med avancerade failsafe-funktioner 
     och dynamiskt circadian-ljus. Huvudlampor, dag- och nattlampor, samt circual lights hanteras automatiskt – 
@@ -622,7 +622,7 @@ action:
                           {% endif %}
                         {% endfor %}
 
-                        {{ lights if lights|count > 0 else '' }}
+                        {{ lights }}
 
           # --- Dagscen ---
           - choose:
@@ -1191,4 +1191,4 @@ action:
                   - service: logbook.log
                     data:
                       name: Rörelsestyrning
-                      message: "Failsafe Circular Lights: Circular lights släckta automatiskt."
+                      message: "Failsafe Circadian Lights: Circadian lights släckta automatiskt."
