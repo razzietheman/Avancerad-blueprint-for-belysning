@@ -565,6 +565,7 @@ variables:
 action:
 
   # --- Rörelse/Brytare PÅ ---
+  
   - choose:
       - conditions:
           - condition: or
@@ -578,6 +579,7 @@ action:
         sequence:
 
           # --- Snapshot ---
+          
           - choose:
               - conditions:
                   - condition: template
@@ -607,6 +609,7 @@ action:
                         {{ lights | tojson }}
 
           # --- Dagscen ---
+          
           - choose:
               - conditions:
                   - condition: template
@@ -667,6 +670,7 @@ action:
                                 {% endif %}
 
           # --- Nattscen ---
+          
           - choose:
               - conditions:
                   - condition: template
@@ -727,6 +731,7 @@ action:
                                 {% endif %}
 
           # --- Spara senaste scen ---
+          
           - choose:
               - conditions:
                   - condition: template
@@ -738,12 +743,14 @@ action:
                       value: "Dag/Natt ON"
 
           # --- Loggning ---
+          
           - service: logbook.log
             data:
               name: Rörelsestyrning
               message: "Dag/Natt ON aktiverad via rörelse eller brytare."
 
   # --- Auto-off Huvudlampor ---
+  
   - choose:
       - conditions:
           - condition: or
@@ -755,8 +762,13 @@ action:
           - condition: template
             value_template: "{{ main_lights_var | default('') != '' }}"
         sequence:
-          - delay:
-              minutes: "{{ auto_off_main_var }}"
+          - choose:
+              - conditions:
+                  - condition: template
+                    value_template: "{{ auto_off_main_var | int > 0 }}"
+                sequence:
+                  - delay:
+                      minutes: "{{ auto_off_main_var | int }}"
           - service: light.turn_off
             target:
               entity_id: >
@@ -773,13 +785,19 @@ action:
               message: "Auto-off Main: Huvudlampor släckta."
 
   # --- Auto-off Daglampor ---
+  
   - choose:
       - conditions:
           - condition: template
             value_template: "{{ day_lights_var | default('') != '' }}"
         sequence:
-          - delay:
-              minutes: "{{ auto_off_day_var }}"
+          - choose:
+              - conditions:
+                  - condition: template
+                    value_template: "{{ auto_off_day_var | int > 0 }}"
+                sequence:
+                  - delay:
+                      minutes: "{{ auto_off_day_var | int }}"
           - service: light.turn_off
             target:
               entity_id: >
@@ -799,13 +817,19 @@ action:
               message: "Auto-off Day: Daglampor släckta och scen återställd."
 
   # --- Auto-off Nattlampor ---
+  
   - choose:
       - conditions:
           - condition: template
             value_template: "{{ night_lights_var | default('') != '' }}"
         sequence:
-          - delay:
-              minutes: "{{ auto_off_night_var }}"
+          - choose:
+              - conditions:
+                  - condition: template
+                    value_template: "{{ auto_off_night_var | int > 0 }}"
+                sequence:
+                  - delay:
+                      minutes: "{{ auto_off_night_var | int }}"
           - service: light.turn_off
             target:
               entity_id: >
@@ -825,13 +849,19 @@ action:
               message: "Auto-off Night: Nattlampor släckta och scen återställd."
 
   # --- Auto-off Circadian Lights ---
+  
   - choose:
       - conditions:
           - condition: template
             value_template: "{{ circadian_lights_var | default([]) != [] }}"
         sequence:
-          - delay:
-              minutes: "{{ failsafe_timer_circular_var }}"
+          - choose:
+              - conditions:
+                  - condition: template
+                    value_template: "{{ failsafe_timer_circular_var | int > 0 }}"
+                sequence:
+                  - delay:
+                      minutes: "{{ failsafe_timer_circular_var | int }}"
           - service: light.turn_off
             target:
               entity_id: >
