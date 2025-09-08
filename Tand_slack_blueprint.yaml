@@ -777,7 +777,7 @@ action:
                         {% elif main_lights_var is mapping %}
                           {{ main_lights_var.entity_id }}
                         {% elif main_lights_var is iterable %}
-                          {{ main_lights_var | join(',') }}
+                          {{ main_lights_var | list }}
                         {% endif %}
           - service: logbook.log
             data:
