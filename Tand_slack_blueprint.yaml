@@ -565,7 +565,7 @@ variables:
 action:
 
   # --- Rörelse/Brytare PÅ ---
-
+  
   - choose:
       - conditions:
           - condition: or
@@ -577,8 +577,8 @@ action:
           - condition: template
             value_template: "{{ (optional_switches | default([])) != [] or trigger.id == 'motion_on' }}"
         sequence:
-
-          # --- Snapshot för huvudlampor ---
+          
+          # --- Snapshot ---
           
           - choose:
               - conditions:
