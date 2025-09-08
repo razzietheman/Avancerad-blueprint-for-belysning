@@ -565,7 +565,7 @@ variables:
 action:
 
   # --- Rörelse/Brytare PÅ ---
-  
+
   - choose:
       - conditions:
           - condition: or
@@ -578,7 +578,7 @@ action:
             value_template: "{{ (optional_switches | default([])) != [] or trigger.id == 'motion_on' }}"
         sequence:
 
-          # --- Snapshot ---
+          # --- Snapshot för huvudlampor ---
           
           - choose:
               - conditions:
@@ -653,21 +653,6 @@ action:
                                 {% else %}
                                   255
                                 {% endif %}
-                      - conditions:
-                          - condition: template
-                            value_template: >
-                              {{ main_lights_var | default('') != '' and (lux_sensor_var | default('') == '' or states(lux_sensor_var) | float < lux_threshold_var | float) }}
-                        sequence:
-                          - service: light.turn_on
-                            target:
-                              entity_id: >
-                                {% if main_lights_var is string %}
-                                  {{ main_lights_var }}
-                                {% elif main_lights_var is mapping %}
-                                  {{ main_lights_var.entity_id }}
-                                {% elif main_lights_var is iterable %}
-                                  {{ main_lights_var | join(',') }}
-                                {% endif %}
 
           # --- Nattscen ---
           
@@ -714,21 +699,6 @@ action:
                                 {% else %}
                                   255
                                 {% endif %}
-                      - conditions:
-                          - condition: template
-                            value_template: >
-                              {{ main_lights_var | default('') != '' and (lux_sensor_var | default('') == '' or states(lux_sensor_var) | float < lux_threshold_var | float) }}
-                        sequence:
-                          - service: light.turn_on
-                            target:
-                              entity_id: >
-                                {% if main_lights_var is string %}
-                                  {{ main_lights_var }}
-                                {% elif main_lights_var is mapping %}
-                                  {{ main_lights_var.entity_id }}
-                                {% elif main_lights_var is iterable %}
-                                  {{ main_lights_var | join(',') }}
-                                {% endif %}
 
           # --- Spara senaste scen ---
           
@@ -753,12 +723,6 @@ action:
   
   - choose:
       - conditions:
-          - condition: or
-            conditions:
-              - condition: trigger
-                id: motion_off
-              - condition: trigger
-                id: switch_off
           - condition: template
             value_template: "{{ main_lights_var | default('') != '' }}"
         sequence:
