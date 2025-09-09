@@ -1,5 +1,5 @@
 blueprint: 
-  name: "Rörelsestyrd Belysning med Circual Light – Failsafe Pro 6.7"
+  name: "Rörelsestyrd Belysning med Circual Light – Failsafe Pro 6.8"
   description: >
     En komplett automation för ditt smarta hem som kombinerar rörelsestyrning med avancerade failsafe-funktioner 
     och dynamiskt circadian-ljus. Huvudlampor, dag- och nattlampor, samt circual lights hanteras automatiskt – 
@@ -770,7 +770,7 @@ action:
               {{ lights | count > 0 }}
         sequence:
           - delay:
-              minutes: "{{ auto_off_main_var | int(0) }}"
+              minutes: "{{ auto_off_main_var | default(0) | float }}"
           - service: light.turn_off
             target:
               entity_id: >
@@ -815,7 +815,7 @@ action:
               {{ lights | count > 0 }}
         sequence:
           - delay:
-              minutes: "{{ auto_off_day_var | int(0) }}"
+              minutes: "{{ auto_off_day_var | default(0) | float }}"
           - service: light.turn_off
             target:
               entity_id: >
@@ -863,7 +863,7 @@ action:
               {{ lights | count > 0 }}
         sequence:
           - delay:
-              minutes: "{{ auto_off_night_var | int(0) }}"
+              minutes: "{{ auto_off_night_var | default(0) | float }}"
           - service: light.turn_off
             target:
               entity_id: >
@@ -901,7 +901,7 @@ action:
               {{ lights | count > 0 }}
         sequence:
           - delay:
-              minutes: "{{ failsafe_timer_circular_var | int(0) }}"
+              minutes: "{{ failsafe_timer_circular_var | default(0) | float }}"
           - service: light.turn_off
             target:
               entity_id: >
@@ -988,7 +988,7 @@ action:
               {{ lights | select('is_state','on') | list | count > 0 }}
         sequence:
           - delay:
-              minutes: "{{ failsafe_timer_main_var }}"
+              minutes: "{{ failsafe_timer_main_var | default(0) | float }}"
           - choose:
               - conditions:
                   - condition: template
@@ -1037,7 +1037,7 @@ action:
               {{ (lights | select('is_state','on') | list | count > 0) or (scene_day_var | default('') != '') }}
         sequence:
           - delay:
-              minutes: "{{ failsafe_timer_day_var }}"
+              minutes: "{{ failsafe_timer_day_var | default(0) | float }}"
           - choose:
               - conditions:
                   - condition: template
@@ -1097,7 +1097,7 @@ action:
               {{ (lights | select('is_state','on') | list | count > 0) or (scene_night_var | default('') != '') }}
         sequence:
           - delay:
-              minutes: "{{ failsafe_timer_night_var }}"
+              minutes: "{{ failsafe_timer_night_var | default(0) | float }}"
           - choose:
               - conditions:
                   - condition: template
@@ -1184,7 +1184,7 @@ action:
               {{ lights | select('is_state','on') | list | count > 0 }}
         sequence:
           - delay:
-              minutes: "{{ failsafe_timer_circular_var }}"
+              minutes: "{{ failsafe_timer_circular_var | default(0) | float }}"
           - choose:
               - conditions:
                   - condition: template
