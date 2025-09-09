@@ -630,7 +630,7 @@ action:
                   - choose:
                       - conditions:
                           - condition: template
-                            value_template: "{{ scene_day_var | default('') != '' }}"
+                            value_template: "{{ scene_day_var | default([]) != [] }}"
                         sequence:
                           - service: scene.turn_on
                             target:
@@ -691,7 +691,7 @@ action:
                   - choose:
                       - conditions:
                           - condition: template
-                            value_template: "{{ scene_night_var | default('') != '' }}"
+                            value_template: "{{ scene_night_var | default([]) != [] }}"
                         sequence:
                           - service: scene.turn_on
                             target:
@@ -1068,7 +1068,7 @@ action:
                       message: "Failsafe Dag: Daglampor släckta automatiskt (endast om fortfarande på)."
               - conditions:
                   - condition: template
-                    value_template: "{{ scene_day_var | default('') != '' }}"
+                    value_template: "{{ scene_day_var | default([]) != [] }}"
                 sequence:
                   - service: scene.turn_on
                     target:
@@ -1128,7 +1128,7 @@ action:
                       message: "Failsafe Natt: Nattlampor släckta automatiskt (endast om fortfarande på)."
               - conditions:
                   - condition: template
-                    value_template: "{{ scene_night_var | default('') != '' }}"
+                    value_template: "{{ scene_night_var | default([]) != [] }}"
                 sequence:
                   - service: scene.turn_on
                     target:
