@@ -1,5 +1,5 @@
 blueprint: 
-  name: "Rörelsestyrd Belysning med Circual Light – Failsafe Pro 6.6"
+  name: "Rörelsestyrd Belysning med Circual Light – Failsafe Pro 6.7"
   description: >
     En komplett automation för ditt smarta hem som kombinerar rörelsestyrning med avancerade failsafe-funktioner 
     och dynamiskt circadian-ljus. Huvudlampor, dag- och nattlampor, samt circual lights hanteras automatiskt – 
@@ -585,13 +585,15 @@ action:
                   - condition: template
                     value_template: >
                       {% set lights = [] %}
-                      {% if main_lights_var is string %}
-                        {% set lights = [main_lights_var] %}
-                      {% elif main_lights_var is mapping %}
-                        {% set lights = [main_lights_var.entity_id] %}
-                      {% elif main_lights_var is iterable %}
-                        {% set lights = main_lights_var %}
-                      {% endif %}
+                      {% for var in [main_lights_var, day_lights_var, night_lights_var] %}
+                        {% if var is string and var != '' %}
+                          {% set lights = lights + [var] %}
+                        {% elif var is mapping and var.entity_id is string %}
+                          {% set lights = lights + [var.entity_id] %}
+                        {% elif var is iterable %}
+                          {% set lights = lights + var %}
+                        {% endif %}
+                      {% endfor %}
                       {{ lights | count > 0 }}
                 sequence:
                   - service: scene.create
@@ -599,13 +601,15 @@ action:
                       scene_id: snapshot_before_on
                       snapshot_entities: >
                         {% set lights = [] %}
-                        {% if main_lights_var is string %}
-                          {% set lights = [main_lights_var] %}
-                        {% elif main_lights_var is mapping %}
-                          {% set lights = [main_lights_var.entity_id] %}
-                        {% elif main_lights_var is iterable %}
-                          {% set lights = main_lights_var %}
-                        {% endif %}
+                        {% for var in [main_lights_var, day_lights_var, night_lights_var] %}
+                          {% if var is string and var != '' %}
+                            {% set lights = lights + [var] %}
+                          {% elif var is mapping and var.entity_id is string %}
+                            {% set lights = lights + [var.entity_id] %}
+                          {% elif var is iterable %}
+                            {% set lights = lights + var %}
+                          {% endif %}
+                        {% endfor %}
                         {{ lights | tojson }}
 
           # --- Dagscen ---
@@ -790,6 +794,16 @@ action:
       - conditions:
           - condition: template
             value_template: >
+              {% set t = now().time() %}
+              {% set start = strptime(day_start_var, '%H:%M:%S').time() %}
+              {% set end = strptime(day_end_var, '%H:%M:%S').time() %}
+              {% if start <= end %}
+                {{ t >= start and t <= end }}
+              {% else %}
+                {{ t >= start or t <= end }}
+              {% endif %}
+          - condition: template
+            value_template: >
               {% set lights = [] %}
               {% if day_lights_var is string and day_lights_var != '' %}
                 {% set lights = [day_lights_var] %}
@@ -826,6 +840,16 @@ action:
   
   - choose:
       - conditions:
+          - condition: template
+            value_template: >
+              {% set t = now().time() %}
+              {% set start = strptime(night_start_var, '%H:%M:%S').time() %}
+              {% set end = strptime(night_end_var, '%H:%M:%S').time() %}
+              {% if start <= end %}
+                {{ t >= start and t <= end }}
+              {% else %}
+                {{ t >= start or t <= end }}
+              {% endif %}
           - condition: template
             value_template: >
               {% set lights = [] %}
@@ -918,8 +942,8 @@ action:
                       {% set lights = lights + var %}
                     {% endif %}
                   {% endif %}
-                  {% endfor %}
-                  {{ lights | join(',') }}
+                {% endfor %}
+                {{ lights | join(',') }}
 
   - choose:
       - conditions:
