@@ -901,7 +901,7 @@ action:
               {{ lights | count > 0 }}
         sequence:
           - delay:
-              minutes: "{{ failsafe_timer_circular_var | default(0) | float }}"
+              minutes: "{{ auto_off_circular_var | default(0) | float }}"
           - service: light.turn_off
             target:
               entity_id: >
