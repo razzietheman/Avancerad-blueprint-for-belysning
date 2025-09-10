@@ -1,5 +1,5 @@
 blueprint: 
-  name: "Rörelsestyrd Belysning med Circual Light – Failsafe Pro 6.9"
+  name: "Rörelsestyrd Belysning med Circual Light – Failsafe Pro 6.10"
   description: >
     En komplett automation för ditt smarta hem som kombinerar rörelsestyrning med avancerade failsafe-funktioner 
     och dynamiskt circadian-ljus. Huvudlampor, dag- och nattlampor, samt circual lights hanteras automatiskt – 
@@ -806,37 +806,73 @@ action:
               {% endif %}
           - condition: template
             value_template: >
-              {% set lights = [] %}
-              {% if day_lights_var is string and day_lights_var != '' %}
-                {% set lights = [day_lights_var] %}
-              {% elif day_lights_var is mapping and day_lights_var.entity_id is string %}
-                {% set lights = [day_lights_var.entity_id] %}
-              {% elif day_lights_var is iterable %}
-                {% set lights = day_lights_var | select('string') | list %}
-              {% endif %}
-              {{ lights | count > 0 }}
+              {% set snapshot_entities = state_attr('scene.snapshot_before_on','entities') | default({}) %}
+              {{ (off_scene_day_var | default('') != '') or (day_lights_var | default('') != '') or (scene_day_var | default('') != '') or (snapshot_entities | length > 0) }}
         sequence:
           - delay:
               minutes: "{{ auto_off_day_var | default(0) | float }}"
-          - service: light.turn_off
-            target:
-              entity_id: >
-                {% set lights = [] %}
-                {% if day_lights_var is string and day_lights_var != '' %}
-                  {% set lights = [day_lights_var] %}
-                {% elif day_lights_var is mapping and day_lights_var.entity_id is string %}
-                  {% set lights = [day_lights_var.entity_id] %}
-                {% elif day_lights_var is iterable %}
-                  {% set lights = day_lights_var | select('string') | list %}
-                {% endif %}
-                {{ lights | join(',') }}
-          - service: scene.turn_on
-            target:
-              entity_id: scene.snapshot_before_on
-          - service: logbook.log
-            data:
-              name: Rörelsestyrning
-              message: "Auto-off Dag: Daglampor släckta och scen återställd."
+          - choose:
+              - conditions:
+                  - condition: template
+                    value_template: "{{ off_scene_day_var | default('') != '' }}"
+                sequence:
+                  - service: scene.turn_on
+                    target:
+                      entity_id: "{{ off_scene_day_var }}"
+                  - service: logbook.log
+                    data:
+                      name: Rörelsestyrning
+                      message: "Auto-off Dag: Off-scene aktiverad."
+              - conditions:
+                  - condition: template
+                    value_template: "{{ state_attr('scene.snapshot_before_on','entities') | default({}) | length > 0 }}"
+                sequence:
+                  - service: scene.turn_on
+                    target:
+                      entity_id: scene.snapshot_before_on
+                  - service: logbook.log
+                    data:
+                      name: Rörelsestyrning
+                      message: "Auto-off Dag: Snapshot återställd."
+              - conditions:
+                  - condition: template
+                    value_template: >
+                      {% set lights = [] %}
+                      {% if day_lights_var is string and day_lights_var != '' %}
+                        {% set lights = [day_lights_var] %}
+                      {% elif day_lights_var is mapping and day_lights_var.entity_id is string %}
+                        {% set lights = [day_lights_var.entity_id] %}
+                      {% elif day_lights_var is iterable %}
+                        {% set lights = day_lights_var | select('string') | list %}
+                      {% elif scene_day_var | default('') != '' %}
+                        {% set ents = state_attr(scene_day_var, 'entities') | default({}) %}
+                        {% for k in ents.keys() %}
+                          {% set lights = lights + [k] %}
+                        {% endfor %}
+                      {% endif %}
+                      {{ lights | length > 0 }}
+                sequence:
+                  - service: homeassistant.turn_off
+                    target:
+                      entity_id: >
+                        {% set lights = [] %}
+                        {% if day_lights_var is string and day_lights_var != '' %}
+                          {% set lights = [day_lights_var] %}
+                        {% elif day_lights_var is mapping and day_lights_var.entity_id is string %}
+                          {% set lights = [day_lights_var.entity_id] %}
+                        {% elif day_lights_var is iterable %}
+                          {% set lights = day_lights_var | select('string') | list %}
+                        {% elif scene_day_var | default('') != '' %}
+                          {% set ents = state_attr(scene_day_var, 'entities') | default({}) %}
+                          {% for k in ents.keys() %}
+                            {% set lights = lights + [k] %}
+                          {% endfor %}
+                        {% endif %}
+                        {{ lights | join(',') }}
+                  - service: logbook.log
+                    data:
+                      name: Rörelsestyrning
+                      message: "Auto-off Dag: Entiteter avstängda."
 
   # --- Auto-off Nattlampor ---
   
@@ -854,37 +890,73 @@ action:
               {% endif %}
           - condition: template
             value_template: >
-              {% set lights = [] %}
-              {% if night_lights_var is string and night_lights_var != '' %}
-                {% set lights = [night_lights_var] %}
-              {% elif night_lights_var is mapping and night_lights_var.entity_id is string %}
-                {% set lights = [night_lights_var.entity_id] %}
-              {% elif night_lights_var is iterable %}
-                {% set lights = night_lights_var | select('string') | list %}
-              {% endif %}
-              {{ lights | count > 0 }}
+              {% set snapshot_entities = state_attr('scene.snapshot_before_on','entities') | default({}) %}
+              {{ (off_scene_night_var | default('') != '') or (night_lights_var | default('') != '') or (scene_night_var | default('') != '') or (snapshot_entities | length > 0) }}
         sequence:
           - delay:
               minutes: "{{ auto_off_night_var | default(0) | float }}"
-          - service: light.turn_off
-            target:
-              entity_id: >
-                {% set lights = [] %}
-                {% if night_lights_var is string and night_lights_var != '' %}
-                  {% set lights = [night_lights_var] %}
-                {% elif night_lights_var is mapping and night_lights_var.entity_id is string %}
-                  {% set lights = [night_lights_var.entity_id] %}
-                {% elif night_lights_var is iterable %}
-                  {% set lights = night_lights_var | select('string') | list %}
-                {% endif %}
-                {{ lights | join(',') }}
-          - service: scene.turn_on
-            target:
-              entity_id: scene.snapshot_before_on
-          - service: logbook.log
-            data:
-              name: Rörelsestyrning
-              message: "Auto-off Natt: Nattlampor släckta och scen återställd."
+          - choose:
+              - conditions:
+                  - condition: template
+                    value_template: "{{ off_scene_night_var | default('') != '' }}"
+                sequence:
+                  - service: scene.turn_on
+                    target:
+                      entity_id: "{{ off_scene_night_var }}"
+                  - service: logbook.log
+                    data:
+                      name: Rörelsestyrning
+                      message: "Auto-off Natt: Off-scene aktiverad."
+              - conditions:
+                  - condition: template
+                    value_template: "{{ state_attr('scene.snapshot_before_on','entities') | default({}) | length > 0 }}"
+                sequence:
+                  - service: scene.turn_on
+                    target:
+                      entity_id: scene.snapshot_before_on
+                  - service: logbook.log
+                    data:
+                      name: Rörelsestyrning
+                      message: "Auto-off Natt: Snapshot återställd."
+              - conditions:
+                  - condition: template
+                    value_template: >
+                      {% set lights = [] %}
+                      {% if night_lights_var is string and night_lights_var != '' %}
+                        {% set lights = [night_lights_var] %}
+                      {% elif night_lights_var is mapping and night_lights_var.entity_id is string %}
+                        {% set lights = [night_lights_var.entity_id] %}
+                      {% elif night_lights_var is iterable %}
+                        {% set lights = night_lights_var | select('string') | list %}
+                      {% elif scene_night_var | default('') != '' %}
+                        {% set ents = state_attr(scene_night_var, 'entities') | default({}) %}
+                        {% for k in ents.keys() %}
+                          {% set lights = lights + [k] %}
+                        {% endfor %}
+                      {% endif %}
+                      {{ lights | length > 0 }}
+                sequence:
+                  - service: homeassistant.turn_off
+                    target:
+                      entity_id: >
+                        {% set lights = [] %}
+                        {% if night_lights_var is string and night_lights_var != '' %}
+                          {% set lights = [night_lights_var] %}
+                        {% elif night_lights_var is mapping and night_lights_var.entity_id is string %}
+                          {% set lights = [night_lights_var.entity_id] %}
+                        {% elif night_lights_var is iterable %}
+                          {% set lights = night_lights_var | select('string') | list %}
+                        {% elif scene_night_var | default('') != '' %}
+                          {% set ents = state_attr(scene_night_var, 'entities') | default({}) %}
+                          {% for k in ents.keys() %}
+                            {% set lights = lights + [k] %}
+                          {% endfor %}
+                        {% endif %}
+                        {{ lights | join(',') }}
+                  - service: logbook.log
+                    data:
+                      name: Rörelsestyrning
+                      message: "Auto-off Natt: Entiteter avstängda."
 
   # --- Auto-off Circadian Lights ---
   
@@ -1074,12 +1146,14 @@ action:
                       name: Rörelsestyrning
                       message: "Failsafe Main: Huvudlampor släckta automatiskt (endast om fortfarande på)."
 
-  # --- Failsafe Daglampor ---
+   # --- Failsafe Daglampor ---
+  
+  # Failsafe Daglampor – Lampor
   
   - choose:
       - conditions:
           - condition: template
-            value_template: "{{ enable_failsafe_var }}"
+            value_template: "{{ enable_failsafe_var and (day_lights_var | default('') != '') }}"
           - condition: template
             value_template: >
               {% set lights = [] %}
@@ -1109,6 +1183,9 @@ action:
               name: Rörelsestyrning
               message: "Failsafe Dag: Daglampor släckta automatiskt (endast om fortfarande på)."
 
+  # Failsafe Daglampor – Scen
+  
+  - choose:
       - conditions:
           - condition: template
             value_template: "{{ enable_failsafe_var and scene_day_var | default('') != '' }}"
@@ -1121,14 +1198,16 @@ action:
           - service: logbook.log
             data:
               name: Rörelsestyrning
-              message: "Failsafe Dag: Dag scen återställd."
+              message: "Failsafe Dag: Off-scen aktiverad."
 
   # --- Failsafe Nattlampor ---
+  
+  # Failsafe Nattlampor – Lampor
   
   - choose:
       - conditions:
           - condition: template
-            value_template: "{{ enable_failsafe_var }}"
+            value_template: "{{ enable_failsafe_var and (night_lights_var | default('') != '') }}"
           - condition: template
             value_template: >
               {% set lights = [] %}
@@ -1158,6 +1237,9 @@ action:
               name: Rörelsestyrning
               message: "Failsafe Natt: Nattlampor släckta automatiskt (endast om fortfarande på)."
 
+  # Failsafe Nattlampor – Scen
+  
+  - choose:
       - conditions:
           - condition: template
             value_template: "{{ enable_failsafe_var and scene_night_var | default('') != '' }}"
@@ -1170,7 +1252,7 @@ action:
           - service: logbook.log
             data:
               name: Rörelsestyrning
-              message: "Failsafe Natt: Natt scen återställd."
+              message: "Failsafe Natt: Off-scen aktiverad."
 
   # --- Failsafe Circadian Lights ---
   
