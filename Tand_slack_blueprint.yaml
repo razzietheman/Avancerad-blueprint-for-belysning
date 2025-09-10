@@ -1,5 +1,5 @@
 blueprint: 
-  name: "Rörelsestyrd Belysning med Circual Light – Failsafe Pro 6.10"
+  name: "Rörelsestyrd Belysning med circadian-ljus – Failsafe Pro 6.11"
   description: >
     En komplett automation för ditt smarta hem som kombinerar rörelsestyrning med avancerade failsafe-funktioner 
     och dynamiskt circadian-ljus. Huvudlampor, dag- och nattlampor, samt circual lights hanteras automatiskt – 
@@ -620,13 +620,17 @@ action:
               - conditions:
                   - condition: template
                     value_template: >
-                      {% set t = now().time() %}
-                      {% set start = strptime(day_start_var, '%H:%M:%S').time() %}
-                      {% set end = strptime(day_end_var, '%H:%M:%S').time() %}
-                      {% if start <= end %}
-                        {{ t >= start and t <= end }}
+                      {% if use_sun_times_var %}
+                        {{ is_state('sun.sun', 'above_horizon') }}
                       {% else %}
-                        {{ t >= start or t <= end }}
+                        {% set t = now().time() %}
+                        {% set start = strptime(day_start_var, '%H:%M:%S').time() %}
+                        {% set end = strptime(day_end_var, '%H:%M:%S').time() %}
+                        {% if start <= end %}
+                          {{ t >= start and t <= end }}
+                        {% else %}
+                          {{ t >= start or t <= end }}
+                        {% endif %}
                       {% endif %}
                 sequence:
                   - choose:
@@ -681,13 +685,17 @@ action:
               - conditions:
                   - condition: template
                     value_template: >
-                      {% set t = now().time() %}
-                      {% set start = strptime(night_start_var, '%H:%M:%S').time() %}
-                      {% set end = strptime(night_end_var, '%H:%M:%S').time() %}
-                      {% if start <= end %}
-                        {{ t >= start and t <= end }}
+                      {% if use_sun_times_var %}
+                        {{ is_state('sun.sun', 'below_horizon') }}
                       {% else %}
-                        {{ t >= start or t <= end }}
+                        {% set t = now().time() %}
+                        {% set start = strptime(night_start_var, '%H:%M:%S').time() %}
+                        {% set end = strptime(night_end_var, '%H:%M:%S').time() %}
+                        {% if start <= end %}
+                          {{ t >= start and t <= end }}
+                        {% else %}
+                          {{ t >= start or t <= end }}
+                        {% endif %}
                       {% endif %}
                 sequence:
                   - choose:
