@@ -753,9 +753,10 @@ action:
                     value_template: "{{ last_scene_entity | default('') != '' }}"
                 sequence:
                   - service: input_text.set_value
+                    target:
+                      entity_id: input_text.last_scene_triggered  # här sätter vi rätt input_text
                     data:
-                      entity_id: "{{ last_scene_entity }}"
-                      value: "Dag/Natt På"
+                      value: "{{ last_scene_entity }}"  # loggar den faktiska scenen
 
           # --- Loggning ---
           
