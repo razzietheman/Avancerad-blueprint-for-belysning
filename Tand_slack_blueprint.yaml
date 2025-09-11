@@ -1,5 +1,5 @@
 blueprint: 
-  name: "Rörelsestyrd Belysning med Circadian Lampor – Failsafe Pro 6.14"
+  name: "Rörelsestyrd Belysning med Circadian Lampor – Failsafe Pro 6.15"
   description: >
     En komplett automation för ditt smarta hem som kombinerar rörelsestyrning med avancerade failsafe-funktioner 
     och dynamiskt circadian-ljus. Huvudlampor, dag- och nattlampor, samt circual lights hanteras automatiskt – 
@@ -1130,6 +1130,11 @@ action:
               {% set lights = day_lights_var %}
             {% endif %}
             {{ lights | select('is_state','on') | list | count > 0 }}
+        - condition: template
+          value_template: >
+            {% set current_time = now().time() %}
+            {% set day_start_time = strptime(day_start, '%H:%M:%S').time() %}
+            {{ current_time >= day_start_time }}
       sequence:
         - choose:
             - conditions:
@@ -1193,6 +1198,11 @@ action:
               {% set lights = night_lights_var %}
             {% endif %}
             {{ lights | select('is_state','on') | list | count > 0 }}
+        - condition: template
+          value_template: >
+            {% set current_time = now().time() %}
+            {% set night_start_time = strptime(night_start, '%H:%M:%S').time() %}
+            {{ current_time >= night_start_time }}
       sequence:
         - choose:
             - conditions:
