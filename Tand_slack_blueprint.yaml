@@ -82,7 +82,7 @@ blueprint:
     brightness_day:
       name: Dagsljusstyrka
       description: "Valfri ljusstyrka för dagslampor (0–100%)."
-      default: null
+      default: []
       selector:
         number:
           min: 0
@@ -131,8 +131,8 @@ blueprint:
 
     brightness_night:
       name: Nattljusstyrka
-      description: "Valfri ljusstyrka för nattlampor (0–100%). Lämna tomt för default."
-      default: null
+      description: "Valfri ljusstyrka för nattlampor (0–100%)."
+      default: []
       selector:
         number:
           min: 0
