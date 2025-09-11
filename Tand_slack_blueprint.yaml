@@ -226,6 +226,14 @@ blueprint:
             - label: Söndag
               value: sun
     
+    input_text_last_scene:
+      name: Input Text - Senaste scen
+      description: "Input Text-enhet som sparar namnet på den senast aktiva scenen."
+      default: []
+      selector:
+        entity:
+          domain: input_text
+    
     # --- Lux & sol ---
     
     lux_sensor:
@@ -454,14 +462,6 @@ blueprint:
           max: 120
           step: 1
           unit_of_measurement: min
-    
-    input_text_last_scene:
-      name: Input Text - Senaste scen
-      description: "Input Text-enhet som sparar namnet på den senast aktiva scenen."
-      default: []
-      selector:
-        entity:
-          domain: input_text
 
 # --- Triggers ---
 
