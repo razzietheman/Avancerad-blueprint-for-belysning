@@ -81,7 +81,7 @@ blueprint:
 
     brightness_day:
       name: Dagsljusstyrka
-      description: "Valfri ljusstyrka för dagslampor (0–100%). Lämna tomt för default."
+      description: "Valfri ljusstyrka för dagslampor (0–100%)."
       default: null
       selector:
         number:
