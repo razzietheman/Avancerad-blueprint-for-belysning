@@ -762,7 +762,7 @@ action:
           
           - service: logbook.log
             data:
-              name: Rörelsestyrning
+              name: Belysningsautomation
               message: "Dag/Natt på aktiverad via rörelse eller brytare."
 
   # --- Auto-off Huvudlampor ---
@@ -797,7 +797,7 @@ action:
                 {{ lights | join(',') }}
           - service: logbook.log
             data:
-              name: Rörelsestyrning
+              name: Belysningsautomation
               message: "Auto-off Main: Huvudlampor släckta."
 
   # --- Auto-off Daglampor ---
@@ -828,7 +828,9 @@ action:
         - delay:
             minutes: "{{ auto_off_day_var | default(0) | float }}"
         - choose:
+            
             # Om off_scene_day_var är satt, kör den
+            
             - conditions:
                 - condition: template
                   value_template: "{{ off_scene_day_var is string and off_scene_day_var != '' }}"
@@ -836,7 +838,9 @@ action:
                 - service: scene.turn_on
                   target:
                     entity_id: "{{ off_scene_day_var }}"
+            
             # Annars, stäng av lamporna direkt
+            
             - conditions: []
               sequence:
                 - service: light.turn_off
@@ -856,7 +860,7 @@ action:
             entity_id: scene.snapshot_before_on
         - service: logbook.log
           data:
-            name: Rörelsestyrning
+            name: Belysningsautomation
             message: "Auto-off Dag: Daglampor släckta och scen återställd."
 
   # --- Auto-off Nattlampor ---
@@ -887,7 +891,9 @@ action:
         - delay:
             minutes: "{{ auto_off_night_var | default(0) | float }}"
         - choose:
+            
             # Om off_scene_night_var är satt, kör den
+            
             - conditions:
                 - condition: template
                   value_template: "{{ off_scene_night_var is string and off_scene_night_var != '' }}"
@@ -895,7 +901,9 @@ action:
                 - service: scene.turn_on
                   target:
                     entity_id: "{{ off_scene_night_var }}"
+            
             # Annars, stäng av lamporna direkt
+            
             - conditions: []
               sequence:
                 - service: light.turn_off
@@ -915,7 +923,7 @@ action:
             entity_id: scene.snapshot_before_on
         - service: logbook.log
           data:
-            name: Rörelsestyrning
+            name: Belysningsautomation
             message: "Auto-off Natt: Nattlampor släckta och scen återställd."
 
   # --- Auto-off Circadian Lights ---
@@ -950,7 +958,7 @@ action:
                 {{ lights | join(',') }}
           - service: logbook.log
             data:
-              name: Rörelsestyrning
+              name: Belysningsautomation
               message: "Auto-off Circadian: Circadian-lampor släckta."
 
   # --- Fasta avstängningstider med veckodag ---
@@ -1027,7 +1035,7 @@ action:
               brightness: "{{ circadian_brightness_var }}"
           - service: logbook.log
             data:
-              name: Rörelsestyrning
+              name: Belysningsautomation
               message: "Circadian Lampor: Justerad automatiskt."
 
   # --- Circadian Light update (via time_pattern) ---
@@ -1054,7 +1062,7 @@ action:
               brightness: "{{ circadian_brightness_var }}"
           - service: logbook.log
             data:
-              name: Rörelsestyrning
+              name: Belysningsautomation
               message: "Circadian Update: Justerad automatiskt via time_pattern."
 
   # --- Failsafe Huvudlampor ---
@@ -1103,7 +1111,7 @@ action:
                         {% endif %}
                   - service: logbook.log
                     data:
-                      name: Rörelsestyrning
+                      name: Belysningsautomation
                       message: "Failsafe Main: Huvudlampor släckta automatiskt (endast om fortfarande på)."
 
   # --- Failsafe Daglampor ---
@@ -1138,7 +1146,7 @@ action:
                 {% endif %}
           - service: logbook.log
             data:
-              name: Rörelsestyrning
+              name: Belysningsautomation
               message: "Failsafe Dag: Daglampor släckta automatiskt (endast om fortfarande på)."
 
       - conditions:
@@ -1152,7 +1160,7 @@ action:
               entity_id: scene.snapshot_before_on
           - service: logbook.log
             data:
-              name: Rörelsestyrning
+              name: Belysningsautomation
               message: "Failsafe Dag: Dag scen återställd."
 
   # --- Failsafe Nattlampor ---
@@ -1187,7 +1195,7 @@ action:
                 {% endif %}
           - service: logbook.log
             data:
-              name: Rörelsestyrning
+              name: Belysningsautomation
               message: "Failsafe Natt: Nattlampor släckta automatiskt (endast om fortfarande på)."
 
       - conditions:
@@ -1201,7 +1209,7 @@ action:
               entity_id: scene.snapshot_before_on
           - service: logbook.log
             data:
-              name: Rörelsestyrning
+              name: Belysningsautomation
               message: "Failsafe Natt: Natt scen återställd."
 
   # --- Failsafe Circadian Lights ---
@@ -1250,5 +1258,5 @@ action:
                         {% endif %}
                   - service: logbook.log
                     data:
-                      name: Rörelsestyrning
+                      name: Belysningsautomation
                       message: "Failsafe Circadian lampor: Circadian lampor släckta automatiskt."
