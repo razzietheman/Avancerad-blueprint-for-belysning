@@ -1,5 +1,5 @@
 blueprint: 
-  name: "Rörelsestyrd Belysning med Circadian Lampor – Failsafe Pro 6.13"
+  name: "Rörelsestyrd Belysning med Circadian Lampor – Failsafe Pro 6.14"
   description: >
     En komplett automation för ditt smarta hem som kombinerar rörelsestyrning med avancerade failsafe-funktioner 
     och dynamiskt circadian-ljus. Huvudlampor, dag- och nattlampor, samt circual lights hanteras automatiskt – 
@@ -324,14 +324,14 @@ blueprint:
     
     day_start:
       name: Dagsstart
-      description: "Tidpunkt då dagsläget aktiveras."
+      description: "Tidpunkt då dagsläget aktiveras. (enkel schemaversion)"
       default: "07:00:00"
       selector:
         time: {}
 
     day_end:
       name: Dagslut
-      description: "Tidpunkt då dagsläget avaktiveras. Dagslut kan inte ha samma starttid som Nattstart. Exempel: 21:59:59 "
+      description: "Tidpunkt då dagsläget avaktiveras. Dagslut kan inte ha samma starttid som Nattstart. Exempel: 21:59:59 (enkel schemaversion)"
       default: "21:59:59"
       selector:
         time: {}
@@ -361,14 +361,14 @@ blueprint:
 
     night_start:
       name: Nattstart
-      description: "Tidpunkt då nattläget aktiveras. Nattstart kan inte ha samma starttid som Dagslut. Exempel: 22:00:00"
+      description: "Tidpunkt då nattläget aktiveras. Nattstart kan inte ha samma starttid som Dagslut. Exempel: 22:00:00 (enkel schemaversion)"
       default: "22:00:00"
       selector:
         time: {}
 
     night_end:
       name: Nattslut
-      description: "Tidpunkt då nattläget avaktiveras."
+      description: "Tidpunkt då nattläget avaktiveras. (enkel schemaversion)"
       default: "06:59:59"
       selector:
         time: {}
@@ -396,6 +396,23 @@ blueprint:
             - label: Söndag
               value: sun
 
+    # --- Avancerat schema ---
+    
+    use_advanced_day_schedule:
+      name: Använd avancerat dagschema
+      description: "Aktivera för att ange olika start- och sluttider per veckodag för dagslampor."
+      default: false
+      selector:
+        boolean: {}
+
+    use_advanced_night_schedule:
+      name: Använd avancerat nattschema
+      description: "Aktivera för att ange olika start- och sluttider per veckodag för nattlampor."
+      default: false
+      selector:
+        boolean: {}
+    
+    
     # --- Arbetsdag & failsafe ---
     
     workday_sensor:
@@ -546,12 +563,46 @@ variables:
   auto_off_circadian_var: !input auto_off_circadian
   fixed_off_weekdays_1_var: !input fixed_off_weekdays_1
   fixed_off_weekdays_2_var: !input fixed_off_weekdays_2
-  day_start_var: !input day_start
-  day_end_var: !input day_end
-  night_start_var: !input night_start
-  night_end_var: !input night_end
-  active_weekdays_day_var: !input active_weekdays_day
-  active_weekdays_night_var: !input active_weekdays_night
+  day_start_var: >
+    {% if use_advanced_day_schedule %}
+      {% set weekday = now().strftime('%a').lower() %}
+      {% if weekday in ['mon','tue','wed','thu'] %}{{ day_start_weekdays }}
+      {% elif weekday == 'fri' %}{{ day_start_friday }}
+      {% elif weekday == 'sat' %}{{ day_start_saturday }}
+      {% else %}{{ day_start_sunday }}{% endif %}
+    {% else %}
+      {{ day_start }}
+    {% endif %}
+  day_end_var: >
+    {% if use_advanced_day_schedule %}
+      {% set weekday = now().strftime('%a').lower() %}
+      {% if weekday in ['mon','tue','wed','thu'] %}{{ day_end_weekdays }}
+      {% elif weekday == 'fri' %}{{ day_end_friday }}
+      {% elif weekday == 'sat' %}{{ day_end_saturday }}
+      {% else %}{{ day_end_sunday }}{% endif %}
+    {% else %}
+      {{ day_end }}
+    {% endif %}
+  night_start_var: >
+    {% if use_advanced_night_schedule %}
+      {% set weekday = now().strftime('%a').lower() %}
+      {% if weekday in ['mon','tue','wed','thu'] %}{{ night_start_weekdays }}
+      {% elif weekday == 'fri' %}{{ night_start_friday }}
+      {% elif weekday == 'sat' %}{{ night_start_saturday }}
+      {% else %}{{ night_start_sunday }}{% endif %}
+    {% else %}
+      {{ night_start }}
+    {% endif %}
+  night_end_var: >
+    {% if use_advanced_night_schedule %}
+      {% set weekday = now().strftime('%a').lower() %}
+      {% if weekday in ['mon','tue','wed','thu'] %}{{ night_end_weekdays }}
+      {% elif weekday == 'fri' %}{{ night_end_friday }}
+      {% elif weekday == 'sat' %}{{ night_end_saturday }}
+      {% else %}{{ night_end_sunday }}{% endif %}
+    {% else %}
+      {{ night_end }}
+    {% endif %}
   enable_failsafe_var: !input enable_failsafe
   failsafe_timer_main_var: !input failsafe_timer_main
   failsafe_timer_day_var: !input failsafe_timer_day
@@ -560,7 +611,7 @@ variables:
   circadian_lights_var: !input circadian_lights
   circadian_min_temp_var: !input circadian_min_temp
   circadian_max_temp_var: !input circadian_max_temp
-  failsafe_timer_circular_var: !input failsafe_timer_circular
+  failsafe_timer_circadian_var: !input failsafe_timer_circadian
 
 # --- Actions ---
 
@@ -1117,100 +1168,148 @@ action:
   # --- Failsafe Daglampor ---
   
   - choose:
-      - conditions:
-          - condition: template
-            value_template: "{{ enable_failsafe_var }}"
-          - condition: template
-            value_template: >
-              {% set lights = [] %}
-              {% if day_lights_var is string %}
-                {% set lights = [day_lights_var] %}
-              {% elif day_lights_var is mapping %}
-                {% set lights = [day_lights_var.entity_id] %}
-              {% elif day_lights_var is iterable %}
-                {% set lights = day_lights_var %}
+    - conditions:
+        - condition: template
+          value_template: "{{ enable_failsafe_var }}"
+        - condition: template
+          value_template: >
+            {% set lights = [] %}
+            {% if day_lights_var is string %}
+              {% set lights = [day_lights_var] %}
+            {% elif day_lights_var is mapping %}
+              {% set lights = [day_lights_var.entity_id] %}
+            {% elif day_lights_var is iterable %}
+              {% set lights = day_lights_var %}
+            {% endif %}
+            {{ lights | select('is_state','on') | list | count > 0 }}
+        - condition: template
+          value_template: >
+            {% set t = now().time() %}
+            {% if use_advanced_schedule_var %}
+              {% set weekday = now().weekday() %}
+              {% if weekday < 5 %}
+                {% set start = strptime(day_start_weekdays_var,'%H:%M:%S').time() %}
+                {% set end = strptime(day_end_weekdays_var,'%H:%M:%S').time() %}
+              {% elif weekday == 5 %}
+                {% set start = strptime(day_start_saturday_var,'%H:%M:%S').time() %}
+                {% set end = strptime(day_end_saturday_var,'%H:%M:%S').time() %}
+              {% else %}
+                {% set start = strptime(day_start_sunday_var,'%H:%M:%S').time() %}
+                {% set end = strptime(day_end_sunday_var,'%H:%M:%S').time() %}
               {% endif %}
-              {{ lights | select('is_state','on') | list | count > 0 }}
-        sequence:
-          - delay:
-              minutes: "{{ failsafe_timer_day_var | default(0) | float }}"
-          - service: light.turn_off
-            target:
-              entity_id: >
-                {% if day_lights_var is string %}
-                  {{ day_lights_var }}
-                {% elif day_lights_var is mapping %}
-                  {{ day_lights_var.entity_id }}
-                {% elif day_lights_var is iterable %}
-                  {{ day_lights_var | join(',') }}
-                {% endif %}
-          - service: logbook.log
-            data:
-              name: Belysningsautomation
-              message: "Failsafe Dag: Daglampor släckta automatiskt (endast om fortfarande på)."
+            {% else %}
+              {% set start = strptime(day_start_var,'%H:%M:%S').time() %}
+              {% set end = strptime(day_end_var,'%H:%M:%S').time() %}
+            {% endif %}
+            {% if start <= end %}
+              {{ t >= start and t <= end }}
+            {% else %}
+              {{ t >= start or t <= end }}
+            {% endif %}
+      sequence:
+        - delay:
+            minutes: "{{ failsafe_timer_day_var | default(0) | float }}"
+        - service: light.turn_off
+          target:
+            entity_id: >
+              {% if day_lights_var is string %}
+                {{ day_lights_var }}
+              {% elif day_lights_var is mapping %}
+                {{ day_lights_var.entity_id }}
+              {% elif day_lights_var is iterable %}
+                {{ day_lights_var | join(',') }}
+              {% endif %}
+        - service: logbook.log
+          data:
+            name: Belysningsautomation
+            message: "Failsafe Dag: Daglampor släckta automatiskt (endast om fortfarande på)."
 
-      - conditions:
-          - condition: template
-            value_template: "{{ enable_failsafe_var and scene_day_var | default('') != '' }}"
-        sequence:
-          - delay:
-              minutes: "{{ failsafe_timer_day_var | default(0) | float }}"
-          - service: scene.turn_on
-            target:
-              entity_id: scene.snapshot_before_on
-          - service: logbook.log
-            data:
-              name: Belysningsautomation
-              message: "Failsafe Dag: Dag scen återställd."
+    - conditions:
+        - condition: template
+          value_template: "{{ enable_failsafe_var and scene_day_var | default('') != '' }}"
+      sequence:
+        - delay:
+            minutes: "{{ failsafe_timer_day_var | default(0) | float }}"
+        - service: scene.turn_on
+          target:
+            entity_id: scene.snapshot_before_on
+        - service: logbook.log
+          data:
+            name: Belysningsautomation
+            message: "Failsafe Dag: Dag scen återställd."
 
   # --- Failsafe Nattlampor ---
   
   - choose:
-      - conditions:
-          - condition: template
-            value_template: "{{ enable_failsafe_var }}"
-          - condition: template
-            value_template: >
-              {% set lights = [] %}
-              {% if night_lights_var is string %}
-                {% set lights = [night_lights_var] %}
-              {% elif night_lights_var is mapping %}
-                {% set lights = [night_lights_var.entity_id] %}
-              {% elif night_lights_var is iterable %}
-                {% set lights = night_lights_var %}
+    - conditions:
+        - condition: template
+          value_template: "{{ enable_failsafe_var }}"
+        - condition: template
+          value_template: >
+            {% set lights = [] %}
+            {% if night_lights_var is string %}
+              {% set lights = [night_lights_var] %}
+            {% elif night_lights_var is mapping %}
+              {% set lights = [night_lights_var.entity_id] %}
+            {% elif night_lights_var is iterable %}
+              {% set lights = night_lights_var %}
+            {% endif %}
+            {{ lights | select('is_state','on') | list | count > 0 }}
+        - condition: template
+          value_template: >
+            {% set t = now().time() %}
+            {% if use_advanced_night_schedule_var %}
+              {% set weekday = now().weekday() %}
+              {% if weekday < 5 %}
+                {% set start = strptime(night_start_weekdays_var,'%H:%M:%S').time() %}
+                {% set end = strptime(night_end_weekdays_var,'%H:%M:%S').time() %}
+              {% elif weekday == 5 %}
+                {% set start = strptime(night_start_saturday_var,'%H:%M:%S').time() %}
+                {% set end = strptime(night_end_saturday_var,'%H:%M:%S').time() %}
+              {% else %}
+                {% set start = strptime(night_start_sunday_var,'%H:%M:%S').time() %}
+                {% set end = strptime(night_end_sunday_var,'%H:%M:%S').time() %}
               {% endif %}
-              {{ lights | select('is_state','on') | list | count > 0 }}
-        sequence:
-          - delay:
-              minutes: "{{ failsafe_timer_night_var | default(0) | float }}"
-          - service: light.turn_off
-            target:
-              entity_id: >
-                {% if night_lights_var is string %}
-                  {{ night_lights_var }}
-                {% elif night_lights_var is mapping %}
-                  {{ night_lights_var.entity_id }}
-                {% elif night_lights_var is iterable %}
-                  {{ night_lights_var | join(',') }}
-                {% endif %}
-          - service: logbook.log
-            data:
-              name: Belysningsautomation
-              message: "Failsafe Natt: Nattlampor släckta automatiskt (endast om fortfarande på)."
+            {% else %}
+              {% set start = strptime(night_start_var,'%H:%M:%S').time() %}
+              {% set end = strptime(night_end_var,'%H:%M:%S').time() %}
+            {% endif %}
+            {% if start <= end %}
+              {{ t >= start and t <= end }}
+            {% else %}
+              {{ t >= start or t <= end }}
+            {% endif %}
+      sequence:
+        - delay:
+            minutes: "{{ failsafe_timer_night_var | default(0) | float }}"
+        - service: light.turn_off
+          target:
+            entity_id: >
+              {% if night_lights_var is string %}
+                {{ night_lights_var }}
+              {% elif night_lights_var is mapping %}
+                {{ night_lights_var.entity_id }}
+              {% elif night_lights_var is iterable %}
+                {{ night_lights_var | join(',') }}
+              {% endif %}
+        - service: logbook.log
+          data:
+            name: Belysningsautomation
+            message: "Failsafe Natt: Nattlampor släckta automatiskt (endast om fortfarande på)."
 
-      - conditions:
-          - condition: template
-            value_template: "{{ enable_failsafe_var and scene_night_var | default('') != '' }}"
-        sequence:
-          - delay:
-              minutes: "{{ failsafe_timer_night_var | default(0) | float }}"
-          - service: scene.turn_on
-            target:
-              entity_id: scene.snapshot_before_on
-          - service: logbook.log
-            data:
-              name: Belysningsautomation
-              message: "Failsafe Natt: Natt scen återställd."
+    - conditions:
+        - condition: template
+          value_template: "{{ enable_failsafe_var and scene_night_var | default('') != '' }}"
+      sequence:
+        - delay:
+            minutes: "{{ failsafe_timer_night_var | default(0) | float }}"
+        - service: scene.turn_on
+          target:
+            entity_id: scene.snapshot_before_on
+        - service: logbook.log
+          data:
+            name: Belysningsautomation
+            message: "Failsafe Natt: Natt scen återställd."
 
   # --- Failsafe Circadian Lights ---
   
@@ -1231,7 +1330,7 @@ action:
               {{ lights | select('is_state','on') | list | count > 0 }}
         sequence:
           - delay:
-              minutes: "{{ failsafe_timer_circular_var | default(0) | float }}"
+              minutes: "{{ failsafe_timer_circadian_var | default(0) | float }}"
           - choose:
               - conditions:
                   - condition: template
