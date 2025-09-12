@@ -636,13 +636,22 @@ action:
                       {% endif %}
                 sequence:
                   - choose:
+                      
+                      # Scen med luxvillkor
+                      
                       - conditions:
                           - condition: template
-                            value_template: "{{ scene_day_var | default([]) != [] }}"
+                            value_template: >
+                              {{ scene_day_var | default([]) != [] and
+                                 (lux_sensor_var | default('') == '' or
+                                 states(lux_sensor_var) | float < lux_threshold_var | float) }}
                         sequence:
                           - service: scene.turn_on
                             target:
                               entity_id: "{{ scene_day_var }}"
+                      
+                      # Lampor med luxvillkor
+                      
                       - conditions:
                           - condition: template
                             value_template: >
@@ -667,6 +676,9 @@ action:
                                 {% else %}
                                   255
                                 {% endif %}
+                      
+                      # Main-lights med luxvillkor
+                      
                       - conditions:
                           - condition: template
                             value_template: >
@@ -706,13 +718,22 @@ action:
                       {% endif %}
                 sequence:
                   - choose:
+                      
+                      # Scen med luxvillkor
+                      
                       - conditions:
                           - condition: template
-                            value_template: "{{ scene_night_var | default([]) != [] }}"
+                            value_template: >
+                              {{ scene_night_var | default([]) != [] and
+                                 (lux_sensor_var | default('') == '' or
+                                 states(lux_sensor_var) | float < lux_threshold_var | float) }}
                         sequence:
                           - service: scene.turn_on
                             target:
                               entity_id: "{{ scene_night_var }}"
+                      
+                      # Lampor med luxvillkor
+                      
                       - conditions:
                           - condition: template
                             value_template: >
@@ -737,6 +758,9 @@ action:
                                 {% else %}
                                   255
                                 {% endif %}
+                      
+                      # Main-lights med luxvillkor
+                      
                       - conditions:
                           - condition: template
                             value_template: >
@@ -1158,7 +1182,9 @@ action:
               {% set current_time = now().time() %}
               {% set day_start_time = strptime(day_start, '%H:%M:%S').time() %}
               {{ current_time >= day_start_time }}
+          
           # ✅ Extra safeguard: kör bara om ingen rörelse är aktiv
+          
           - condition: template
             value_template: >
               {{ expand(motion_sensors) | selectattr('state','eq','on') | list | count == 0 }}
@@ -1233,7 +1259,9 @@ action:
               {% set current_time = now().time() %}
               {% set night_start_time = strptime(night_start, '%H:%M:%S').time() %}
               {{ current_time >= night_start_time }}
+          
           # ✅ Extra safeguard: kör bara om ingen rörelse är aktiv
+          
           - condition: template
             value_template: >
               {{ expand(motion_sensors) | selectattr('state','eq','on') | list | count == 0 }}
