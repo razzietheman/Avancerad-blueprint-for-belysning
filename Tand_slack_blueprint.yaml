@@ -1,5 +1,5 @@
 blueprint: 
-  name: "Rörelsestyrd Belysning med Circadian Lampor – Failsafe Pro 6.14"
+  name: "Rörelsestyrd Belysning med Circadian Lampor – Failsafe Pro 6.15"
   description: >
     En komplett automation för ditt smarta hem som kombinerar rörelsestyrning med avancerade failsafe-funktioner 
     och dynamiskt circadian-ljus. Huvudlampor, dag- och nattlampor, samt circual lights hanteras automatiskt – 
@@ -972,7 +972,7 @@ action:
             name: Belysningsautomation
             message: "Auto-off Natt: Nattlampor släckta och scen återställd."
 
-  # --- Auto-off Circadian Lights ---
+  # --- Auto-off Circadian Lampor ---
   
   - choose:
       - conditions:
