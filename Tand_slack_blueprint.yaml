@@ -1,5 +1,5 @@
 blueprint: 
-  name: "Rörelsestyrd Belysning med Circadian Lampor – Failsafe Pro 6.16"
+  name: "Rörelsestyrd Belysning med Circadian Lampor – Failsafe Pro 6.17"
   description: >
     En komplett automation för ditt smarta hem som kombinerar rörelsestyrning med avancerade failsafe-funktioner 
     och dynamiskt circadian-ljus. Huvudlampor, dag- och nattlampor, samt circual lights hanteras automatiskt – 
@@ -535,7 +535,6 @@ max: 100
 # --- Variabler ---
 
 variables:
-  use_persistent_notifications_var: !input use_persistent_notifications
   motion_sensors_var: !input motion_sensors
   main_lights_var: !input main_lights
   day_lights_var: !input day_lights
@@ -563,6 +562,7 @@ variables:
   night_end_var: !input night_end
   active_weekdays_day_var: !input active_weekdays_day
   active_weekdays_night_var: !input active_weekdays_night
+  use_persistent_notifications_var: !input use_persistent_notifications
   enable_failsafe_var: !input enable_failsafe
   failsafe_timer_main_var: !input failsafe_timer_main
   failsafe_timer_day_var: !input failsafe_timer_day
@@ -631,13 +631,13 @@ action:
               - conditions:
                   - condition: template
                     value_template: >
-                      {% set t = now().time() %}
-                      {% set start = strptime(day_start_var, '%H:%M:%S').time() %}
-                      {% set end = strptime(day_end_var, '%H:%M:%S').time() %}
-                      {% if start <= end %}
-                        {{ start <= t <= end }}
+                      {% if day_start_var is defined and day_end_var is defined %}
+                        {% set t = now().time() %}
+                        {% set start = strptime(day_start_var, '%H:%M:%S').time() %}
+                        {% set end = strptime(day_end_var, '%H:%M:%S').time() %}
+                        {{ ((start <= end and start <= t <= end) or (start > end and (t >= start or t <= end))) }}
                       {% else %}
-                        {{ t >= start or t <= end }}
+                        false
                       {% endif %}
                 sequence:
                   - choose:
@@ -682,13 +682,13 @@ action:
               - conditions:
                   - condition: template
                     value_template: >
-                      {% set t = now().time() %}
-                      {% set start = strptime(night_start_var, '%H:%M:%S').time() %}
-                      {% set end = strptime(night_end_var, '%H:%M:%S').time() %}
-                      {% if start <= end %}
-                        {{ start <= t <= end }}
+                      {% if night_start_var is defined and night_end_var is defined %}
+                        {% set t = now().time() %}
+                        {% set start = strptime(night_start_var, '%H:%M:%S').time() %}
+                        {% set end = strptime(night_end_var, '%H:%M:%S').time() %}
+                        {{ ((start <= end and start <= t <= end) or (start > end and (t >= start or t <= end))) }}
                       {% else %}
-                        {{ t >= start or t <= end }}
+                        false
                       {% endif %}
                 sequence:
                   - choose:
@@ -891,12 +891,12 @@ action:
               {{ is_state('sun.sun','above_horizon') }}
             {% else %}
               {% set t = now().time() %}
-              {% set start = strptime(day_start_var, '%H:%M:%S').time() %}
-              {% set end = strptime(day_end_var, '%H:%M:%S').time() %}
-              {% if start <= end %}
-                {{ t >= start and t <= end }}
+              {% set day_start_time = strptime(day_start_var, '%H:%M:%S').time() %}
+              {% set day_end_time   = strptime(day_end_var, '%H:%M:%S').time() %}
+              {% if day_start_time <= day_end_time %}
+                {{ t >= day_start_time and t <= day_end_time }}
               {% else %}
-                {{ t >= start or t <= end }}
+                {{ t >= day_start_time or t <= day_end_time }}
               {% endif %}
             {% endif %}
         - condition: template
@@ -988,12 +988,12 @@ action:
               {{ is_state('sun.sun','below_horizon') }}
             {% else %}
               {% set t = now().time() %}
-              {% set start = strptime(night_start_var, '%H:%M:%S').time() %}
-              {% set end = strptime(night_end_var, '%H:%M:%S').time() %}
-              {% if start <= end %}
-                {{ t >= start and t <= end }}
+              {% set night_start_time = strptime(night_start_var, '%H:%M:%S').time() %}
+              {% set night_end_time   = strptime(night_end_var, '%H:%M:%S').time() %}
+              {% if night_start_time <= night_end_time %}
+                {{ t >= night_start_time and t <= night_end_time }}
               {% else %}
-                {{ t >= start or t <= end }}
+                {{ t >= night_start_time or t <= night_end_time }}
               {% endif %}
             {% endif %}
         - condition: template
@@ -1170,53 +1170,18 @@ action:
                 {% endif %}
               {% endfor %}
               {{ entities | join(',') }}
-
-  # --- Circadian Lampor ---
   
-  - choose:
-      - conditions:
-          - condition: template
-            value_template: "{{ circadian_enabled_var and circadian_lights_var | default([]) != [] }}"
-          - condition: trigger
-            id: motion_on
-        sequence:
-          - service: light.turn_on
-            target:
-              entity_id: >
-                {% if circadian_lights_var is string %}
-                  {{ circadian_lights_var }}
-                {% elif circadian_lights_var is mapping %}
-                  {{ circadian_lights_var.entity_id }}
-                {% elif circadian_lights_var is iterable %}
-                  {{ circadian_lights_var | join(',') }}
-                {% endif %}
-            data:
-              color_temp: "{{ circadian_temp_var }}"
-              brightness: "{{ circadian_brightness_var }}"
-          - choose:
-              - conditions:
-                  - condition: template
-                    value_template: "{{ use_persistent_notifications_var }}"
-                sequence:
-                  - service: persistent_notification.create
-                    data:
-                      title: "Belysningsautomation"
-                      message: "Circadian Lampor: Justerad automatiskt."
-              - conditions: []
-                sequence:
-                  - service: logbook.log
-                    data:
-                      name: Belysningsautomation
-                      message: "Circadian Lampor: Justerad automatiskt."
-
-  # --- Circadian Lampor med uppdatering (via time_pattern) ---
+  # --- Circadian Lampor ---
   
   - choose:
     - conditions:
         - condition: trigger
-          id: circadian_update
+          id: motion_on
         - condition: template
-          value_template: "{{ circadian_enabled_var and circadian_lights_var | default([]) != [] }}"
+          value_template: >
+            {% set circadian_enabled_var = circadian_enabled_var | default(false) %}
+            {% set circadian_lights_var = circadian_lights_var | default([]) %}
+            {{ circadian_enabled_var and circadian_lights_var != [] }}
       sequence:
         - service: light.turn_on
           target:
@@ -1229,12 +1194,57 @@ action:
                 {{ circadian_lights_var | join(',') }}
               {% endif %}
           data:
-            color_temp: "{{ circadian_temp_var }}"
-            brightness: "{{ circadian_brightness_var }}"
+            color_temp: "{{ circadian_temp_var | default(400) }}"
+            brightness: "{{ circadian_brightness_var | default(255) }}"
         - choose:
             - conditions:
                 - condition: template
-                  value_template: "{{ use_persistent_notifications_var }}"
+                  value_template: >
+                    {% set use_persistent_notifications_var = use_persistent_notifications_var | default(false) %}
+                    {{ use_persistent_notifications_var }}
+              sequence:
+                - service: persistent_notification.create
+                  data:
+                    title: "Belysningsautomation"
+                    message: "Circadian Lampor: Justerad automatiskt."
+            - conditions: []
+              sequence:
+                - service: logbook.log
+                  data:
+                    name: Belysningsautomation
+                    message: "Circadian Lampor: Justerad automatiskt."
+
+  # --- Circadian Lampor med uppdatering (via time_pattern) ---
+  
+  - choose:
+    - conditions:
+        - condition: trigger
+          id: circadian_update
+        - condition: template
+          value_template: >
+            {% set circadian_enabled_var = circadian_enabled_var | default(false) %}
+            {% set circadian_lights_var = circadian_lights_var | default([]) %}
+            {{ circadian_enabled_var and circadian_lights_var != [] }}
+      sequence:
+        - service: light.turn_on
+          target:
+            entity_id: >
+              {% if circadian_lights_var is string %}
+                {{ circadian_lights_var }}
+              {% elif circadian_lights_var is mapping %}
+                {{ circadian_lights_var.entity_id }}
+              {% elif circadian_lights_var is iterable %}
+                {{ circadian_lights_var | join(',') }}
+              {% endif %}
+          data:
+            color_temp: "{{ circadian_temp_var | default(400) }}"
+            brightness: "{{ circadian_brightness_var | default(255) }}"
+        - choose:
+            - conditions:
+                - condition: template
+                  value_template: >
+                    {% set use_persistent_notifications_var = use_persistent_notifications_var | default(false) %}
+                    {{ use_persistent_notifications_var }}
               sequence:
                 - service: persistent_notification.create
                   data:
@@ -1327,11 +1337,11 @@ action:
         - condition: template
           value_template: >
             {% set current_time = now().time() %}
-            {% set day_start_time = strptime(day_start, '%H:%M:%S').time() %}
+            {% set day_start_time = strptime(day_start_var, '%H:%M:%S').time() %}
             {{ current_time >= day_start_time }}
         - condition: template
           value_template: >
-            {{ expand(motion_sensors) | selectattr('state','eq','on') | list | count == 0 }}
+            {{ expand(motion_sensors | default([])) | selectattr('state','eq','on') | list | count == 0 }}
       sequence:
         - choose:
             - conditions:
@@ -1379,7 +1389,7 @@ action:
           value_template: "{{ enable_failsafe_var and scene_day_var | default('') != '' }}"
         - condition: template
           value_template: >
-            {{ expand(motion_sensors) | selectattr('state','eq','on') | list | count == 0 }}
+            {{ expand(motion_sensors | default([])) | selectattr('state','eq','on') | list | count == 0 }}
       sequence:
         - delay:
             minutes: "{{ failsafe_timer_day_var | default(0) | float }}"
@@ -1422,11 +1432,11 @@ action:
         - condition: template
           value_template: >
             {% set current_time = now().time() %}
-            {% set night_start_time = strptime(night_start, '%H:%M:%S').time() %}
+            {% set night_start_time = strptime(night_start_var, '%H:%M:%S').time() %}
             {{ current_time >= night_start_time }}
         - condition: template
           value_template: >
-            {{ expand(motion_sensors) | selectattr('state','eq','on') | list | count == 0 }}
+            {{ expand(motion_sensors | default([])) | selectattr('state','eq','on') | list | count == 0 }}
       sequence:
         - choose:
             - conditions:
@@ -1474,7 +1484,7 @@ action:
           value_template: "{{ enable_failsafe_var and scene_night_var | default('') != '' }}"
         - condition: template
           value_template: >
-            {{ expand(motion_sensors) | selectattr('state','eq','on') | list | count == 0 }}
+            {{ expand(motion_sensors | default([])) | selectattr('state','eq','on') | list | count == 0 }}
       sequence:
         - delay:
             minutes: "{{ failsafe_timer_night_var | default(0) | float }}"
