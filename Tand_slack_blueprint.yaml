@@ -1,5 +1,5 @@
 blueprint: 
-  name: "Rörelsestyrd Belysning med Circadian Lampor – Failsafe Pro 6.17"
+  name: "Rörelsestyrd Belysning med Circadian Lampor – Failsafe Pro 6.18"
   description: >
     En komplett automation för ditt smarta hem som kombinerar rörelsestyrning med avancerade failsafe-funktioner 
     och dynamiskt circadian-ljus. Huvudlampor, dag- och nattlampor, samt circual lights hanteras automatiskt – 
@@ -8,469 +8,475 @@ blueprint:
 
   domain: automation
   input:
-  
+
     # --- Loggning ---
     
-    use_persistent_notifications:
-      name: Använd notifieringar istället för loggboken
-      description: "Om aktiverad skickas loggar som notiser istället för att skrivas i loggboken."
-      default: false
-      selector:
-        boolean: {}
-    
-    # --- Sensorer & brytare ---
-  
-    motion_sensors:
-      name: Rörelsesensor(er)
-      description: "En eller flera rörelsesensorer som ska styra belysningen."
-      default: []
-      selector:
-        entity:
-          domain: binary_sensor
-          multiple: true
+    logging:
+      name: Loggning
+      description: Inställningar för loggning och notifieringar
+      input:
+        use_persistent_notifications:
+          name: Använd notifieringar istället för loggboken
+          description: "Om aktiverad skickas loggar som notiser istället för att skrivas i loggboken."
+          default: false
+          selector:
+            boolean: {}
 
-    optional_switches:
-      name: Smarta uttag eller strömbrytare
-      description: "Valfria smarta uttag eller strömbrytare som kan styra lamporna/enheterna."
-      default: []
-      selector:
-        entity:
-          domain: switch
-          multiple: true
+    # --- Sensorer & Brytare ---
     
-    # --- Lampor & scener ---
+    sensors_switches:
+      name: Sensorer & Brytare
+      description: Välj rörelsesensorer och valfria smarta uttag
+      input:
+        motion_sensors:
+          name: Rörelsesensor(er)
+          description: "En eller flera rörelsesensorer som ska styra belysningen."
+          default: []
+          selector:
+            entity:
+              domain: binary_sensor
+              multiple: true
+
+        optional_switches:
+          name: Smarta uttag eller strömbrytare
+          description: "Valfria smarta uttag eller strömbrytare som kan styra lamporna/enheterna."
+          default: []
+          selector:
+            entity:
+              domain: switch
+              multiple: true
+
+    # --- Dagbelysning ---
     
-    main_lights:
-      name: Huvudlampor
-      description: "Lampor som alltid ska tändas vid rörelse (oavsett dag/natt)."
-      default: []
-      selector:
-        target:
-          entity:
-            domain: light
+    day_lighting:
+      name: Dagbelysning
+      description: Inställningar för daglampor och dagscener
+      input:
+        main_lights:
+          name: Huvudlampor
+          description: "Lampor som alltid ska tändas vid rörelse (oavsett dag/natt)."
+          default: []
+          selector:
+            target:
+              entity:
+                domain: light
 
-    auto_off_main:
-      name: Huvudlampors varaktighet (minuter)
-      description: "Hur länge huvudlamporna ska lysa efter senaste rörelse."
-      default: []
-      selector:
-        number:
-          min: 0
-          max: 1200
-          step: 1
-          unit_of_measurement: min
-          mode: box
+        auto_off_main:
+          name: Huvudlampors varaktighet (minuter)
+          description: "Hur länge huvudlamporna ska lysa efter senaste rörelse."
+          default: []
+          selector:
+            number:
+              min: 0
+              max: 1200
+              step: 1
+              unit_of_measurement: min
+              mode: box
 
-    scene_day:
-      name: Dagscen
-      description: "Scen som aktiveras under dagtid (om vald)."
-      default: []
-      selector:
-        entity:
-          domain: scene
-          multiple: false
+        scene_day:
+          name: Dagscen
+          description: "Scen som aktiveras under dagtid (om vald)."
+          default: []
+          selector:
+            entity:
+              domain: scene
+              multiple: false
 
-    off_scene_day:
-      name: Off Scene Dag
-      description: "Scen som aktiveras när daglamporna ska stängas av."
-      default: []
-      selector:
-        entity:
-          domain: scene
-          multiple: false
+        off_scene_day:
+          name: Off Scene Dag
+          description: "Scen som aktiveras när daglamporna ska stängas av."
+          default: []
+          selector:
+            entity:
+              domain: scene
+              multiple: false
+
+        day_lights:
+          name: Dagslampor
+          description: "Lampor som bara ska tändas under dagtid."
+          default: []
+          selector:
+            target:
+              entity:
+                domain: light
+
+        auto_off_day:
+          name: Dagslampors varaktighet (minuter)
+          default: []
+          selector:
+            number:
+              min: 0
+              max: 1200
+              step: 1
+              unit_of_measurement: min
+              mode: box
+
+        brightness_day:
+          name: Dagsljusstyrka
+          description: "Valfri ljusstyrka för dagslampor (0–100%)."
+          default: []
+          selector:
+            number:
+              min: 0
+              max: 100
+              step: 1
+              unit_of_measurement: "%"
+
+        day_start:
+          name: Dagsstart
+          description: "Tidpunkt då dagsläget aktiveras."
+          default: "07:00:00"
+          selector:
+            time: {}
+
+        day_end:
+          name: Dagslut
+          description: "Tidpunkt då dagsläget avaktiveras. Dagslut kan inte ha samma starttid som Nattstart."
+          default: "21:59:59"
+          selector:
+            time: {}
+
+        active_weekdays_day:
+          name: Aktiva veckodagar (Dag)
+          description: "Välj vilka dagar dagsläget ska vara aktivt."
+          default: []
+          selector:
+            select:
+              multiple: true
+              options:
+                - label: Måndag
+                  value: mon
+                - label: Tisdag
+                  value: tue
+                - label: Onsdag
+                  value: wed
+                - label: Torsdag
+                  value: thu
+                - label: Fredag
+                  value: fri
+                - label: Lördag
+                  value: sat
+                - label: Söndag
+                  value: sun
+
+    # --- Nattbelysning ---
     
-    day_lights:
-      name: Dagslampor
-      description: "Lampor som bara ska tändas under dagtid."
-      default: []
-      selector:
-        target:
-          entity:
-            domain: light
+    night_lighting:
+      name: Nattbelysning
+      description: Inställningar för nattlampor och nattscener
+      input:
+        scene_night:
+          name: Nattscen
+          description: "Scen som aktiveras under nattetid (om vald)."
+          default: []
+          selector:
+            entity:
+              domain: scene
+              multiple: false
 
-    auto_off_day:
-      name: Dagslampors varaktighet (minuter)
-      description: "Hur länge dagslamporna ska lysa efter senaste rörelse."
-      default: []
-      selector:
-        number:
-          min: 0
-          max: 1200
-          step: 1
-          unit_of_measurement: min
-          mode: box
-    
-    brightness_day:
-      name: Dagsljusstyrka
-      description: "Valfri ljusstyrka för dagslampor (0–100%)."
-      default: []
-      selector:
-        number:
-          min: 0
-          max: 100
-          step: 1
-          unit_of_measurement: "%"
-   
-    day_start:
-      name: Dagsstart
-      description: "Tidpunkt då dagsläget aktiveras."
-      default: "07:00:00"
-      selector:
-        time: {}
-    
-    day_end:
-      name: Dagslut
-      description: "Tidpunkt då dagsläget avaktiveras. Dagslut kan inte ha samma starttid som Nattstart. Exempel: 21:59:59 "
-      default: "21:59:59"
-      selector:
-        time: {}
-    
-    active_weekdays_day:
-      name: Aktiva veckodagar (Dag)
-      description: "Välj vilka dagar dagsläget ska vara aktivt."
-      default: []
-      selector:
-        select:
-          multiple: true
-          options:
-            - label: Måndag
-              value: mon
-            - label: Tisdag
-              value: tue
-            - label: Onsdag
-              value: wed
-            - label: Torsdag
-              value: thu
-            - label: Fredag
-              value: fri
-            - label: Lördag
-              value: sat
-            - label: Söndag
-              value: sun
-    
-    scene_night:
-      name: Nattscen
-      description: "Scen som aktiveras under nattetid (om vald)."
-      default: []
-      selector:
-        entity:
-          domain: scene
-          multiple: false
+        off_scene_night:
+          name: Off Scene Natt
+          description: "Scen som aktiveras när nattlamporna ska stängas av."
+          default: []
+          selector:
+            entity:
+              domain: scene
+              multiple: false
 
-    off_scene_night:
-      name: Off Scene Natt
-      description: "Scen som aktiveras när nattlamporna ska stängas av."
-      default: []
-      selector:
-        entity:
-          domain: scene
-          multiple: false
+        night_lights:
+          name: Nattlampor
+          description: "Lampor som bara ska tändas under nattetid."
+          default: []
+          selector:
+            target:
+              entity:
+                domain: light
+
+        auto_off_night:
+          name: Nattlampors varaktighet (minuter)
+          default: []
+          selector:
+            number:
+              min: 0
+              max: 1200
+              step: 1
+              unit_of_measurement: min
+              mode: box
+
+        brightness_night:
+          name: Nattljusstyrka
+          default: []
+          selector:
+            number:
+              min: 0
+              max: 100
+              step: 1
+              unit_of_measurement: "%"
+
+        night_start:
+          name: Nattstart
+          default: "22:00:00"
+          selector:
+            time: {}
+
+        night_end:
+          name: Nattslut
+          default: "06:59:59"
+          selector:
+            time: {}
+
+        active_weekdays_night:
+          name: Aktiva veckodagar (Natt)
+          default: []
+          selector:
+            select:
+              multiple: true
+              options:
+                - label: Måndag
+                  value: mon
+                - label: Tisdag
+                  value: tue
+                - label: Onsdag
+                  value: wed
+                - label: Torsdag
+                  value: thu
+                - label: Fredag
+                  value: fri
+                - label: Lördag
+                  value: sat
+                - label: Söndag
+                  value: sun
+
+        input_text_last_scene:
+          name: Input Text - Senaste scen
+          default: []
+          selector:
+            entity:
+              domain: input_text
+
+    # --- Lux & Sol ---
     
-    night_lights:
-      name: Nattlampor
-      description: "Lampor som bara ska tändas under nattetid."
-      default: []
-      selector:
-        target:
-          entity:
-            domain: light
+    lux_sun:
+      name: Lux & Sol
+      description: Sensor för lux och inställningar för solens tider
+      input:
+        lux_sensor:
+          name: Luxsensor
+          default: []
+          selector:
+            entity:
+              domain: sensor
+              device_class: illuminance
 
-    auto_off_night:
-      name: Nattlampors varaktighet (minuter)
-      description: "Hur länge nattlamporna ska lysa efter senaste rörelse."
-      default: []
-      selector:
-        number:
-          min: 0
-          max: 1200
-          step: 1
-          unit_of_measurement: min
-          mode: box
+        lux_threshold:
+          name: Luxgräns
+          default: []
+          selector:
+            number:
+              min: 0
+              max: 3000
+              step: 1
+              unit_of_measurement: lx
+
+        use_sun_times:
+          name: Använd soluppgång/solnedgång
+          default: false
+          selector:
+            boolean: {}
+
+        sunset_offset:
+          name: Offset för solnedgång
+          default: "00:00:00"
+          selector:
+            time: {}
+
+        sunrise_offset:
+          name: Offset för soluppgång
+          default: "00:00:00"
+          selector:
+            time: {}
+
+    # --- Circadian ---
     
-    brightness_night:
-      name: Nattljusstyrka
-      description: "Valfri ljusstyrka för nattlampor (0–100%)."
-      default: []
-      selector:
-        number:
-          min: 0
-          max: 100
-          step: 1
-          unit_of_measurement: "%"
+    circadian:
+      name: Circadian-ljus
+      description: Inställningar för circadian-lampor
+      input:
+        circadian_enabled:
+          name: Aktivera Circadian
+          default: false
+          selector:
+            boolean: {}
 
-    night_start:
-      name: Nattstart
-      description: "Tidpunkt då nattläget aktiveras. Nattstart kan inte ha samma starttid som Dagslut. Exempel: 22:00:00"
-      default: "22:00:00"
-      selector:
-        time: {}
+        circadian_lights:
+          name: Circadian-lampor
+          default: []
+          selector:
+            target:
+              entity:
+                domain: light
 
-    night_end:
-      name: Nattslut
-      description: "Tidpunkt då nattläget avaktiveras."
-      default: "06:59:59"
-      selector:
-        time: {}
+        update_interval:
+          name: Circadian update interval (min)
+          default: 15
+          selector:
+            number:
+              min: 1
+              max: 60
+              step: 1
+              unit_of_measurement: min
 
-    active_weekdays_night:
-      name: Aktiva veckodagar (Natt)
-      description: "Välj vilka dagar nattläget ska vara aktivt."
-      default: []
-      selector:
-        select:
-          multiple: true
-          options:
-            - label: Måndag
-              value: mon
-            - label: Tisdag
-              value: tue
-            - label: Onsdag
-              value: wed
-            - label: Torsdag
-              value: thu
-            - label: Fredag
-              value: fri
-            - label: Lördag
-              value: sat
-            - label: Söndag
-              value: sun
-    
-    input_text_last_scene:
-      name: Input Text - Senaste scen
-      description: "Input Text-enhet som sparar namnet på den senast aktiva scenen."
-      default: []
-      selector:
-        entity:
-          domain: input_text
-    
-    # --- Lux & sol ---
-    
-    lux_sensor:
-      name: Luxsensor
-      description: "Sensor som mäter ljusstyrka (lux)."
-      default: []
-      selector:
-        entity:
-          domain: sensor
-          device_class: illuminance
+        circadian_min_temp:
+          name: Minimum färgtemperatur (K)
+          default: 2700
+          selector:
+            number:
+              min: 1500
+              max: 6500
+              step: 100
+              unit_of_measurement: K
 
-    lux_threshold:
-      name: Luxgräns
-      description: "Lampor tänds bara om luxvärdet är lägre än denna gräns."
-      default: []
-      selector:
-        number:
-          min: 0
-          max: 3000
-          step: 1
-          unit_of_measurement: lx
+        circadian_max_temp:
+          name: Maximum färgtemperatur (K)
+          default: 5000
+          selector:
+            number:
+              min: 1500
+              max: 6500
+              step: 100
+              unit_of_measurement: K
 
-    use_sun_times:
-      name: Använd soluppgång/solnedgång
-      description: "Om automationen ska använda solens tider istället för fasta klockslag."
-      default: false
-      selector:
-        boolean: {}
-
-    sunset_offset:
-      name: Offset för solnedgång
-      description: "Justering av tiden för solnedgång, tidigare eller senare."
-      default: "00:00:00"
-      selector:
-        time: {}
-
-    sunrise_offset:
-      name: Offset för soluppgång
-      description: "Justering av tiden för soluppgång, tidigare eller senare."
-      default: "00:00:00"
-      selector:
-        time: {}
-    
-    # --- Circadian light ---
-    
-    circadian_enabled:
-      name: Aktivera Circadian
-      description: "Om lamporna ska följa circadian-ljusprofil."
-      default: false
-      selector:
-        boolean: {}
-
-    circadian_lights:
-      name: Circadian-lampor
-      description: "Lampor som ska följa circadian-ljusprofilen."
-      default: []
-      selector:
-        target:
-          entity:
-            domain: light
-
-    update_interval:
-      name: Circadian update interval (min)
-      description: "Hur ofta circadian-lampor uppdateras."
-      default: 15
-      selector:
-        number:
-          min: 1
-          max: 60
-          step: 1
-          unit_of_measurement: min
-    
-    circadian_min_temp:
-      name: Minimum färgtemperatur (K)
-      description: "Färgtemperatur på morgon/natt (varmt ljus)."
-      default: 2700
-      selector:
-        number:
-          min: 1500
-          max: 6500
-          step: 100
-          unit_of_measurement: K
-
-    circadian_max_temp:
-      name: Maximum färgtemperatur (K)
-      description: "Färgtemperatur mitt på dagen (kallt ljus)."
-      default: 5000
-      selector:
-        number:
-          min: 1500
-          max: 6500
-          step: 100
-          unit_of_measurement: K
-    
-    auto_off_circadian:
-      name: Circadian-lampors varaktighet (minuter)
-      description: "Hur länge circadian-lamporna ska lysa efter senaste rörelse eller trigger."
-      default: []
-      selector:
-        number:
-          min: 0
-          max: 1200
-          step: 1
-          unit_of_measurement: min
-          mode: box
+        auto_off_circadian:
+          name: Circadian-lampors varaktighet (minuter)
+          default: []
+          selector:
+            number:
+              min: 0
+              max: 1200
+              step: 1
+              unit_of_measurement: min
+              mode: box
 
     # --- Fasta avstängningstider ---
     
-    fixed_off_time_1:
-      name: Fast avstängningstid 1 (valfri)
-      description: "Klockslag då lampor eller smarta uttag automatiskt släcks/stängs av."
-      default: []
-      selector:
-        time: {}
+    fixed_times:
+      name: Fasta avstängningstider
+      description: Automatisk avstängning för lampor eller smarta uttag
+      input:
+        fixed_off_time_1:
+          name: Fast avstängningstid 1
+          default: []
+          selector:
+            time: {}
 
-    fixed_off_weekdays_1:
-      name: Aktiva veckodagar (Fast tid 1)
-      description: Vilka veckodagar avstängningstid 1 ska gälla.
-      default: []
-      selector:
-        select:
-          multiple: true
-          options:
-            - label: Måndag
-              value: mon
-            - label: Tisdag
-              value: tue
-            - label: Onsdag
-              value: wed
-            - label: Torsdag
-              value: thu
-            - label: Fredag
-              value: fri
-            - label: Lördag
-              value: sat
-            - label: Söndag
-              value: sun
+        fixed_off_weekdays_1:
+          name: Aktiva veckodagar (Fast tid 1)
+          default: []
+          selector:
+            select:
+              multiple: true
+              options:
+                - label: Måndag
+                  value: mon
+                - label: Tisdag
+                  value: tue
+                - label: Onsdag
+                  value: wed
+                - label: Torsdag
+                  value: thu
+                - label: Fredag
+                  value: fri
+                - label: Lördag
+                  value: sat
+                - label: Söndag
+                  value: sun
 
-    fixed_off_time_2:
-      name: Fast avstängningstid 2 (valfri)
-      description: "Klockslag då lampor eller smarta uttag automatiskt släcks/stängs av."
-      default: []
-      selector:
-        time: {}
+        fixed_off_time_2:
+          name: Fast avstängningstid 2
+          default: []
+          selector:
+            time: {}
 
-    fixed_off_weekdays_2:
-      name: Aktiva veckodagar (Fast tid 2)
-      description: Vilka veckodagar avstängningstid 2 ska gälla.
-      default: []
-      selector:
-        select:
-          multiple: true
-          options:
-            - label: Måndag
-              value: mon
-            - label: Tisdag
-              value: tue
-            - label: Onsdag
-              value: wed
-            - label: Torsdag
-              value: thu
-            - label: Fredag
-              value: fri
-            - label: Lördag
-              value: sat
-            - label: Söndag
-              value: sun
+        fixed_off_weekdays_2:
+          name: Aktiva veckodagar (Fast tid 2)
+          default: []
+          selector:
+            select:
+              multiple: true
+              options:
+                - label: Måndag
+                  value: mon
+                - label: Tisdag
+                  value: tue
+                - label: Onsdag
+                  value: wed
+                - label: Torsdag
+                  value: thu
+                - label: Fredag
+                  value: fri
+                - label: Lördag
+                  value: sat
+                - label: Söndag
+                  value: sun
+
+    # --- Arbetsdag & Failsafe ---
     
-    # --- Arbetsdag & failsafe ---
-    
-    workday_sensor:
-      name: Arbetsdagsensor
-      description: "Sensor som indikerar arbetsdagar."
-      default: []
-      selector:
-        entity:
-          domain: binary_sensor
+    failsafe:
+      name: Arbetsdag & Failsafe
+      description: Sensor och timers för failsafe
+      input:
+        workday_sensor:
+          name: Arbetsdagsensor
+          default: []
+          selector:
+            entity:
+              domain: binary_sensor
 
-    enable_failsafe:
-      name: Aktivera failsafe
-      description: "Slår på failsafe-funktionen som automatiskt släcker lampor om auto-off inte har triggats korrekt."
-      default: true
-      selector:
-        boolean: {}
+        enable_failsafe:
+          name: Aktivera failsafe
+          default: true
+          selector:
+            boolean: {}
 
-    failsafe_timer_main:
-      name: Failsafe-timer huvudbelysning (minuter)
-      description: "Antal minuter innan huvudlampor automatiskt släcks om auto-off inte har aktiverats som förväntat."
-      default: []
-      selector:
-        number:
-          min: 1
-          max: 240
-          step: 1
-          unit_of_measurement: min
-    
-    failsafe_timer_day:
-      name: Failsafe-timer dag (minuter)
-      description: "Antal minuter innan dagslampor automatiskt släcks om auto-off inte har aktiverats som förväntat."
-      default: []
-      selector:
-        number:
-          min: 1
-          max: 120
-          step: 1
-          unit_of_measurement: min
+        failsafe_timer_main:
+          name: Failsafe-timer huvudbelysning (minuter)
+          default: []
+          selector:
+            number:
+              min: 1
+              max: 240
+              step: 1
+              unit_of_measurement: min
 
-    failsafe_timer_night:
-      name: Failsafe-timer natt (minuter)
-      description: "Antal minuter innan nattlampor automatiskt släcks om auto-off inte har aktiverats som förväntat."
-      default: []
-      selector:
-        number:
-          min: 1
-          max: 120
-          step: 1
-          unit_of_measurement: min
+        failsafe_timer_day:
+          name: Failsafe-timer dag (minuter)
+          default: []
+          selector:
+            number:
+              min: 1
+              max: 120
+              step: 1
+              unit_of_measurement: min
 
-    failsafe_timer_circadian:
-      name: Failsafe-timer circadian-lampor (minuter)
-      description: "Antal minuter innan circadian-lampor automatiskt släcks om auto-off inte har aktiverats."
-      default: []
-      selector:
-        number:
-          min: 1
-          max: 120
-          step: 1
-          unit_of_measurement: min
+        failsafe_timer_night:
+          name: Failsafe-timer natt (minuter)
+          default: []
+          selector:
+            number:
+              min: 1
+              max: 120
+              step: 1
+              unit_of_measurement: min
+
+        failsafe_timer_circadian:
+          name: Failsafe-timer circadian-lampor (minuter)
+          default: []
+          selector:
+            number:
+              min: 1
+              max: 120
+              step: 1
+              unit_of_measurement: min
 
 # --- Triggers ---
 
