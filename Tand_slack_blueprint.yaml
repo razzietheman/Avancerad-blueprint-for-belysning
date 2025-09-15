@@ -50,13 +50,13 @@ blueprint:
               domain: switch
               multiple: true
 
-    # --- Dagbelysning ---
+    # --- Huvudlampor ---
     
-    day_lighting:
-      name: Dagbelysning
-      description: Inställningar för daglampor och dagscener
+    head_lighting:
+      name: Huvudlampor
+      description: Inställningar för huvudlampor
       collapsed: true
-      icon: mdi:weather-sunny
+      icon: mdi:lightbulb-on-outline
       input:
         main_lights:
           name: Huvudlampor
@@ -79,6 +79,14 @@ blueprint:
               unit_of_measurement: min
               mode: box
 
+    # --- Dagbelysning ---
+    
+    day_lighting:
+      name: Dagbelysning
+      description: Inställningar för daglampor och dagscener
+      collapsed: true
+      icon: mdi:weather-sunny
+      input:
         scene_day:
           name: Dagscen
           description: "Scen som aktiveras under dagtid (om vald)."
@@ -107,7 +115,7 @@ blueprint:
                 domain: light
 
         auto_off_day:
-          name: Dagslampors varaktighet (minuter)
+          name: Daglampors varaktighet (minuter)
           default: []
           selector:
             number:
@@ -119,7 +127,7 @@ blueprint:
 
         brightness_day:
           name: Dagsljusstyrka
-          description: "Valfri ljusstyrka för dagslampor (0–100%)."
+          description: "Valfri ljusstyrka för daglampor (0–100%)."
           default: []
           selector:
             number:
@@ -438,8 +446,8 @@ blueprint:
     failsafe:
       name: Arbetsdag & Failsafe
       description: Sensor och timers för failsafe
-      icon: mdi:shield-alert-outline
       collapsed: true
+      icon: mdi:shield-alert-outline
       input:
         workday_sensor:
           name: Arbetsdagsensor
