@@ -10,6 +10,7 @@ blueprint:
   input:
 
     # --- Loggning ---
+    
     logging:
       name: Loggning
       description: Inställningar för loggning och notifieringar
@@ -22,6 +23,7 @@ blueprint:
             boolean: {}
 
     # --- Sensorer & Brytare ---
+    
     sensors_switches:
       name: Sensorer & Brytare
       description: Välj rörelsesensorer och valfria smarta uttag
@@ -45,6 +47,7 @@ blueprint:
               multiple: true
 
     # --- Dagbelysning ---
+    
     day_lighting:
       name: Dagbelysning
       description: Inställningar för daglampor och dagscener
@@ -157,6 +160,7 @@ blueprint:
                   value: sun
 
     # --- Nattbelysning ---
+    
     night_lighting:
       name: Nattbelysning
       description: Inställningar för nattlampor och nattscener
@@ -251,6 +255,7 @@ blueprint:
               domain: input_text
 
     # --- Lux & Sol ---
+    
     lux_sun:
       name: Lux & Sol
       description: Sensor för lux och inställningar för solens tider
@@ -291,7 +296,8 @@ blueprint:
           selector:
             time: {}
 
-    # --- Circadian ---
+    # --- Circadian lampor---
+    
     circadian:
       name: Circadian-ljus
       description: Inställningar för circadian-lampor
@@ -352,6 +358,7 @@ blueprint:
               mode: box
 
     # --- Fasta avstängningstider ---
+    
     fixed_times:
       name: Fasta avstängningstider
       description: Automatisk avstängning för lampor eller smarta uttag
@@ -413,6 +420,7 @@ blueprint:
                   value: sun
 
     # --- Arbetsdag & Failsafe ---
+    
     failsafe:
       name: Arbetsdag & Failsafe
       description: Sensor och timers för failsafe
