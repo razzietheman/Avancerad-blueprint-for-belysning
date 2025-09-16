@@ -1,5 +1,5 @@
 blueprint: 
-  name: "Rörelsestyrd Belysning med Circadian Lampor – Failsafe Pro 6.18.3"
+  name: "Rörelsestyrd Belysning med Circadian Lampor – Failsafe Pro 6.18.2"
   description: >
     En komplett automation för ditt smarta hem som kombinerar rörelsestyrning med avancerade failsafe-funktioner 
     och dynamiskt circadian-ljus. Huvudlampor, dag- och nattlampor, samt circual lights hanteras automatiskt – 
@@ -50,13 +50,13 @@ blueprint:
               domain: switch
               multiple: true
 
-    # --- Huvudlampor ---
+    # --- Dagbelysning ---
     
-    head_lighting:
-      name: Huvudlampor
-      description: Inställningar för huvudlampor
+    day_lighting:
+      name: Dagbelysning
+      description: Inställningar för daglampor och dagscener
       collapsed: true
-      icon: mdi:lightbulb-on-outline
+      icon: mdi:weather-sunny
       input:
         main_lights:
           name: Huvudlampor
@@ -79,14 +79,6 @@ blueprint:
               unit_of_measurement: min
               mode: box
 
-    # --- Dagbelysning ---
-    
-    day_lighting:
-      name: Dagbelysning
-      description: Inställningar för daglampor och dagscener
-      collapsed: true
-      icon: mdi:weather-sunny
-      input:
         scene_day:
           name: Dagscen
           description: "Scen som aktiveras under dagtid (om vald)."
@@ -115,7 +107,7 @@ blueprint:
                 domain: light
 
         auto_off_day:
-          name: Daglampors varaktighet (minuter)
+          name: Dagslampors varaktighet (minuter)
           default: []
           selector:
             number:
@@ -127,7 +119,7 @@ blueprint:
 
         brightness_day:
           name: Dagsljusstyrka
-          description: "Valfri ljusstyrka för daglampor (0–100%)."
+          description: "Valfri ljusstyrka för dagslampor (0–100%)."
           default: []
           selector:
             number:
@@ -559,7 +551,8 @@ trigger:
     id: circadian_update
     enabled: !input circadian_enabled
 
-mode: restart
+mode: parallel
+max: 100
 
 # --- Variabler ---
 
@@ -938,9 +931,6 @@ action:
         - delay:
             minutes: "{{ auto_off_day_var | default(0) | float }}"
         - choose:
-            
-            # CASE 1: Lampor släckas direkt
-            
             - conditions:
                 - condition: template
                   value_template: >
@@ -955,60 +945,60 @@ action:
                     {% set motion = expand(motion_sensors | default([])) | selectattr('state','eq','on') | list %}
                     {{ lights_on | select('is_state','on') | list | count > 0 and motion | count == 0 }}
               sequence:
-                - service: light.turn_off
-                  target:
-                    entity_id: >
-                      {% set lights_on = [] %}
-                      {% if day_lights_var is string and day_lights_var != '' %}
-                        {% set lights_on = [day_lights_var] %}
-                      {% elif day_lights_var is mapping and day_lights_var.entity_id is string %}
-                        {% set lights_on = [day_lights_var.entity_id] %}
-                      {% elif day_lights_var is iterable %}
-                        {% set lights_on = day_lights_var | select('string') | list %}
-                      {% endif %}
-                      {{ lights_on | join(',') }}
                 - choose:
                     - conditions:
                         - condition: template
-                          value_template: "{{ use_persistent_notifications_var }}"
+                          value_template: "{{ off_scene_day_var is string and off_scene_day_var != '' }}"
                       sequence:
-                        - service: persistent_notification.create
-                          data:
-                            title: "Belysningsautomation"
-                            message: "Auto-off Dag: Daglampor släckta."
-                    - conditions: []
-                      sequence:
-                        - service: logbook.log
-                          data:
-                            name: Belysningsautomation
-                            message: "Auto-off Dag: Daglampor släckta."
-
-            # CASE 2: Off-scen aktiveras (endast om satt och ingen rörelse)
-            
-            - conditions:
-                - condition: template
-                  value_template: >
-                    {{ off_scene_day_var is string and off_scene_day_var != '' and
-                       expand(motion_sensors | default([])) | selectattr('state','eq','on') | list | count == 0 }}
-              sequence:
-                - service: scene.turn_on
-                  target:
-                    entity_id: "{{ off_scene_day_var }}"
-                - choose:
+                        - service: scene.turn_on
+                          target:
+                            entity_id: "{{ off_scene_day_var }}"
+                        - choose:
+                            - conditions:
+                                - condition: template
+                                  value_template: "{{ use_persistent_notifications_var }}"
+                              sequence:
+                                - service: persistent_notification.create
+                                  data:
+                                    title: "Belysningsautomation"
+                                    message: "Auto-off Dag: Daglampor släckta och scen återställd."
+                            - conditions: []
+                              sequence:
+                                - service: logbook.log
+                                  data:
+                                    name: Belysningsautomation
+                                    message: "Auto-off Dag: Daglampor släckta och scen återställd."
                     - conditions:
                         - condition: template
-                          value_template: "{{ use_persistent_notifications_var }}"
+                          value_template: "true"
                       sequence:
-                        - service: persistent_notification.create
-                          data:
-                            title: "Belysningsautomation"
-                            message: "Auto-off Dag: Dag scen återställd."
-                    - conditions: []
-                      sequence:
-                        - service: logbook.log
-                          data:
-                            name: Belysningsautomation
-                            message: "Auto-off Dag: Dag scen återställd."
+                        - service: light.turn_off
+                          target:
+                            entity_id: >
+                              {% set lights_on = [] %}
+                              {% if day_lights_var is string and day_lights_var != '' %}
+                                {% set lights_on = [day_lights_var] %}
+                              {% elif day_lights_var is mapping and day_lights_var.entity_id is string %}
+                                {% set lights_on = [day_lights_var.entity_id] %}
+                              {% elif day_lights_var is iterable %}
+                                {% set lights_on = day_lights_var | select('string') | list %}
+                              {% endif %}
+                              {{ lights_on | join(',') }}
+                        - choose:
+                            - conditions:
+                                - condition: template
+                                  value_template: "{{ use_persistent_notifications_var }}"
+                              sequence:
+                                - service: persistent_notification.create
+                                  data:
+                                    title: "Belysningsautomation"
+                                    message: "Auto-off Dag: Daglampor släckta."
+                            - conditions: []
+                              sequence:
+                                - service: logbook.log
+                                  data:
+                                    name: Belysningsautomation
+                                    message: "Auto-off Dag: Daglampor släckta."
 
   # --- Auto-off Nattlampor ---
   
@@ -1038,9 +1028,6 @@ action:
         - delay:
             minutes: "{{ auto_off_night_var | default(0) | float }}"
         - choose:
-            
-            # CASE 1: Lampor släckas direkt
-            
             - conditions:
                 - condition: template
                   value_template: >
@@ -1055,60 +1042,60 @@ action:
                     {% set motion = expand(motion_sensors | default([])) | selectattr('state','eq','on') | list %}
                     {{ lights_on | select('is_state','on') | list | count > 0 and motion | count == 0 }}
               sequence:
-                - service: light.turn_off
-                  target:
-                    entity_id: >
-                      {% set lights_on = [] %}
-                      {% if night_lights_var is string and night_lights_var != '' %}
-                        {% set lights_on = [night_lights_var] %}
-                      {% elif night_lights_var is mapping and night_lights_var.entity_id is string %}
-                        {% set lights_on = [night_lights_var.entity_id] %}
-                      {% elif night_lights_var is iterable %}
-                        {% set lights_on = night_lights_var | select('string') | list %}
-                      {% endif %}
-                      {{ lights_on | join(',') }}
                 - choose:
                     - conditions:
                         - condition: template
-                          value_template: "{{ use_persistent_notifications_var }}"
+                          value_template: "{{ off_scene_night_var is string and off_scene_night_var != '' }}"
                       sequence:
-                        - service: persistent_notification.create
-                          data:
-                            title: "Belysningsautomation"
-                            message: "Auto-off Natt: Nattlampor släckta."
-                    - conditions: []
-                      sequence:
-                        - service: logbook.log
-                          data:
-                            name: Belysningsautomation
-                            message: "Auto-off Natt: Nattlampor släckta."
-
-            # CASE 2: Off-scen aktiveras (endast om satt och ingen rörelse)
-            
-            - conditions:
-                - condition: template
-                  value_template: >
-                    {{ off_scene_night_var is string and off_scene_night_var != '' and
-                       expand(motion_sensors | default([])) | selectattr('state','eq','on') | list | count == 0 }}
-              sequence:
-                - service: scene.turn_on
-                  target:
-                    entity_id: "{{ off_scene_night_var }}"
-                - choose:
+                        - service: scene.turn_on
+                          target:
+                            entity_id: "{{ off_scene_night_var }}"
+                        - choose:
+                            - conditions:
+                                - condition: template
+                                  value_template: "{{ use_persistent_notifications_var }}"
+                              sequence:
+                                - service: persistent_notification.create
+                                  data:
+                                    title: "Belysningsautomation"
+                                    message: "Auto-off Natt: Nattlampor släckta och scen återställd."
+                            - conditions: []
+                              sequence:
+                                - service: logbook.log
+                                  data:
+                                    name: Belysningsautomation
+                                    message: "Auto-off Natt: Nattlampor släckta och scen återställd."
                     - conditions:
                         - condition: template
-                          value_template: "{{ use_persistent_notifications_var }}"
+                          value_template: "true"
                       sequence:
-                        - service: persistent_notification.create
-                          data:
-                            title: "Belysningsautomation"
-                            message: "Auto-off Natt: Off Scene Natt aktiverad."
-                    - conditions: []
-                      sequence:
-                        - service: logbook.log
-                          data:
-                            name: Belysningsautomation
-                            message: "Auto-off Natt: Off Scene Natt aktiverad."
+                        - service: light.turn_off
+                          target:
+                            entity_id: >
+                              {% set lights_on = [] %}
+                              {% if night_lights_var is string and night_lights_var != '' %}
+                                {% set lights_on = [night_lights_var] %}
+                              {% elif night_lights_var is mapping and night_lights_var.entity_id is string %}
+                                {% set lights_on = [night_lights_var.entity_id] %}
+                              {% elif night_lights_var is iterable %}
+                                {% set lights_on = night_lights_var | select('string') | list %}
+                              {% endif %}
+                              {{ lights_on | join(',') }}
+                        - choose:
+                            - conditions:
+                                - condition: template
+                                  value_template: "{{ use_persistent_notifications_var }}"
+                              sequence:
+                                - service: persistent_notification.create
+                                  data:
+                                    title: "Belysningsautomation"
+                                    message: "Auto-off Natt: Nattlampor släckta."
+                            - conditions: []
+                              sequence:
+                                - service: logbook.log
+                                  data:
+                                    name: Belysningsautomation
+                                    message: "Auto-off Natt: Nattlampor släckta."
 
   # --- Auto-off Circadian Lampor ---
   
