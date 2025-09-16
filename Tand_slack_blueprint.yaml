@@ -559,8 +559,8 @@ trigger:
     id: circadian_update
     enabled: !input circadian_enabled
 
-mode: parallel
-max: 100
+mode: restart
+max: silent
 
 # --- Variabler ---
 
