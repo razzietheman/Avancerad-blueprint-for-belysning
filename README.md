@@ -90,6 +90,8 @@ Få lugna helgkvällar och effektiv vardagsbelysning på vardagar
 | 📸 Snapshot-återställning | Spara & återställ tidigare ljusläge/scen       |
 | 🛡️ Failsafe              | Säkerhetssystem som aldrig glömmer släcka      |
 | 📝 Loggning               | Persistent Notification eller logbook-loggar   |
+| 🌅 Soluppgång/solnedgång     | Exakt timing med offset                     |
+| ⏱ Två fasta släcktider       | Vardag/helg, automatiskt eller manuellt    |
 
 
 ---
