@@ -1,5 +1,5 @@
 blueprint: 
-  name: "Rörelsestyrd Belysning med Circadian Lampor – Failsafe Pro 6.18.3"
+  name: "Rörelsestyrd Belysning med Circadian Lampor – Failsafe Pro 6.18.4"
   description: >
     En komplett automation för ditt smarta hem som kombinerar rörelsestyrning med avancerade failsafe-funktioner 
     och dynamiskt circadian-ljus. Huvudlampor, dag- och nattlampor, samt circual lights hanteras automatiskt – 
@@ -265,14 +265,18 @@ blueprint:
 
     # --- Scenåterställning ---
     
-    restore_scenes:
-      name: Scenhantering
-      description: Hantera och återställ scener automatiskt.
+    snapshot_restore:
+      name: Snapshot-återställning
+      description: Spara och återställ tidigare ljusläge/scen när auto-off eller failsafe triggas.
       collapsed: true
-      icon: mdi:palette
+      icon: mdi:camera-retake
       input:        
-        restore_last_scene:
-          name: Återställ senaste scen
+        enable_snapshot_restore:
+          name: Aktivera snapshot-återställning
+          description: >
+            Om aktiverad sparas det senaste ljusläget och återställs automatiskt 
+            när auto-off eller failsafe triggas. 
+            ⚠️ Används endast om ingen off-scen är definierad.
           default: false
           selector:
             boolean: {}
@@ -591,7 +595,7 @@ variables:
   scene_night_var: !input scene_night
   off_scene_night_var: !input off_scene_night
   last_scene_entity: !input input_text_last_scene
-  restore_last_scene_var: !input restore_last_scene
+  restore_last_scene_var: !input enable_snapshot_restore
   lux_sensor_var: !input lux_sensor
   lux_threshold_var: !input lux_threshold
   use_sun_times_var: !input use_sun_times
@@ -1026,6 +1030,33 @@ action:
                             name: Belysningsautomation
                             message: "Auto-off Dag: Dag scen återställd."
 
+            # CASE 3: Snapshot-återställning (om aktiverad och ingen off-scene)
+            
+            - conditions:
+                - condition: template
+                  value_template: >
+                    {{ off_scene_day_var == '' and enable_snapshot_restore_var and
+                       expand(motion_sensors | default([])) | selectattr('state','eq','on') | list | count == 0 }}
+              sequence:
+                - service: scene.turn_on
+                  target:
+                    entity_id: "{{ states(input_text_last_scene) }}"
+                - choose:
+                    - conditions:
+                        - condition: template
+                          value_template: "{{ use_persistent_notifications_var }}"
+                      sequence:
+                        - service: persistent_notification.create
+                          data:
+                            title: "Belysningsautomation"
+                            message: "Auto-off Dag: Snapshot återställd."
+                    - conditions: []
+                      sequence:
+                        - service: logbook.log
+                          data:
+                            name: Belysningsautomation
+                            message: "Auto-off Dag: Snapshot återställd."
+
   # --- Auto-off Nattlampor ---
   
   - choose:
@@ -1125,6 +1156,33 @@ action:
                           data:
                             name: Belysningsautomation
                             message: "Auto-off Natt: Off Scene Natt aktiverad."
+
+            # CASE 3: Snapshot-återställning (om aktiverad och ingen off-scene)
+            
+            - conditions:
+                - condition: template
+                  value_template: >
+                    {{ off_scene_night_var == '' and enable_snapshot_restore_var and
+                       expand(motion_sensors | default([])) | selectattr('state','eq','on') | list | count == 0 }}
+              sequence:
+                - service: scene.turn_on
+                  target:
+                    entity_id: "{{ states(input_text_last_scene) }}"
+                - choose:
+                    - conditions:
+                        - condition: template
+                          value_template: "{{ use_persistent_notifications_var }}"
+                      sequence:
+                        - service: persistent_notification.create
+                          data:
+                            title: "Belysningsautomation"
+                            message: "Auto-off Natt: Snapshot återställd."
+                    - conditions: []
+                      sequence:
+                        - service: logbook.log
+                          data:
+                            name: Belysningsautomation
+                            message: "Auto-off Natt: Snapshot återställd."
 
   # --- Auto-off Circadian Lampor ---
   
@@ -1376,7 +1434,7 @@ action:
   # --- Failsafe Daglampor ---
   
   - choose:
-    
+
     # CASE 1: Släck lampor direkt
     
     - conditions:
@@ -1453,30 +1511,26 @@ action:
                 - service: persistent_notification.create
                   data:
                     title: "Belysningsautomation"
-                    message: "Failsafe Dag: Off-scen Aktiverad."
+                    message: "Failsafe Dag: Off-scen aktiverad."
             - conditions: []
               sequence:
                 - service: logbook.log
                   data:
                     name: Belysningsautomation
-                    message: "Failsafe Dag: Off-scen Aktiverad."
+                    message: "Failsafe Dag: Off-scen aktiverad."
 
-    # CASE 3: Återställ senaste scen (om aktiverad)
+    # CASE 3: Snapshot-återställning (om aktiverad och ingen off-scene)
     
     - conditions:
         - condition: template
-          value_template: "{{ enable_failsafe_var and restore_last_scene_var }}"
-        - condition: template
-          value_template: "{{ states(last_scene_entity) | default('') != '' }}"
+          value_template: "{{ enable_failsafe_var and off_scene_day_var == '' and enable_snapshot_restore_var }}"
         - condition: template
           value_template: >
             {{ expand(motion_sensors | default([])) | selectattr('state','eq','on') | list | count == 0 }}
       sequence:
-        - delay:
-            minutes: "{{ failsafe_timer_day_var | default(0) | float }}"
         - service: scene.turn_on
           target:
-            entity_id: "{{ states(last_scene_entity) }}"
+            entity_id: "{{ states(input_text_last_scene) }}"
         - choose:
             - conditions:
                 - condition: template
@@ -1485,18 +1539,18 @@ action:
                 - service: persistent_notification.create
                   data:
                     title: "Belysningsautomation"
-                    message: "Failsafe Dag: Senaste scen återställd."
+                    message: "Failsafe Dag: Snapshot återställd."
             - conditions: []
               sequence:
                 - service: logbook.log
                   data:
                     name: Belysningsautomation
-                    message: "Failsafe Dag: Senaste scen återställd."
+                    message: "Failsafe Dag: Snapshot återställd."
 
   # --- Failsafe Nattlampor ---
   
   - choose:
-    
+
     # CASE 1: Släck lampor direkt
     
     - conditions:
@@ -1585,22 +1639,18 @@ action:
                     name: Belysningsautomation
                     message: "Failsafe Natt: Off-scen aktiverad (ingen rörelse)."
 
-    # CASE 3: Återställ senaste scen (om aktiverad)
+    # CASE 3: Snapshot-återställning (om aktiverad och ingen off-scene)
     
     - conditions:
         - condition: template
-          value_template: "{{ enable_failsafe_var and restore_last_scene_var }}"
-        - condition: template
-          value_template: "{{ states(last_scene_entity) | default('') != '' }}"
+          value_template: "{{ enable_failsafe_var and off_scene_night_var == '' and enable_snapshot_restore_var }}"
         - condition: template
           value_template: >
             {{ expand(motion_sensors | default([])) | selectattr('state','eq','on') | list | count == 0 }}
       sequence:
-        - delay:
-            minutes: "{{ failsafe_timer_night_var | default(0) | float }}"
         - service: scene.turn_on
           target:
-            entity_id: "{{ states(last_scene_entity) }}"
+            entity_id: "{{ states(input_text_last_scene) }}"
         - choose:
             - conditions:
                 - condition: template
@@ -1609,13 +1659,13 @@ action:
                 - service: persistent_notification.create
                   data:
                     title: "Belysningsautomation"
-                    message: "Failsafe Natt: Senaste scen återställd (ingen rörelse)."
+                    message: "Failsafe Natt: Snapshot återställd."
             - conditions: []
               sequence:
                 - service: logbook.log
                   data:
                     name: Belysningsautomation
-                    message: "Failsafe Natt: Senaste scen återställd (ingen rörelse)."
+                    message: "Failsafe Natt: Snapshot återställd."
 
   # --- Failsafe Circadian Lampor ---
   
@@ -1676,3 +1726,34 @@ action:
                           data:
                             name: Belysningsautomation
                             message: "Failsafe Circadian lampor: Circadian lampor släckta automatiskt."
+  
+  # --- Återställ senaste scen (fristående) ---
+  
+  - choose:
+    - conditions:
+        - condition: template
+          value_template: "{{ restore_last_scene_var }}"
+        - condition: template
+          value_template: "{{ states(last_scene_entity) | default('') != '' }}"
+        - condition: template
+          value_template: >
+            {{ expand(motion_sensors_var | default([])) | selectattr('state','eq','on') | list | count == 0 }}
+      sequence:
+        - service: scene.turn_on
+          target:
+            entity_id: "{{ states(last_scene_entity) }}"
+        - choose:
+            - conditions:
+                - condition: template
+                  value_template: "{{ use_persistent_notifications_var }}"
+              sequence:
+                - service: persistent_notification.create
+                  data:
+                    title: "Belysningsautomation"
+                    message: "Senaste scen återställd."
+            - conditions: []
+              sequence:
+                - service: logbook.log
+                  data:
+                    name: Belysningsautomation
+                    message: "Senaste scen återställd."
