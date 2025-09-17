@@ -1,28 +1,41 @@
-# ✨🌟 Rörelsestyrd Belysning 6.0 🌟✨
+# ✨🌟 Avancerad Belysningsautomation 6.18.3 🌟✨
 
-# 💡 *Ditt hem, smartare än någonsin*
+# 💡 När smart hem blir magi på riktigt
 
-![Release Badge](https://img.shields.io/badge/release-6.0-brightgreen?style=flat-square) ![License](https://img.shields.io/badge/license-MIT-blue?style=flat-square) ![HA Compatible](https://img.shields.io/badge/Home_Assistant-Compatible-orange?style=flat-square)
+![License](https://img.shields.io/badge/license-MIT-blue?style=flat-square) ![HA Compatible](https://img.shields.io/badge/Home_Assistant-Compatible-orange?style=flat-square)
 
-Välkommen till **Rörelsestyrd Belysning 6.0** – där **automation möter magi**.
-Ditt hem **tänker själv**, känner solens rytm och vet exakt när lamporna ska lysa eller vila.
+Välkommen till Avancerad Belysningsautomation 6.18.3 – den mest kompletta, flexibla och robusta lösningen för rörelsestyrd belysning i Home Assistant.
+Här möts intelligens, trygghet och stil.
 
-✅ **Superrobust** | ✅ **Otroligt flexibel** | ✅ **Energi- och scen-smart**
+✅ Supersäker | ✅ Maximalt flexibel | ✅ Scen- och ljussmart
 
 ---
 
-# 🚀 Nyheter i 6.0
+# 🚀 Nyheter i 6.18.3
 
-- ✨ **Off Scenes 2.0** – Släck lampor med stil och mjuk fade
-- 💡 **Auto-off + Scenåterställning** – Återställ favoritljuslägen automatiskt
-- 🛡️ **Failsafe per kategori** – Lamporna släcks **bara när de verkligen behöver**
-- 🌙 **Dynamisk dimning** – Ljusstyrka som följer dygnets rytm
-- 🌓 **Circadian Light** – Färgtemperatur anpassas automatiskt efter dygnets naturliga rytm
-- 📅 **Veckodagslogik** – Olika scheman för vardag och helg
-- 📸 **Snapshot-hantering** – Spara & återställ exakt det ljus du vill ha
-- 📝 **Smart loggning** – Full kontroll på alla händelser
+- 🎨 Ny GUI-design – enklare än någonsin
+- ✨ Off Scenes Next-Gen – Aktivera avslutande scener endast när du själv valt dem.
+- 💡 Auto-off per kategori – Separata timers för dag, natt och huvudlampor.
+- 🛡️ Failsafe 2.0 – Återställer eller släcker lampor beroende på vad som faktiskt är satt.
+- 📸 Snapshot-system – Spara och återställ senaste scen eller ljusläge när du vill.
+- 📅 Veckodag + Tidstyrning – Full kontroll över när dag/natt är aktivt.
+- 🌞 Lux-kontroll – Lampor tänds bara när det verkligen är mörkt.
+- 📝 Smart loggning – Full överblick över vad som triggat och varför.
 
-✨ Små tweaks som gör hemmet **levande, personligt och wow**
+✨ Små tweaks överallt gör att automationen känns levande, logisk och sömlös.
+
+---
+
+# 🎨 Ny GUI-design – enklare än någonsin
+
+Menyerna i blueprinten har fått en fräsch översyn.
+Alla avancerade inställningar är nu infällda som standard, vilket ger en mycket renare och mer lättöverskådlig överblick.
+Det betyder:
+
+🔽 Du ser direkt de viktigaste inställningarna
+➕ Avancerade alternativ kan expanderas vid behov
+🧭 Enklare att navigera, även om blueprinten är fullmatad med funktioner
+Resultatet blir en snyggare, mer intuitiv och användarvänlig GUI som gör det roligare att konfigurera automationen.
 
 ---
 
@@ -35,22 +48,23 @@ Ditt hem **tänker själv**, känner solens rytm och vet exakt när lamporna ska
 * Rörelse triggar **dagscen** eller dagslampor
 * Ljusstyrkan stiger mjukt för **perfekt start på dagen**
 
-# 🌞 Dagläge + solkontroll
+# 🌞 Smart dagläge
 
-* Lampor tänds **endast när det behövs**
+* Lampor tänds bara om lux-sensorn säger att det är mörkt
 * Kombinera med **fasta auto-off-tider**
-* **Energi-smart & stilrent**
+* Auto-off ser till att inget står på i onödan
+* Energisnålt och bekvämt
 
-# 🌙 Kvällsmys
+# 🌙 Kvälls- & nattmys
 
-* Efter nattstart tänds **nattscen eller nattlampor** med dimmad belysning
-* Släcks mjukt efter inställd tid om ingen rörelse registreras
-* Skapar **perfekt lugn för kväll & natt**
+* Efter nattstart aktiveras nattscen eller nattlampor
+* Failsafe släcker automatiskt efter inställd tid
+* Tryggt, mjukt och sömnvänligt
 
 # ⏰ Arbetsdag vs Helg
 
-* Anpassa ljuslogik efter veckodag
-* Få **lugna helgkvällar** och **effektiv vardagsbelysning**
+Anpassa logiken efter veckodag
+Få lugna helgkvällar och effektiv vardagsbelysning på vardagar
 
 ---
 
@@ -63,20 +77,18 @@ Ditt hem **tänker själv**, känner solens rytm och vet exakt när lamporna ska
 
 # 🔧 **Funktioner i detalj**
 
-| Funktion                     | Beskrivning                                            |
-| ---------------------------- | ------------------------------------------------------ |
-| 🚶‍♂️ Rörelsesensor          | Tänd/släck med rörelse – lämna tomt för schemastyrning |
-| 🔘 Smarta uttag/strömbrytare | Styr lampor via Home Assistant-kompatibla enheter      |
-| 🌞 Dag- & natt-scener        | Skapa stämning med scener eller individuella lampor    |
-| 💡 Lux-sensor                | Tänder lampor **endast när det är mörkt**              |
-| 🌓 Circadian Light           | Anpassar färgtemperatur automatiskt efter naturligt dygnsrytm |
-| 🌅 Soluppgång/solnedgång     | Exakt timing med offset                                |
-| ⏱ Två fasta släcktider       | Vardag/helg, automatiskt eller manuellt                |
-| 📅 Arbetsdagskontroll        | Anpassa belysning per veckodag                         |
-| ⏳ Auto-off per kategori      | Separata timers för huvud, dag & natt                  |
-| 📸 Snapshots                 | Återställ favoritljus på **nolltid**                   |
-| 🛡️ Failsafe                 | Säkerställer att lampor aldrig glöms på                |
-| 📝 Loggning                  | Följ varje aktivering & ändring i detalj               |
+| Funktion                  | Beskrivning                                    |
+| ------------------------- | ---------------------------------------------- |
+| 🚶‍♂️ Rörelsesensor       | Styr lampor & scener baserat på aktivitet      |
+| 🔘 Val av scener & lampor | Kör scener eller direkta lampor – eller båda   |
+| 🌞 Dag- & nattlogik       | Separata tider, scener & off-scenes            |
+| 💡 Lux-sensor             | Hindrar onödig tändning när det redan är ljust |
+| 📅 Veckodagsstyrning      | Välj olika scheman för vardag & helg           |
+| ⏱ Auto-off per kategori   | Separata timers för dag/natt/huvudlampor       |
+| 📸 Snapshot-återställning | Spara & återställ tidigare ljusläge/scen       |
+| 🛡️ Failsafe              | Säkerhetssystem som aldrig glömmer släcka      |
+| 📝 Loggning               | Persistent Notification eller logbook-loggar   |
+
 
 ---
 
@@ -102,4 +114,4 @@ Ditt hem **tänker själv**, känner solens rytm och vet exakt när lamporna ska
 
 Byggd med ❤️ av **Rasmus Sjöberg** [razzietheman](https://github.com/razzietheman/) – 2025
 
-✨ **Rörelsestyrd Belysning 6.0** – maximal automation när du vill, **full kontroll när du behöver**.
+✨ **Rörelsestyrd Belysning 6.18.3** – maximal automation när du vill, **full kontroll när du behöver**.
