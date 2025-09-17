@@ -32,10 +32,10 @@ Menyerna i blueprinten har fått en fräsch översyn.
 Alla avancerade inställningar är nu infällda som standard, vilket ger en mycket renare och mer lättöverskådlig överblick.
 Det betyder:
 
-🔽 Du ser direkt de viktigaste inställningarna
-➕ Avancerade alternativ kan expanderas vid behov
-🧭 Enklare att navigera, även om blueprinten är fullmatad med funktioner
-Resultatet blir en snyggare, mer intuitiv och användarvänlig GUI som gör det roligare att konfigurera automationen.
+* 🔽 Du ser direkt de viktigaste inställningarna
+* ➕ Avancerade alternativ kan expanderas vid behov
+* 🧭 Enklare att navigera, även om blueprinten är fullmatad med funktioner
+* Resultatet blir en snyggare, mer intuitiv och användarvänlig GUI som gör det roligare att konfigurera automationen.
 
 ---
 
