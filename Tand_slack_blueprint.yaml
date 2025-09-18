@@ -1,5 +1,5 @@
 blueprint: 
-  name: "Rörelsestyrd Belysning med Circadian Lampor – Failsafe Pro 6.18.4"
+  name: "Rörelsestyrd Belysning med Circadian Lampor – Failsafe Pro 6.18.5"
   description: >
     En komplett automation för ditt smarta hem som kombinerar rörelsestyrning med avancerade failsafe-funktioner 
     och dynamiskt circadian-ljus. Huvudlampor, dag- och nattlampor, samt circual lights hanteras automatiskt – 
@@ -922,13 +922,15 @@ action:
                 - service: persistent_notification.create
                   data:
                     title: "Belysningsautomation"
-                    message: "Auto-off Main: Huvudlampor släckta."
+                    message: >
+                      Auto-off Huvudlampor: {{ expand(main_lights_var) | map(attribute='name') | join(', ') }} släckta.
             - conditions: []
               sequence:
                 - service: logbook.log
                   data:
                     name: Belysningsautomation
-                    message: "Auto-off Main: Huvudlampor släckta."
+                    message: >
+                      Auto-off Huvudlampor: {{ expand(main_lights_var) | map(attribute='name') | join(', ') }} släckta.
 
   # --- Auto-off Daglampor ---
   
@@ -995,13 +997,15 @@ action:
                         - service: persistent_notification.create
                           data:
                             title: "Belysningsautomation"
-                            message: "Auto-off Dag: Daglampor släckta."
+                            message: >
+                              Auto-off Dag: {{ expand(day_lights_var) | map(attribute='name') | join(', ') }} släckta.
                     - conditions: []
                       sequence:
                         - service: logbook.log
                           data:
                             name: Belysningsautomation
-                            message: "Auto-off Dag: Daglampor släckta."
+                            message: >
+                              Auto-off Dag: {{ expand(day_lights_var) | map(attribute='name') | join(', ') }} släckta.
 
             # CASE 2: Off-scen aktiveras (endast om satt och ingen rörelse)
             
@@ -1022,13 +1026,13 @@ action:
                         - service: persistent_notification.create
                           data:
                             title: "Belysningsautomation"
-                            message: "Auto-off Dag: Dag scen återställd."
+                            message: "Auto-off Dag: Dag scene aktiverad."
                     - conditions: []
                       sequence:
                         - service: logbook.log
                           data:
                             name: Belysningsautomation
-                            message: "Auto-off Dag: Dag scen återställd."
+                            message: "Auto-off Dag: Dag scene aktiverad."
 
             # CASE 3: Snapshot-återställning (om aktiverad och ingen off-scene)
             
@@ -1122,13 +1126,15 @@ action:
                         - service: persistent_notification.create
                           data:
                             title: "Belysningsautomation"
-                            message: "Auto-off Natt: Nattlampor släckta."
+                            message: >
+                              Auto-off Natt: {{ expand(night_lights_var) | map(attribute='name') | join(', ') }} släckta.
                     - conditions: []
                       sequence:
                         - service: logbook.log
                           data:
                             name: Belysningsautomation
-                            message: "Auto-off Natt: Nattlampor släckta."
+                            message: >
+                              Auto-off Natt: {{ expand(night_lights_var) | map(attribute='name') | join(', ') }} släckta.
 
             # CASE 2: Off-scen aktiveras (endast om satt och ingen rörelse)
             
@@ -1423,13 +1429,15 @@ action:
                           - service: persistent_notification.create
                             data:
                               title: "Belysningsautomation"
-                              message: "Failsafe Main: Huvudlampor släckta automatiskt (ingen rörelse)."
+                              message: >
+                                Failsafe Huvudlampor: {{ expand(main_lights_var) | map(attribute='name') | join(', ') }} släckta automatiskt.
                       - conditions: []
                         sequence:
                           - service: logbook.log
                             data:
                               name: Belysningsautomation
-                              message: "Failsafe Main: Huvudlampor släckta automatiskt (ingen rörelse)."
+                              message: >
+                                Failsafe Huvudlampor: {{ expand(main_lights_var) | map(attribute='name') | join(', ') }} släckta automatiskt.
 
   # --- Failsafe Daglampor ---
   
@@ -1481,13 +1489,15 @@ action:
                 - service: persistent_notification.create
                   data:
                     title: "Belysningsautomation"
-                    message: "Failsafe Dag: Daglampor släckta automatiskt."
+                    message: >
+                      Failsafe Dag: {{ expand(day_lights_var) | map(attribute='name') | join(', ') }} släckta automatiskt.
             - conditions: []
               sequence:
                 - service: logbook.log
                   data:
                     name: Belysningsautomation
-                    message: "Failsafe Dag: Daglampor släckta automatiskt."
+                    message: >
+                      Failsafe Dag: {{ expand(day_lights_var) | map(attribute='name') | join(', ') }} släckta automatiskt.
 
     # CASE 2: Aktivera off-scen
     
@@ -1601,13 +1611,15 @@ action:
                 - service: persistent_notification.create
                   data:
                     title: "Belysningsautomation"
-                    message: "Failsafe Natt: Nattlampor släckta automatiskt (ingen rörelse)."
+                    message: >
+                      Failsafe Natt: {{ expand(night_lights_var) | map(attribute='name') | join(', ') }} släckta automatiskt.
             - conditions: []
               sequence:
                 - service: logbook.log
                   data:
                     name: Belysningsautomation
-                    message: "Failsafe Natt: Nattlampor släckta automatiskt (ingen rörelse)."
+                    message: >
+                      Failsafe Natt: {{ expand(night_lights_var) | map(attribute='name') | join(', ') }} släckta automatiskt.
 
     # CASE 2: Aktivera off-scen
     
