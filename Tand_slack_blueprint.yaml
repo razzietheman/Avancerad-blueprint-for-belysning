@@ -1,5 +1,5 @@
 blueprint: 
-  name: "Rörelsestyrd Belysning med Circadian Lampor – Failsafe Pro 6.18.6"
+  name: "Rörelsestyrd Belysning med Circadian Lampor – Failsafe Pro 6.18.7"
   description: >
     En komplett automation för ditt smarta hem som kombinerar rörelsestyrning med avancerade failsafe-funktioner 
     och dynamiskt circadian-ljus. Huvudlampor, dag- och nattlampor, samt circual lights hanteras automatiskt – 
@@ -933,6 +933,62 @@ action:
                         {% endif %}
                         {{ switches | join(',') }}
                     
+          # --- Tänd switchar vid solnedgång ---
+          
+          - choose:
+              - conditions:
+                  - condition: template
+                    value_template: "{{ optional_switches | default([]) != [] and use_sun_times_var }}"
+                  - condition: trigger
+                    id: sunset_trigger
+                sequence:
+                  - service: switch.turn_on
+                    target:
+                      entity_id: >
+                        {% set switches = [] %}
+                        {% if optional_switches is string %}
+                          {% set switches = [optional_switches] %}
+                        {% elif optional_switches is mapping and optional_switches.entity_id is string %}
+                          {% set switches = [optional_switches.entity_id] %}
+                        {% elif optional_switches is iterable %}
+                          {% for s in optional_switches %}
+                            {% if s is string %}
+                              {% set switches = switches + [s] %}
+                            {% elif s.entity_id is string %}
+                              {% set switches = switches + [s.entity_id] %}
+                            {% endif %}
+                          {% endfor %}
+                        {% endif %}
+                        {{ switches | join(',') }}
+          
+          # --- Släck switchar vid soluppgång ---
+          
+          - choose:
+              - conditions:
+                  - condition: template
+                    value_template: "{{ optional_switches | default([]) != [] and use_sun_times_var }}"
+                  - condition: trigger
+                    id: sunrise_trigger
+                sequence:
+                  - service: switch.turn_off
+                    target:
+                      entity_id: >
+                        {% set switches = [] %}
+                        {% if optional_switches is string %}
+                          {% set switches = [optional_switches] %}
+                        {% elif optional_switches is mapping and optional_switches.entity_id is string %}
+                          {% set switches = [optional_switches.entity_id] %}
+                        {% elif optional_switches is iterable %}
+                          {% for s in optional_switches %}
+                            {% if s is string %}
+                              {% set switches = switches + [s] %}
+                            {% elif s.entity_id is string %}
+                              {% set switches = switches + [s.entity_id] %}
+                            {% endif %}
+                          {% endfor %}
+                        {% endif %}
+                        {{ switches | join(',') }}
+          
           # --- Spara senaste scen ---
           
           - choose:
