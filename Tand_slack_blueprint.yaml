@@ -734,53 +734,65 @@ action:
   # --- Rörelse / Switch PÅ ---
 
   - choose:
-      - conditions:
-          - condition: or
-            conditions:
-              - condition: trigger
-                id: motion_on
-              - condition: trigger
-                id: switch_on
-          - condition: template
-            value_template: "{{ (optional_switches | default([])) != [] or trigger.id == 'motion_on' }}"
-        sequence:
+    - conditions:
+        - condition: trigger
+          id: motion_on
+      sequence:
 
-          # --- Tänd lampor ---
-
-          - service: light.turn_on
-            target:
-              entity_id: >
-                {% set lights = [] %}
-                {% for var in [day_lights_var, night_lights_var] %}
-                  {% if var | default('') != '' %}
-                    {% if var is string %}
-                      {% set lights = lights + [var] %}
-                    {% elif var is mapping and var.entity_id is string %}
-                      {% set lights = lights + [var.entity_id] %}
-                    {% elif var is iterable %}
-                      {% set lights = lights + var %}
-                    {% endif %}
-                  {% endif %}
-                {% endfor %}
-                {{ lights | join(',') }}
-
-          # --- Tänd switchar ---
-          
-          - choose:
-              - conditions:
-                  - condition: template
-                    value_template: "{{ optional_switches | default([]) != [] }}"
-                sequence:
-                  - service: switch.turn_on
-                    target:
-                      entity_id: >
-                        {% set switches = [] %}
-                        {% if optional_switches is iterable %}
-                          {% set switches = optional_switches | select('string') | list %}
-                        {% else %}
-                          {% set switches = [optional_switches] %}
+        # --- Tänd lampor ---
+        
+        - choose:
+            - conditions:
+                - condition: template
+                  value_template: >
+                    {% set lights = [] %}
+                    {% for var in [day_lights_var, night_lights_var] %}
+                      {% if var | default('') != '' %}
+                        {% if var is string %}
+                          {% set lights = lights + [var] %}
+                        {% elif var is mapping and var.entity_id is string %}
+                          {% set lights = lights + [var.entity_id] %}
+                        {% elif var is iterable %}
+                          {% set lights = lights + var %}
                         {% endif %}
-                        {{ switches | join(',') }}
+                      {% endif %}
+                    {% endfor %}
+                    {{ lights | count > 0 }}
+              sequence:
+                - service: light.turn_on
+                  target:
+                    entity_id: >
+                      {% set lights = [] %}
+                      {% for var in [day_lights_var, night_lights_var] %}
+                        {% if var | default('') != '' %}
+                          {% if var is string %}
+                            {% set lights = lights + [var] %}
+                          {% elif var is mapping and var.entity_id is string %}
+                            {% set lights = lights + [var.entity_id] %}
+                          {% elif var is iterable %}
+                            {% set lights = lights + var %}
+                          {% endif %}
+                        {% endif %}
+                      {% endfor %}
+                      {{ lights | join(',') }}
+
+        # --- Tänd switchar ---
+        
+        - choose:
+            - conditions:
+                - condition: template
+                  value_template: "{{ optional_switches | default([]) != [] }}"
+              sequence:
+                - service: switch.turn_on
+                  target:
+                    entity_id: >
+                      {% set switches = [] %}
+                      {% if optional_switches is iterable %}
+                        {% set switches = optional_switches | select('string') | list %}
+                      {% else %}
+                        {% set switches = [optional_switches] %}
+                      {% endif %}
+                      {{ switches | join(',') }}
 
           # --- Snapshot ---
           
