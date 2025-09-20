@@ -210,7 +210,7 @@ blueprint:
                   value: sun
 
         fade_out_duration_day_var:
-          name: Fade out duration Dag (sekunder)
+          name: Fade out Dag lampor (sekunder)
           description: Hur lång tid daglampor ska ta på sig att släckas (0 = direkt).
           default: 0
           selector:
@@ -314,7 +314,7 @@ blueprint:
                   value: sun
 
         fade_out_duration_night_var:
-          name: Fade out duration Natt (sekunder)
+          name: Fade out Natt lampor (sekunder)
           description: Hur lång tid nattlampor ska ta på sig att släckas (0 = direkt).
           default: 0
           selector:
