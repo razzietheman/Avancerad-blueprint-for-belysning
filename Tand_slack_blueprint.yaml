@@ -1,5 +1,5 @@
 blueprint: 
-  name: "Rörelsestyrd Belysning med Circadian Lampor – Failsafe Pro 6.18.8"
+  name: "Rörelsestyrd Belysning med Circadian Lampor – Failsafe Pro 6.18.9"
   description: >
     En komplett automation för ditt smarta hem som kombinerar rörelsestyrning med avancerade failsafe-funktioner 
     och dynamiskt circadian-ljus. Huvudlampor, dag- och nattlampor, samt circual lights hanteras automatiskt – 
@@ -103,6 +103,17 @@ blueprint:
               unit_of_measurement: min
               mode: box
 
+        fade_out_duration_main:
+          name: Fade out Huvudlampor (sekunder)
+          description: Hur lång tid huvudlamporna ska ta på sig att släckas (0 = direkt).
+          default: 0
+          selector:
+            number:
+              min: 0
+              max: 300
+              unit_of_measurement: sek
+              mode: box
+    
     # --- Dagbelysning ---
     
     day_lighting:
@@ -198,6 +209,17 @@ blueprint:
                 - label: Söndag
                   value: sun
 
+        fade_out_duration_day_var:
+          name: Fade out duration Dag (sekunder)
+          description: Hur lång tid daglampor ska ta på sig att släckas (0 = direkt).
+          default: 0
+          selector:
+            number:
+              min: 0
+              max: 300
+              unit_of_measurement: s
+              mode: box
+    
     # --- Nattbelysning ---
     
     night_lighting:
@@ -291,6 +313,17 @@ blueprint:
                 - label: Söndag
                   value: sun
 
+        fade_out_duration_night_var:
+          name: Fade out duration Natt (sekunder)
+          description: Hur lång tid nattlampor ska ta på sig att släckas (0 = direkt).
+          default: 0
+          selector:
+            number:
+              min: 0
+              max: 300
+              unit_of_measurement: s
+              mode: box
+    
     # --- Scenåterställning ---
     
     snapshot_restore:
@@ -703,6 +736,9 @@ variables:
   night_lights_var: !input night_lights
   lux_sensor_var: !input lux_sensor
   lux_threshold_var: !input lux_threshold
+  fade_out_duration_main_var: !input fade_out_duration_main
+  fade_out_duration_day_var: !input fade_out_duration_day_var
+  fade_out_duration_night_var: !input fade_out_duration_night_var
 
   # --- Scener ---
   
@@ -1247,6 +1283,9 @@ action:
                 {% set lights = main_lights_var | select('string') | list %}
               {% endif %}
               {{ lights | join(',') }}
+          data:
+            transition: >
+              {{ [0, fade_out_duration_main_var | default(0) | int] | max }}
         - choose:
             - conditions:
                 - condition: template
@@ -1338,6 +1377,9 @@ action:
                         {% set lights_on = day_lights_var | select('string') | list %}
                       {% endif %}
                       {{ lights_on | join(',') }}
+                  data:
+                    transition: >
+                      {{ [0, fade_out_duration_day_var | default(0) | int] | max }}
                 - choose:
                     - conditions:
                         - condition: template
@@ -1355,7 +1397,7 @@ action:
                               {% elif day_lights_var is iterable %}
                                 {% set lights = day_lights_var | select('string') | list %}
                               {% endif %}
-                              Auto-off Dag: {{ expand(lights) | map(attribute='name') | join(', ') | default('Ingen lampor') }} släckta.
+                              Auto-off Dag: {{ expand(lights) | map(attribute='name') | join(', ') | default('inga lampor') }} släckta.
                     - conditions: []
                       sequence:
                         - service: logbook.log
@@ -1370,7 +1412,7 @@ action:
                               {% elif day_lights_var is iterable %}
                                 {% set lights = day_lights_var | select('string') | list %}
                               {% endif %}
-                              Auto-off Dag: {{ expand(lights) | map(attribute='name') | join(', ') | default('Ingen lampor') }} släckta.
+                              Auto-off Dag: {{ expand(lights) | map(attribute='name') | join(', ') | default('inga lampor') }} släckta.
 
             # CASE 2: Off-scen aktiveras (endast om satt och ingen rörelse)
             
@@ -1483,6 +1525,9 @@ action:
                         {% set lights_on = night_lights_var | select('string') | list %}
                       {% endif %}
                       {{ lights_on | join(',') }}
+                  data:
+                    transition: >
+                      {{ [0, fade_out_duration_night_var | default(0) | int] | max }}
                 - choose:
                     - conditions:
                         - condition: template
@@ -1500,7 +1545,7 @@ action:
                               {% elif night_lights_var is iterable %}
                                 {% set lights = night_lights_var | select('string') | list %}
                               {% endif %}
-                              Auto-off Natt: {{ expand(lights) | map(attribute='name') | join(', ') | default('Ingen lampor') }} släckta.
+                              Auto-off Natt: {{ expand(lights) | map(attribute='name') | join(', ') | default('inga lampor') }} släckta.
                     - conditions: []
                       sequence:
                         - service: logbook.log
@@ -1515,7 +1560,7 @@ action:
                               {% elif night_lights_var is iterable %}
                                 {% set lights = night_lights_var | select('string') | list %}
                               {% endif %}
-                              Auto-off Natt: {{ expand(lights) | map(attribute='name') | join(', ') | default('Ingen lampor') }} släckta.
+                              Auto-off Natt: {{ expand(lights) | map(attribute='name') | join(', ') | default('inga lampor') }} släckta.
 
             # CASE 2: Off-scen aktiveras (endast om satt och ingen rörelse)
             
