@@ -1,17 +1,17 @@
-# ✨🌟 Avancerad Belysningsautomation 6.18.3 🌟✨
+# ✨🌟 Avancerad Belysningsautomation 1.0 🌟✨
 
 # 💡 När smart hem blir magi på riktigt
 
 ![License](https://img.shields.io/badge/license-MIT-blue?style=flat-square) ![HA Compatible](https://img.shields.io/badge/Home_Assistant-Compatible-orange?style=flat-square)
 
-Välkommen till Avancerad Belysningsautomation 6.18.3 – den mest kompletta, flexibla och robusta lösningen för rörelsestyrd belysning i Home Assistant.
+Välkommen till Avancerad Belysningsautomation 1.0 – den mest kompletta, flexibla och robusta lösningen för rörelsestyrd belysning i Home Assistant.
 Här möts intelligens, trygghet och stil.
 
 ✅ Supersäker | ✅ Maximalt flexibel | ✅ Scen- och ljussmart
 
 ---
 
-# 🚀 Nyheter i 6.18.3
+# 🚀 Nyheter i 1.0
 
 - 🎨 Ny GUI-design – enklare än någonsin
 - ✨ Off Scenes Next-Gen – Aktivera avslutande scener endast när du själv valt dem.
@@ -116,6 +116,6 @@ Få lugna helgkvällar och effektiv vardagsbelysning på vardagar
 
 # 👨‍💻 **Skapare**
 
-Byggd med ❤️ av **Rasmus Sjöberg** [razzietheman](https://github.com/razzietheman/) – 2025
+Byggd med ❤️ av **Rasmus Sjöberg** [razzietheman](https://github.com/razzietheman/) – 2026
 
-✨ **Rörelsestyrd Belysning 6.18.3** – maximal automation när du vill, **full kontroll när du behöver**.
+✨ **Rörelsestyrd Belysning 1.0** – maximal automation när du vill, **full kontroll när du behöver**.
